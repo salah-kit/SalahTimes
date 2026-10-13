@@ -152,22 +152,23 @@ struct ModelTests {
     #expect(times.timeZone.secondsFromGMT() == 7497)
   }
 
-  @Test("Decoding an autoupdating zone stores the zone it stands for")
+  @Test("Decoding an autoupdating zone keeps the zone its identifier names")
   func decodedZoneIsFixed() throws {
     let times = try PrayerTimes(
       coordinates: Coordinates(latitude: 30.0444, longitude: 31.2357),
       day: try #require(GregorianDay("2026-03-20")),
       timeZone: try #require(TimeZone(identifier: "Africa/Cairo")),
       parameters: CalculationMethod.egyptian.parameters)
-    // Replace the zone with an autoupdating one, as another encoder might write it.
+    // Replace the zone with an autoupdating one naming a zone other than this device's, as
+    // another encoder might write it. Foundation alone would decode it as this device's zone.
+    let named = TimeZone.current.identifier == "Asia/Tokyo" ? "Pacific/Apia" : "Asia/Tokyo"
     var object = try #require(
       try JSONSerialization.jsonObject(with: JSONEncoder().encode(times)) as? [String: Any])
-    object["timeZone"] = try JSONSerialization.jsonObject(
-      with: JSONEncoder().encode(TimeZone.autoupdatingCurrent))
+    object["timeZone"] = ["identifier": named, "autoupdating": true]
     let data = try JSONSerialization.data(withJSONObject: object)
     let decoded = try JSONDecoder().decode(PrayerTimes.self, from: data)
     #expect(decoded.timeZone != TimeZone.autoupdatingCurrent)
-    #expect(decoded.timeZone.identifier == TimeZone.current.identifier)
+    #expect(decoded.timeZone.identifier == named)
     #expect(decoded.fajr == times.fajr && decoded.lastThirdOfTheNight == times.lastThirdOfTheNight)
   }
 

@@ -44,7 +44,8 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
   /// It's the zone you passed, except that an autoupdating zone such as
   /// `TimeZone.autoupdatingCurrent` is stored as `TimeZone.current`, the zone it stood for when
   /// the times were computed, so the value doesn't change when the device's zone does. Decoding
-  /// does the same. The zone's `Codable` form is Foundation's, its identifier, so a zone made with
+  /// an autoupdating zone keeps the zone its identifier names, not the decoding device's zone.
+  /// The zone's `Codable` form is Foundation's, its identifier, so a zone made with
   /// `TimeZone(secondsFromGMT:)` and an offset that isn't a whole minute decodes rounded to the
   /// minute.
   public let timeZone: TimeZone
@@ -106,7 +107,7 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.init(
       day: try container.decode(GregorianDay.self, forKey: .day),
-      timeZone: Self.fixed(try container.decode(TimeZone.self, forKey: .timeZone)),
+      timeZone: try Self.decodeZone(from: container),
       fajr: try container.decode(EventTime.self, forKey: .fajr),
       sunrise: try container.decode(EventTime.self, forKey: .sunrise),
       dhuhr: try container.decode(EventTime.self, forKey: .dhuhr),
@@ -121,6 +122,28 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
   private enum CodingKeys: String, CodingKey {
     case day, timeZone, fajr, sunrise, dhuhr, asr, sunset, maghrib, isha, middleOfTheNight
     case lastThirdOfTheNight
+  }
+
+  /// The encoded zone, never autoupdating.
+  ///
+  /// Foundation decodes an autoupdating zone as the decoding device's current zone without
+  /// reading its identifier, so the identifier is read here instead.
+  private static func decodeZone(from container: KeyedDecodingContainer<CodingKeys>) throws
+    -> TimeZone
+  {
+    let zone = try container.decode(TimeZone.self, forKey: .timeZone)
+    guard zone == .autoupdatingCurrent else { return zone }
+    let encoded = try? container.nestedContainer(keyedBy: ZoneKeys.self, forKey: .timeZone)
+    if let identifier = try? encoded?.decode(String.self, forKey: .identifier),
+      let named = TimeZone(identifier: identifier)
+    {
+      return named
+    }
+    return .current
+  }
+
+  private enum ZoneKeys: String, CodingKey {
+    case identifier
   }
 
   init(
