@@ -1,49 +1,167 @@
 # Validating SalahTimes
 
-How SalahTimes' results were checked, what the checks found, and how to repeat them.
+How SalahTimes' results were checked, what the checks found, and how to repeat them. The numbers are from 2026-10-13, Swift 6.4 on an Apple M2 Pro (macOS), with the engine at the head of this branch.
 
 ## Summary
 
-TODO (phase 2): one paragraph of results once the engine runs.
+- **Astronomy.** At every computed event, an independent solar model (NOAA's equation-of-time formulation) puts the Sun within 0.013° of the altitude that defines the event, and within 0.013° of hour angle (3.1 seconds of time) of the meridian at Dhuhr. That covers 31,000 crossings at latitudes from 60° S to 60° N.
+- **adhan-swift.** All eight of adhan-swift's timetables agree within one minute for every prayer, except seven prayer columns in three files. adhan-swift's own tests allow two minutes for those same three files. Every exception is explained below.
+- **Official timetables.** Nine 2026 timetables from six authorities, 365 days each. moonsighting.com's London times agree with the `moonsightingCommittee` preset to the minute on 91–97% of days for every prayer but Asr (74–78%), with mean offsets under 0.05 minutes. Diyanet (Istanbul, Ankara) and Umm al-Qura (Makkah, Riyadh) agree within a minute on 90–100% of days, and all their mean offsets are 0 or ±0.5 minutes, which is rounding. MUIS, Kemenag and JAKIM add precautionary minutes or round up, which their presets don't do. JAKIM's Fajr is 9–12 minutes later than the `jakim` preset's 20°: Malaysia moved Subuh to 18° in 2019.
+- **Properties.** Events stay in order, change smoothly from day to day, give the same instants with or without daylight saving time, behave as algorithm.md §9 says in polar day and polar night, stay on their civil day at the equator and the date line, and mirror between the hemispheres within 8 seconds. The one surprise is in the Tehran method at 60° and beyond: Maghrib and Isha can be the same instant (see Known limitations).
+- **Speed.** A day's events take about 9 µs in a release build and 22 µs in a debug build. 48 hours (three days) take about 27 µs in release.
+
+No engine bugs were found. The findings are about method presets: JAKIM's Fajr angle, and the precautionary minutes and rounding that MUIS, Kemenag and JAKIM use.
 
 ## Astronomy cross-checks
 
-`SelfConsistencyTests.swift` carries its own solar model, written from NOAA's "General Solar Position Calculations" and the NOAA Solar Calculator spreadsheet. It computes the hour angle from the equation of time, where the engine uses right ascension and sidereal time (algorithm.md §4), and it checks itself against Meeus's worked examples 25.a and 28.b.
+`SelfConsistencyTests.swift` has its own solar model, written from NOAA's "General Solar Position Calculations" and the NOAA Solar Calculator spreadsheet (https://gml.noaa.gov/grad/solcalc/calcdetails.html). Its formulation differs from the engine's:
 
-TODO (phase 2): results.
+| | Engine (algorithm.md §4) | Test model (NOAA) |
+|---|---|---|
+| Time scale | UT for sidereal time, TT (with ΔT) for the Sun | UT throughout |
+| Hour angle | Apparent sidereal time minus right ascension, plus longitude | True solar time from the equation of time |
+| Root finding | Newton-style iteration on the hour angle | Bisection on the altitude |
+
+The model reproduces Meeus's worked examples: the apparent declination of example 25.a (−7.78507° on 1992-10-13) within 0.002°, and the equation of time of example 28.b (13 min 42.6 s) within 6 seconds.
+
+Both models use the same series for the Sun's longitude (Meeus chapter 25), so this check is independent in the hour angle, the time scale and the root finding, not in the solar theory. Comparisons with an independent ephemeris (JPL Horizons or USNO) weren't run: the engine's author reports that the USNO API reset every connection from this machine.
 
 ## adhan-swift parity
 
-Data: the eight timetables in adhan-swift's `Tests/Resources/Times/` at commit `a6fa2de`, MIT licensed, copied to `Tests/Data/adhan-swift/` with the licence. Several were "adjusted +/- 1 or 2 minutes" by adhan-swift's authors to agree with their library.
+**Data.** The eight timetables in adhan-swift's `Tests/Resources/Times/` at commit `a6fa2de` (MIT licence), copied to `Tests/Data/adhan-swift/` with the licence and a README. Several say they were "adjusted +/- 1 or 2 minutes" by adhan-swift's authors to agree with their library.
 
-Method: `AdhanParityTests.swift` maps each file's method to the SalahTimes preset (UmmAlQura to `ummAlQura`, Turkey to `diyanet`, Singapore to `muis`, MoonsightingCommittee to `moonsightingCommittee`, and so on), takes the file's madhab and high-latitude rule, computes every listed day and checks each prayer within one minute.
+**Method.** `AdhanParityTests.swift` maps each file's method to the SalahTimes preset: UmmAlQura to `ummAlQura`, Turkey to `diyanet`, Singapore to `muis`, MoonsightingCommittee to `moonsightingCommittee`, and Dubai, Qatar, Kuwait and Tehran to the presets of the same name. It takes the file's madhab and high-latitude rule, computes every listed day, and compares each prayer with the file's local time.
 
-TODO (phase 2): per-file results and every known difference.
+**Results.** The largest difference per prayer, in minutes:
+
+| File | Days | Fajr | Sunrise | Dhuhr | Asr | Maghrib | Isha |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Ankara-Turkey | 24 | 1 | 1 | 1 | 1 | 1 | **2** |
+| Doha-Qatar | 12 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Dubai-Gulf | 12 | 1 | 1 | 1 | 1 | 1 | 1 |
+| Kuwait City-Kuwait | 12 | **2** | **2** | 1 | 1 | 1 | 1 |
+| London-MoonsightingCommittee | 12 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Makkah-UmmAlQura | 12 | 0 | 0 | 0 | 1 | 0 | 0 |
+| Singapore-Singapore | 366 | 1 | 1 | **2** | **2** | **2** | 1 |
+| Tehran-Tehran | 12 | 0 | 0 | 0 | 1 | 0 | 1 |
+
+The test lists each difference over a minute in `knownDifferences`, with a two-minute limit and its reason. It also fails if a listed difference disappears, so the list can't go stale.
+
+- **Ankara, Isha (2 days of 24).** Diyanet's Isha isn't exactly the Sun at 17°. On 2019-05-01 Diyanet publishes 21:18 and SalahTimes computes 21:19:37; on 2019-09-01, 20:52 against 20:50:16. The 2026 Diyanet comparison below shows the same spread, about ±1.9 minutes, around a mean of zero.
+- **Kuwait, Fajr and sunrise (1 day of 12).** The 2016-03-01 row is about 1.6 minutes later than the Sun for both Fajr (04:56 against 04:54:27) and sunrise (06:15 against 06:13:24). The other eleven days agree within a minute. It looks like an irregularity in the source table, which adhan-swift's authors also adjusted.
+- **Singapore, Dhuhr (192 days), Asr (2 days) and Maghrib (9 days).** MUIS publishes Dhuhr about a minute after the transit and rounds every time up, and the `muis` preset does neither. MUIS's own 2026 data confirms it (below).
+
+adhan-swift's own tests allow two minutes (their `variance` key) for exactly these three files, so adhan-swift doesn't reproduce them within a minute either.
 
 ## Official timetables
 
-Sources, URLs, retrieval dates, reference coordinates and licences: `Validation/official-timetables/README.md` and `sources.json`. Nine timetables cover all of 2026: Diyanet (Istanbul, Ankara), JAKIM (WLY01), MUIS (Singapore), Umm al-Qura (Makkah, Riyadh), Kemenag (Jakarta) and moonsighting.com (London, two methods). Only MUIS's data may be redistributed; it's committed.
+**Sources.** Six authorities, nine timetables, every day of 2026, retrieved on 2026-10-13. `Validation/official-timetables/README.md` and `sources.json` give the URLs, the reference coordinates and why they were chosen, and the licences.
 
-TODO (phase 2): offsets per prayer and their interpretation.
+| Timetable | Where the data came from | Reference coordinates |
+|---|---|---|
+| Diyanet, Istanbul and Ankara | namazvakitleri.diyanet.gov.tr. The 2026 yearly table comes from the Internet Archive's copy of 2 January 2026, because the live page now shows 2027. Its 31 days that overlap the live 30-day table are identical. | City centres; Diyanet doesn't publish its reference points |
+| JAKIM, zone WLY01 | e-solat.gov.my API | Central Kuala Lumpur; JAKIM doesn't publish zone reference points |
+| MUIS, Singapore | data.gov.sg, "Muslim Prayer Timetable 2026" | Island centre; not published |
+| Umm al-Qura, Makkah and Riyadh | The service behind ummulqura.org.sa/prayer-times | Exact: the site's own city list |
+| Kemenag, Kota Jakarta | bimasislam.kemenag.go.id/jadwalshalat | Central Jakarta; not shown |
+| moonsighting.com, London | praytable.php, methods 0 (Hanafi, shafaq general) and 2 (Shafi'i, shafaq ahmer) | Exact: the coordinates requested |
+
+Only MUIS's data may be redistributed (Singapore Open Data Licence 1.0). It's committed with attribution, and its comparison runs in every test run. The others stay in a gitignored cache, and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. UAE, Qatar and Kuwait were tried without success; the README records what was tried.
+
+**Results.** These are the official time minus SalahTimes' unrounded time, in minutes. "Exact" and "≤ 1 min" compare the preset as it ships, rounded to the nearest minute. Full tables: `Validation/official-timetables/results.md`.
+
+| Timetable | Fajr | Sunrise | Dhuhr | Asr | Maghrib | Isha | Exact | ≤ 1 min |
+|---|---|---|---|---|---|---|---|---|
+| moonsighting.com London, Hanafi | −0.01 | +0.03 | −0.03 | +0.02 | −0.01 | −0.02 | 74–97% | 100% |
+| moonsighting.com London, Shafi'i | −0.01 | +0.03 | −0.03 | −0.02 | −0.01 | −0.01 | 78–97% | 100% |
+| Diyanet Istanbul | +0.04 | +0.04 | +0.03 | +0.07 | +0.02 | +0.06 | 25–90% | 90–100% |
+| Diyanet Ankara | +0.10 | +0.06 | +0.02 | +0.08 | +0.04 | +0.07 | 27–92% | 93–100% |
+| Umm al-Qura Makkah | +0.52 | −0.50 | +0.52 | +0.51 | +0.50 | +0.50 | 44–51% | 100% |
+| Umm al-Qura Riyadh | +0.49 | −0.47 | +0.48 | +0.53 | +0.49 | +0.49 | 41–54% | 98–100% |
+| MUIS Singapore | +0.49 | +0.50 | +1.58 | +0.51 | +0.60 | +0.53 | 0–53% | 41–100% |
+| Kemenag Jakarta | +2.43 | −3.23 | +3.50 | +2.45 | +3.17 | +2.44 | 0% | 0% |
+| JAKIM WLY01 | +10.29 | −0.80 | +2.77 | +1.75 | +1.93 | +1.97 | 0–20% | 0–100% |
+
+The table gives the mean offset for each prayer; the minimum and maximum are in `results.md`.
+
+**Interpretation.**
+
+- **moonsighting.com** computes for the coordinates given, so this is a pure method comparison: the committee's seasonal Fajr and Isha (shafaq general and ahmer), Hanafi and Shafi'i Asr, and its +5 minutes for Dhuhr and +3 for Maghrib. Every offset lies within ±0.84 minutes, the spread that rounding gives. SalahTimes reproduces the committee's own calculator.
+- **Diyanet.** Mean offsets are under 0.1 minutes, so Diyanet rounds to the nearest minute and the `diyanet` preset's precautionary minutes (sunrise −7, Dhuhr +5, Asr +4, Maghrib +7) are right. Fajr, sunrise and Dhuhr stay within ±0.85 minutes. Maghrib and Isha spread to about ±1.9 minutes around zero, a seasonal wave rather than an offset: Diyanet's own definitions for those two aren't exactly a constant angle plus constant minutes. Within one minute: 97–99% for Maghrib and 90–93% for Isha.
+- **Umm al-Qura** also computes for the coordinates given. Every prayer averages +0.5 minutes and sunrise −0.5: Umm al-Qura rounds prayers up and sunrise down, the cautious direction for each. The Isha statistics equal Maghrib's exactly, so the published Ramadan Isha (120 minutes in the Umm al-Qura month of Ramadan, 18 February to 19 March 2026) matches `ramadanIsha: .interval(minutes: 120, hijriDayOffset: 0)` on every day. With its default nearest rounding, the `ummAlQura` preset is within a minute on 98–100% of days. `rounding: .up` for prayers would match more days exactly, but SalahTimes has no setting that rounds sunrise down while it rounds the prayers up.
+- **MUIS** averages +0.5 minutes on every prayer, so it rounds up, and Dhuhr runs a further minute later. An evaluation of the preset with `rounding: .up` and one Dhuhr minute against the same 365 days gives 62–80% exact matches and 100% within a minute for every prayer except Asr (361 of 365 days). The `muis` preset has neither, so it matches only 41% of Dhuhrs within a minute. **Recommendation for the preset:** `rounding: .up` and `methodAdjustments.dhuhr = 1`. adhan-swift's Singapore data shows the same pattern.
+- **Kemenag** publishes every prayer about 2 to 3.5 minutes later than the Sun and sunrise about 3 minutes earlier: its ihtiyat, the precautionary margin it adds. The `kemenag` preset uses Kemenag's 20° and 18° but no margin. With adjustments of Fajr +2, sunrise −3, Dhuhr +3, Asr +2, Maghrib +3 and Isha +2, and `rounding: .up`, every prayer is within a minute on all 365 days, and Fajr, Dhuhr and Isha match exactly on 95–96% of days. **Recommendation:** add those minutes and that rounding to the preset, after the method research confirms them against Kemenag's own documentation.
+- **JAKIM.** Fajr is 8.9 to 12.0 minutes later than the preset's 20°. Malaysia's religious authorities moved the Subuh angle from 20° to 18°: Selangor announced it on 28 November 2019 and the other states followed (Berita Harian commentary, 2020: https://www.bharian.com.my/amp/rencana/komentar/2020/05/691723/bhplus). At 18°, Fajr still runs about 1.9 minutes later than the Sun, and the other prayers about +1.8 to +2.8 minutes, sunrise −0.8: JAKIM's precautionary minutes. Offsets for Asr, Maghrib and Isha spread over about 2.5 minutes through the year, more than rounding explains. That fits a zone reference point other than central Kuala Lumpur, which JAKIM doesn't publish. **Recommendation:** change the `jakim` preset's Fajr to 18° and record JAKIM's precautionary minutes once the method research confirms them. The cached comparison fails its 10-minute sanity bound on JAKIM's Fajr until then.
 
 ## Self-consistency
 
-TODO (phase 2): maxima.
+`SelfConsistencyTests.swift` computes events with `rounding: .none`, no minute adjustments and `highLatitudeRule: .disabled`. It then measures the Sun's altitude at each instant with the NOAA model. The grid covers latitudes 60° S to 60° N in steps of 10°, five longitudes from 157.5° W to 106° E, the 1st and 15th of each month of 2026, and three days in 1950, 2000 and 2100. Three parameter sets: Fajr 18°, Isha 17°, Shafi'i; Fajr and Isha 15°, Hanafi; Fajr 19.5°, Isha 17.5°, Maghrib 4.5°, Shafi'i.
+
+| Check | Expected | Largest deviation | Tolerance |
+|---|---|---:|---:|
+| Fajr, Isha, Maghrib angle | altitude = −angle | 0.0128° | 0.03° |
+| Sunrise, sunset, Maghrib at sunset | altitude = −0.8333° | 0.0128° | 0.03° |
+| Asr | cot(altitude) = madhab factor + tan(noon zenith distance) | 0.0128° | 0.03° |
+| Dhuhr | hour angle = 0 | 0.0131° (3.1 s of time) | 0.03° |
+
+In all, 30,946 crossings were checked. The tolerance comes from the models' known difference: NOAA's equation-of-time series differs from the right-ascension form by up to about 7 seconds of time, which is 0.03° of hour angle. That bounds the altitude error too, because the altitude error is at most the hour-angle error times cos φ cos δ sin H. The measured deviations are under half the tolerance.
 
 ## Properties
 
-`PropertyTests.swift` checks order, continuity, DST independence, polar regimes, the equator and the date line, and southern high latitudes.
+`PropertyTests.swift`. Every check passes.
 
-TODO (phase 2): results.
+- **Order.** The grid covers latitudes 65° S to 65° N in steps of 5° on every day of 2026, with seven presets: Muslim World League, ISNA, Egyptian, Umm al-Qura, Tehran, Moonsighting Committee and Karachi. That's 9,855 days per preset. On every day, Fajr < sunrise < Dhuhr < Asr < sunset ≤ Maghrib ≤ Isha, the middle of the night < the last third, and Isha ≤ the next day's Fajr. Equal Maghrib and Isha is allowed only beyond 48°, and it happens only with the Tehran method: 278 days at 60° and 65°, north and south. Interval Isha (Umm al-Qura) never falls after the next Fajr, even at 65°.
+- **Continuity.** The same grid and presets, with `rounding: .none`, give 88,938 day pairs per preset. An event's day-to-day change minus 24 hours may not exceed the fastest change, over the surrounding three day pairs, among the Sun's own crossings at that place, plus 60 seconds. The test's NOAA model computes those crossings: transit, sunrise, sunset, the method's angles and Asr. The reasoning: every SalahTimes event is a crossing, or a weighted mean of crossings with weights between 0 and 1 (`sunrise − p × night`, the night's middle), or a crossing plus an interval that changes by at most about 20 seconds a day (the committee's seasonal minutes). The 60 seconds cover that and the models' few seconds of disagreement. No event exceeded its bound. The largest change minus 24 hours was 4.0 minutes (4.9 with Tehran's Maghrib angle), at 65°. A further test moves one day's Isha by two minutes and confirms the check reports it.
+- **Daylight saving time.** London, New York and Sydney were computed against UTC+0, UTC−5 and UTC+10 for every day of 2026. Instants differ by at most 2.4 × 10⁻⁷ seconds, and reasons for non-occurrence are identical. The comparison uses `rounding: .none`: with rounding, an instant within a millisecond of a half minute could round differently in the two zones. On the transition days (London 29 March and 25 October, New York 8 March and 1 November, Sydney 5 April and 4 October), Dhuhr moves by less than a minute beyond 24 hours, and every event passes the continuity bound.
+- **Polar regimes.** Tromsø (69.65° N) and Longyearbyen (78.22° N), Muslim World League, Shafi'i and Hanafi, behave as algorithm.md §9 says. On 21 June, Fajr, sunrise, sunset, Maghrib, Isha and both night divisions don't occur (`sunStaysAbove`), while Dhuhr and Asr occur. On 21 December, sunrise, sunset, Maghrib, Asr and both night divisions don't occur (`sunStaysBelow`), while Dhuhr, Fajr and Isha occur, unbounded, because there's no night to bound them. On 1 May in Tromsø the Sun sets but never reaches 17° below the horizon. The seventh-of-the-night bound supplies Isha and Fajr then; with `.disabled`, both are `sunStaysAbove`.
+- **The equator and the date line.** Kiritimati (UTC+14), Apia, Adak, Quito, Singapore and Pontianak, every day of 2026: Fajr through Maghrib fall on the requested civil day in the place's zone. Dhuhr is within 3.15 seconds of the NOAA model's solar noon; the tolerance is 10 seconds.
+- **Southern high latitudes.** Ushuaia (54.80° S) and Punta Arenas (53.16° S), every day of 2026. `recommended` resolves to `seventhOfTheNight` and gives the same results as setting it explicitly. Events are ordered and continuous. Each place was mirrored at the same latitude north on the day whose declination is opposite, interpolated between two days and matched by the declination's trend. Across 3,645 comparisons, each event's distance from Dhuhr matches within 7.6 seconds; the tolerance is 30 seconds.
 
 ## Benchmark
 
-TODO (phase 2): debug and release numbers.
+`BenchmarkTests.swift` computes three consecutive days at six places, each with its own method: Makkah, London, Jakarta, Istanbul, Tromsø and Ushuaia. That's 3,600 calls per run, on an Apple M2 Pro with Swift 6.4.
+
+| Build | Per day (one `PrayerTimes`) | Per 48 hours (three days) | Range across places |
+|---|---:|---:|---|
+| Release (`-c release -Xswiftc -enable-testing`) | 9.1 µs | 27.3 µs | 8.0–10.3 µs per day |
+| Debug | 21.9 µs | 65.7 µs | 20.3–23.9 µs per day |
+
+Tromsø and London, where bounds and the Moonsighting Committee's rules apply, are the slowest. When the debug run shared the machine with the rest of the suite running in parallel, it averaged 28.5 µs per day. The test's only assertion is a 50 ms ceiling.
 
 ## Known limitations
 
-TODO (phase 2).
+- **Presets versus published timetables.** The `jakim` preset's Fajr angle is outdated, at 20° instead of 18°. The `muis`, `kemenag` and `jakim` presets carry none of their authorities' precautionary minutes or upward rounding. The official-timetable section gives the evidence and the recommended values. These are data in `CalculationMethod`, not engine behaviour.
+- **Tehran at high latitudes.** Algorithm.md §8.1 bounds every angle-based evening time by the same `p`, and `seventhOfTheNight` gives 1/7 whatever the angle. So when both the 4.5° Maghrib and the 14° Isha pass the bound, they're clamped to the same instant, sunset plus a seventh of the night. They never cross, but they coincide. The order test found it on 278 days at 60° and 65°, and on none at 55°. Whether the Maghrib angle should be bounded at all, or by a smaller portion, is a method question.
+- **Interval Isha isn't bounded** (algorithm.md §8.4). Up to 65° in 2026 it never fell after the next Fajr, but at higher latitudes an interval longer than the night would.
+- **Reference points.** Diyanet, JAKIM, MUIS and Kemenag don't say which point their province, zone or national timetables are computed for. City-centre coordinates explain the means well, but part of each offset can come from the reference point.
+- **Elevation is ignored.** SalahTimes uses a −0.8333° horizon everywhere, as RFC 0001 decides. Authorities that correct sunrise and sunset for elevation differ by up to a minute or two at elevated places; none of the compared cities is high enough to show it.
+- **adhan-swift's data was adjusted** by its authors to fit their library, so parity with it is a comparison with adhan-swift as much as with the original timetables.
+- **The solar cross-check shares the Sun's longitude series** with the engine (Meeus chapter 25, which NOAA also uses). It checks the hour angle, time scale and root finding independently, but not the solar theory. A comparison with JPL Horizons or USNO is still to do.
+- **Linux.** The tests use only Foundation APIs available on Linux, but this validation ran on macOS only. Linux runs in CI.
 
 ## Reproducing
 
-TODO (phase 2): commands.
+From the package root:
+
+```sh
+# Everything that runs without network data: parity, MUIS, self-consistency, properties,
+# benchmark (debug).
+swift test -j 4
+
+# One group.
+swift test -j 4 --filter AdhanParity
+swift test -j 4 --filter SelfConsistency
+swift test -j 4 --filter Properties
+
+# Benchmark in release.
+swift test -c release -Xswiftc -enable-testing -j 4 --filter Benchmark
+
+# Official timetables: fetch (about 25 requests), compare and write results.md.
+python3 Validation/official-timetables/fetch.py
+rm -f Validation/official-timetables/results.md
+SALAHTIMES_OFFICIAL_TIMETABLES=$PWD/Validation/official-timetables/cache \
+SALAHTIMES_OFFICIAL_RESULTS=$PWD/Validation/official-timetables/results.md \
+  swift test -j 4 --filter OfficialTimetable
+```
+
+Each test prints its numbers (parity maxima, self-consistency maxima, order and continuity counts, DST differences, mirror differences, benchmark times), and those printed numbers are the source of this document's figures. Official sites change: a later fetch may return revised timetables. `fetch.py` reports, for Diyanet, whether the archived 2026 table still matches the live page.

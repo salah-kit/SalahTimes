@@ -50,7 +50,9 @@ struct OfficialTimetableTests {
     Self.publish(reports, name: "committed")
   }
 
-  @Test("Cached timetables", .enabled(if: hasCache, "Set SALAHTIMES_OFFICIAL_TIMETABLES to the cache directory"))
+  @Test(
+    "Cached timetables",
+    .enabled(if: hasCache, "Set SALAHTIMES_OFFICIAL_TIMETABLES to the cache directory"))
   func cachedTimetables() throws {
     let path = try #require(ProcessInfo.processInfo.environment[Self.cacheVariable])
     let directory = URL(fileURLWithPath: path)
@@ -169,10 +171,17 @@ struct OfficialTimetableTests {
         let minutes = official.timeIntervalSince(computed) / 60
         statistics[index].1.add(
           minutes, presetDifference: official.timeIntervalSince(shipped) / 60)
-        #expect(
-          abs(minutes) <= sanityMinutes,
-          "\(source.id) \(day) \(name): official \(fields[index + 1]), off by \(minutes) min")
       }
+    }
+    // One issue per prayer, not per day.
+    for (name, stats) in statistics {
+      let worst = max(abs(stats.minimum), abs(stats.maximum))
+      #expect(
+        worst <= sanityMinutes,
+        Comment(
+          rawValue: "\(source.id) \(name): official minus SalahTimes ranges from "
+            + "\(format(stats.minimum)) to \(format(stats.maximum)) min, beyond the "
+            + "\(sanityMinutes)-minute sanity bound"))
     }
     return Report(source: source, days: days, statistics: statistics)
   }
@@ -203,10 +212,26 @@ struct OfficialTimetableTests {
     print("Official timetables (\(name)), official minus SalahTimes in minutes:\n\n" + markdown)
     if let path = ProcessInfo.processInfo.environment[resultsVariable] {
       let url = URL(fileURLWithPath: path)
-      let existing = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+      var existing = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+      if existing.isEmpty {
+        existing = resultsHeader
+      }
       try? (existing + markdown).write(to: url, atomically: true, encoding: .utf8)
     }
   }
+
+  static let resultsHeader = """
+    # Official timetables: results
+
+    Official time minus SalahTimes' unrounded time, in minutes, for every day of 2026. A \
+    positive value means the authority publishes later. "Preset exact" and "Preset within 1 \
+    min" compare the method's preset as it ships (rounded) with the published minute.
+
+    Written by `OfficialTimetableTests.swift`; see README.md to reproduce. docs/validation.md \
+    interprets the numbers.
+
+
+    """
 
   static func format(_ value: Double) -> String {
     String(format: "%+.2f", value)

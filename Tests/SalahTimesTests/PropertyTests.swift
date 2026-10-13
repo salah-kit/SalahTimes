@@ -28,6 +28,7 @@ struct PropertyTests {
     let utc = try #require(TimeZone(identifier: "UTC"))
     let days = Self.days(from: GregorianDay(year: 2026, month: 1, day: 1)!, count: 366)
     var intervalOverlaps: [String] = []
+    var sharedBounds: [String] = []
     var checked = 0
     for latitude in stride(from: -65.0, through: 65.0, by: 5) {
       let coordinates = Coordinates(latitude: latitude, longitude: 0)
@@ -35,6 +36,9 @@ struct PropertyTests {
       for index in 0..<(series.count - 1) {
         let report = Self.orderProblems(series[index], next: series[index + 1])
         checked += 1
+        if report.maghribEqualsIsha {
+          sharedBounds.append("\(latitude)° \(days[index])")
+        }
         for problem in report.problems {
           Issue.record("\(method) at \(latitude)° on \(days[index]): \(problem)")
         }
@@ -48,17 +52,28 @@ struct PropertyTests {
       }
     }
     // An Isha interval isn't bounded (algorithm.md §8.4), so where the night is shorter than
-    // the interval plus the bounded Fajr's distance from sunrise, Isha falls after the next
-    // Fajr. That happens only beyond 48°, where the recommended rule bounds Fajr by a seventh.
+    // the interval plus the bounded Fajr's distance from sunrise, Isha could fall after the next
+    // Fajr. That can only happen beyond 48°, where the recommended rule bounds Fajr by a seventh;
+    // up to 65° in 2026 it doesn't happen at all.
     for overlap in intervalOverlaps {
       let latitude = Double(overlap.split(separator: "°")[0])!
       #expect(abs(latitude) > 48, "\(method): interval Isha after next Fajr at \(overlap)")
     }
+    // With an angle for Maghrib (Tehran), Maghrib and Isha share the same bound
+    // (algorithm.md §8.1: the seventh is 1/7 whatever the angle), so on days when both angles
+    // pass it they coincide. They never cross. Recorded in docs/validation.md.
+    for shared in sharedBounds {
+      let latitude = Double(shared.split(separator: "°")[0])!
+      #expect(abs(latitude) > 48, "\(method): Maghrib equals Isha at \(shared)")
+    }
     print(
-      "Order \(method): \(checked) days checked; interval Isha after the next Fajr on "
+      "Order \(method): \(checked) days checked; Maghrib equal to Isha on "
+        + "\(sharedBounds.count) days; interval Isha after the next Fajr on "
         + "\(intervalOverlaps.count) days"
-        + (intervalOverlaps.isEmpty ? "" : " (first \(intervalOverlaps[0]), last "
-          + "\(intervalOverlaps[intervalOverlaps.count - 1]))"))
+        + (intervalOverlaps.isEmpty
+          ? ""
+          : " (first \(intervalOverlaps[0]), last "
+            + "\(intervalOverlaps[intervalOverlaps.count - 1]))"))
   }
 
   // MARK: Continuity
@@ -84,6 +99,25 @@ struct PropertyTests {
     print(
       "Continuity \(method): \(checked) day pairs checked, largest change minus 24 h "
         + "\(String(format: "%.1f", worst / 60)) min")
+  }
+
+  @Test("The continuity check catches a two-minute jump")
+  func continuityCheckDetectsJumps() throws {
+    var parameters = CalculationMethod.muslimWorldLeague.parameters
+    parameters.rounding = .none
+    let coordinates = Coordinates(latitude: 40, longitude: 0)
+    let utc = try #require(TimeZone(identifier: "UTC"))
+    let days = Self.days(from: GregorianDay(year: 2026, month: 3, day: 1)!, count: 10)
+    let series = try Self.series(coordinates, utc, parameters, days)
+    var instants = series.map(Self.instants)
+    #expect(Self.continuityProblems(instants, days, coordinates, parameters).problems.isEmpty)
+
+    // Move one day's Isha two minutes later.
+    instants[5][.isha] = instants[5][.isha]!.addingTimeInterval(120)
+    let problems = Self.continuityProblems(instants, days, coordinates, parameters).problems
+    // The jump into the moved day exceeds the bound; the smaller jump back may not.
+    #expect(!problems.isEmpty)
+    #expect(problems.allSatisfy { $0.hasPrefix("isha") }, "\(problems)")
   }
 
   // MARK: Daylight saving time
@@ -266,8 +300,9 @@ struct PropertyTests {
   /// southern place and at its northern mirror on the day the Sun's declination is opposite.
   /// Pairing by declination and interpolating linearly between two northern days leaves an
   /// error of a few seconds; the rest is the asymmetry of the orbit, which changes how fast the
-  /// declination moves and so the neighboring nights that a bound uses.
-  static let mirrorTolerance = 120.0
+  /// declination moves and so the neighboring nights that a bound uses. Both are seconds: the
+  /// measured maximum is under 8 s, and 30 s leaves room without hiding a real asymmetry.
+  static let mirrorTolerance = 30.0
 
   @Test("Ushuaia and Punta Arenas: seventh of the night, ordered, continuous, mirrored")
   func southernHighLatitudes() throws {
@@ -288,11 +323,12 @@ struct PropertyTests {
       #expect(viaRecommended == viaSeventh, "\(name): recommended isn't the seventh")
 
       for index in 0..<(viaRecommended.count - 1) {
-        for problem in Self.orderProblems(viaRecommended[index], next: viaRecommended[index + 1])
-          .problems
-        {
+        let report = Self.orderProblems(viaRecommended[index], next: viaRecommended[index + 1])
+        for problem in report.problems {
           Issue.record("\(name) \(southDays[index]): \(problem)")
         }
+        #expect(!report.maghribEqualsIsha, "\(name) \(southDays[index]): Maghrib equals Isha")
+        #expect(!report.ishaAfterNextFajr, "\(name) \(southDays[index]): Isha after next Fajr")
       }
 
       recommended.rounding = .none
@@ -379,14 +415,20 @@ struct PropertyTests {
     .fajr, .sunrise, .dhuhr, .asr, .sunset, .maghrib, .isha,
   ]
 
-  /// Order problems on one day, and whether Isha falls after the next day's Fajr.
+  /// Order problems on one day, whether Maghrib and Isha are the same instant, and whether
+  /// Isha falls after the next day's Fajr.
+  ///
+  /// Sunset may equal Maghrib. Maghrib may equal Isha, but never follow it; the caller decides
+  /// whether equality is acceptable.
   static func orderProblems(_ times: PrayerTimes, next: PrayerTimes) -> (
-    problems: [String], ishaAfterNextFajr: Bool
+    problems: [String], maghribEqualsIsha: Bool, ishaAfterNextFajr: Bool
   ) {
     var problems: [String] = []
     let occurring = chain.compactMap { event in times[event].date.map { (event, $0) } }
     for (first, second) in zip(occurring, occurring.dropFirst()) {
-      let allowsEqual = first.0 == .sunset && second.0 == .maghrib
+      let allowsEqual =
+        (first.0 == .sunset && second.0 == .maghrib)
+        || (first.0 == .maghrib && second.0 == .isha)
       let ordered = allowsEqual ? first.1 <= second.1 : first.1 < second.1
       if !ordered {
         problems.append("\(first.0) \(first.1) not before \(second.0) \(second.1)")
@@ -401,7 +443,8 @@ struct PropertyTests {
     if let isha = times.isha.date, let fajr = next.fajr.date, isha > fajr {
       ishaAfterNextFajr = true
     }
-    return (problems, ishaAfterNextFajr)
+    let maghribEqualsIsha = times.maghrib.date != nil && times.maghrib.date == times.isha.date
+    return (problems, maghribEqualsIsha, ishaAfterNextFajr)
   }
 
   /// The altitudes whose crossings bound how fast events can move, for the parameters.
@@ -427,12 +470,28 @@ struct PropertyTests {
   static func continuityProblems(
     _ series: [PrayerTimes], _ coordinates: Coordinates, _ parameters: CalculationParameters
   ) -> (problems: [String], checked: Int, worstChange: Double) {
+    continuityProblems(series.map(instants), series.map(\.day), coordinates, parameters)
+  }
+
+  /// The instants of the events that occur.
+  static func instants(_ times: PrayerTimes) -> [PrayerTimes.Event: Date] {
+    var instants: [PrayerTimes.Event: Date] = [:]
+    for event in PrayerTimes.Event.allCases {
+      instants[event] = times[event].date
+    }
+    return instants
+  }
+
+  static func continuityProblems(
+    _ series: [[PrayerTimes.Event: Date]], _ days: [GregorianDay], _ coordinates: Coordinates,
+    _ parameters: CalculationParameters
+  ) -> (problems: [String], checked: Int, worstChange: Double) {
     let latitude = coordinates.latitude
     let longitude = coordinates.longitude
     let altitudes = crossingAltitudes(parameters)
     // The Sun's own crossings for each day: transit, the altitudes, and Asr.
     let own: [[Date?]] = series.map { times in
-      let noon = Sun.solarNoon(near: times.dhuhr.date!, longitude: longitude)
+      let noon = Sun.solarNoon(near: times[.dhuhr]!, longitude: longitude)
       var crossings: [Date?] = [noon]
       for (altitude, morning) in altitudes {
         crossings.append(
@@ -469,7 +528,7 @@ struct PropertyTests {
       let window = ownChange[max(0, index - 1)...min(ownChange.count - 1, index + 1)]
       let bound = window.max()! + 60
       for event in PrayerTimes.Event.allCases {
-        guard let a = series[index][event].date, let b = series[index + 1][event].date else {
+        guard let a = series[index][event], let b = series[index + 1][event] else {
           continue
         }
         let change = abs(b.timeIntervalSince(a) - 86_400)
@@ -477,7 +536,7 @@ struct PropertyTests {
         checked += 1
         if change > bound {
           problems.append(
-            "\(event) from \(series[index].day) to \(series[index + 1].day) changes by "
+            "\(event) from \(days[index]) to \(days[index + 1]) changes by "
               + "\(Int(change)) s beyond 24 h; the bound is \(Int(bound)) s")
         }
       }

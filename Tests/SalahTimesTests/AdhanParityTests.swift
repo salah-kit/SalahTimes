@@ -31,7 +31,40 @@ struct AdhanParityTests {
   }
 
   /// Known differences, keyed by file name and then by prayer.
-  static let knownDifferences: [String: [String: KnownDifference]] = [:]
+  ///
+  /// adhan-swift's own tests allow two minutes for exactly these three files (their `variance`
+  /// key), so adhan-swift doesn't reproduce them within a minute either.
+  static let knownDifferences: [String: [String: KnownDifference]] = [
+    "Ankara-Turkey": [
+      "isha": KnownDifference(
+        maximumMinutes: 2,
+        reason: "Diyanet's Isha isn't exactly the Sun at 17°; on 2019-05-01 Diyanet publishes "
+          + "21:18 against SalahTimes' 21:19:37, and on 2019-09-01 20:52 against 20:50:16. "
+          + "The 2026 Diyanet comparison shows the same spread of about ±1.9 minutes.")
+    ],
+    "Kuwait City-Kuwait": [
+      "fajr": KnownDifference(
+        maximumMinutes: 2,
+        reason: "The table's 2016-03-01 row is about 1.6 minutes later than the Sun for both "
+          + "Fajr (04:56 against 04:54:27) and sunrise (06:15 against 06:13:24); the other 11 "
+          + "days agree within a minute."),
+      "sunrise": KnownDifference(
+        maximumMinutes: 2, reason: "The same 2016-03-01 row as Fajr."),
+    ],
+    "Singapore-Singapore": [
+      "dhuhr": KnownDifference(
+        maximumMinutes: 2,
+        reason: "MUIS publishes Dhuhr about a minute after the transit and rounds every time "
+          + "up; the muis preset has no Dhuhr minute and rounds to the nearest minute. 192 of "
+          + "366 days differ by two minutes."),
+      "asr": KnownDifference(
+        maximumMinutes: 2, reason: "MUIS rounds up; the preset rounds to the nearest minute."),
+      "maghrib": KnownDifference(
+        maximumMinutes: 2,
+        reason: "MUIS rounds up and publishes Maghrib up to about 1.9 minutes after sunset; "
+          + "the preset rounds to the nearest minute."),
+    ],
+  ]
 
   @Test("Every listed day agrees within one minute", arguments: files)
   func parity(file: String) throws {
@@ -72,8 +105,9 @@ struct AdhanParityTests {
     let summary = AdhanTable.prayerNames.map { name in
       "\(name) \(String(format: "%.2f", worst[name] ?? 0))"
     }
-    print("adhan-swift parity \(file), \(table.times.count) days, max |diff| min: "
-      + summary.joined(separator: ", "))
+    print(
+      "adhan-swift parity \(file), \(table.times.count) days, max |diff| min: "
+        + summary.joined(separator: ", "))
   }
 
   /// SalahTimes' parameters for an adhan-swift file's method, madhab and high-latitude rule.

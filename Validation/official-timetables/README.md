@@ -23,6 +23,8 @@ SALAHTIMES_OFFICIAL_RESULTS=$PWD/Validation/official-timetables/results.md \
 
 Delete `results.md` first: the test appends to it. Without `SALAHTIMES_OFFICIAL_TIMETABLES`, only the committed timetables (MUIS) are compared.
 
+The cached comparison fails one check today: JAKIM's Fajr is 8.9 to 12.0 minutes later than the `jakim` preset's 20°, beyond the test's 10-minute sanity bound, because Malaysia moved Subuh to 18° in 2019. docs/validation.md has the details.
+
 `fetch.py` makes about 25 requests, 1.5 seconds apart. If Python can't verify TLS certificates (the python.org installer for macOS ships without them), it falls back to `/etc/ssl/cert.pem`.
 
 ## Sources
