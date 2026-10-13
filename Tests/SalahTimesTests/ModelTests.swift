@@ -140,6 +140,37 @@ struct ModelTests {
     #expect(!json.contains(#""autoupdating":true"#), "\(json)")
   }
 
+  @Test("A fixed zone is stored as it is, to the second")
+  func zoneKeptToTheSecond() throws {
+    // Cairo's local mean time, 7497 s ahead of UTC. Rebuilding it from its identifier, GMT+0205,
+    // would give 7500 s.
+    let zone = try #require(TimeZone(secondsFromGMT: 7497))
+    let times = try PrayerTimes(
+      coordinates: Coordinates(latitude: 30.0444, longitude: 31.2357),
+      day: try #require(GregorianDay("2026-03-20")), timeZone: zone,
+      parameters: CalculationMethod.egyptian.parameters)
+    #expect(times.timeZone.secondsFromGMT() == 7497)
+  }
+
+  @Test("Decoding an autoupdating zone stores the zone it stands for")
+  func decodedZoneIsFixed() throws {
+    let times = try PrayerTimes(
+      coordinates: Coordinates(latitude: 30.0444, longitude: 31.2357),
+      day: try #require(GregorianDay("2026-03-20")),
+      timeZone: try #require(TimeZone(identifier: "Africa/Cairo")),
+      parameters: CalculationMethod.egyptian.parameters)
+    // Replace the zone with an autoupdating one, as another encoder might write it.
+    var object = try #require(
+      try JSONSerialization.jsonObject(with: JSONEncoder().encode(times)) as? [String: Any])
+    object["timeZone"] = try JSONSerialization.jsonObject(
+      with: JSONEncoder().encode(TimeZone.autoupdatingCurrent))
+    let data = try JSONSerialization.data(withJSONObject: object)
+    let decoded = try JSONDecoder().decode(PrayerTimes.self, from: data)
+    #expect(decoded.timeZone != TimeZone.autoupdatingCurrent)
+    #expect(decoded.timeZone.identifier == TimeZone.current.identifier)
+    #expect(decoded.fajr == times.fajr && decoded.lastThirdOfTheNight == times.lastThirdOfTheNight)
+  }
+
   @Test("Qibla resolves places within a few metres of the Kaaba's antipode")
   func qiblaNearTheAntipode() throws {
     // The antipode itself has no direction, and neither does a point 1e-11° from it, about

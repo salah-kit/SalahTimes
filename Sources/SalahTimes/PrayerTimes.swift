@@ -41,9 +41,12 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
 
   /// The time zone that defines ``day``.
   ///
-  /// It's a fixed copy of the zone you passed. An autoupdating zone such as
-  /// `TimeZone.autoupdatingCurrent` is stored as the zone it stood for when the times were
-  /// computed, so the value doesn't change when the device's zone does.
+  /// It's the zone you passed, except that an autoupdating zone such as
+  /// `TimeZone.autoupdatingCurrent` is stored as `TimeZone.current`, the zone it stood for when
+  /// the times were computed, so the value doesn't change when the device's zone does. Decoding
+  /// does the same. The zone's `Codable` form is Foundation's, its identifier, so a zone made with
+  /// `TimeZone(secondsFromGMT:)` and an offset that isn't a whole minute decodes rounded to the
+  /// minute.
   public let timeZone: TimeZone
 
   /// The start of Fajr.
@@ -87,10 +90,37 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
     coordinates: Coordinates, day: GregorianDay, timeZone: TimeZone,
     parameters: CalculationParameters
   ) throws {
-    // Fix an autoupdating zone, so the calculation and the stored zone can't see two zones.
-    let fixed = TimeZone(identifier: timeZone.identifier) ?? timeZone
     self = try Engine.prayerTimes(
-      coordinates: coordinates, day: day, timeZone: fixed, parameters: parameters)
+      coordinates: coordinates, day: day, timeZone: Self.fixed(timeZone), parameters: parameters)
+  }
+
+  /// The zone an autoupdating zone stands for now, or any other zone as it is.
+  ///
+  /// Only an autoupdating zone is replaced: rebuilding a zone from its identifier would round a
+  /// fixed offset such as `TimeZone(secondsFromGMT: 7497)` to the minute.
+  static func fixed(_ timeZone: TimeZone) -> TimeZone {
+    timeZone == .autoupdatingCurrent ? .current : timeZone
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.init(
+      day: try container.decode(GregorianDay.self, forKey: .day),
+      timeZone: Self.fixed(try container.decode(TimeZone.self, forKey: .timeZone)),
+      fajr: try container.decode(EventTime.self, forKey: .fajr),
+      sunrise: try container.decode(EventTime.self, forKey: .sunrise),
+      dhuhr: try container.decode(EventTime.self, forKey: .dhuhr),
+      asr: try container.decode(EventTime.self, forKey: .asr),
+      sunset: try container.decode(EventTime.self, forKey: .sunset),
+      maghrib: try container.decode(EventTime.self, forKey: .maghrib),
+      isha: try container.decode(EventTime.self, forKey: .isha),
+      middleOfTheNight: try container.decode(EventTime.self, forKey: .middleOfTheNight),
+      lastThirdOfTheNight: try container.decode(EventTime.self, forKey: .lastThirdOfTheNight))
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case day, timeZone, fajr, sunrise, dhuhr, asr, sunset, maghrib, isha, middleOfTheNight
+    case lastThirdOfTheNight
   }
 
   init(
