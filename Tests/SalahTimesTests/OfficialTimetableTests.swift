@@ -22,10 +22,12 @@ import Testing
 /// gives exactly the published minute. Set `SALAHTIMES_OFFICIAL_RESULTS` to a file path to write
 /// the tables there as Markdown.
 ///
+/// The suite is serialized because both tests append to the same results file.
+///
 /// The only assertion is a sanity bound: no day may differ by more than
 /// ``OfficialTimetableTests/sanityMinutes``, which catches a wrong time zone, date or
 /// coordinate. The offsets themselves are findings, interpreted in docs/validation.md.
-@Suite("Official timetables")
+@Suite("Official timetables", .serialized)
 struct OfficialTimetableTests {
   static let sanityMinutes = 10.0
   static let cacheVariable = "SALAHTIMES_OFFICIAL_TIMETABLES"
@@ -250,7 +252,11 @@ struct OfficialTimetableTests {
       if existing.isEmpty {
         existing = resultsHeader
       }
-      try? (existing + markdown).write(to: url, atomically: true, encoding: .utf8)
+      do {
+        try (existing + markdown).write(to: url, atomically: true, encoding: .utf8)
+      } catch {
+        Issue.record("Couldn't write \(path): \(error)")
+      }
     }
   }
 
