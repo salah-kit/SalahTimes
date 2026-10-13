@@ -20,7 +20,7 @@ tolerance.
 
 The vectors cover the methods, both madhabs, the high-latitude rules and adjustments, at
 places from the equator to the polar regions in both hemispheres. Each expected time is a UTC
-instant, or a reason the event doesn't occur. Engines in other languages pass the same files.
+instant, or a reason the event doesn't occur. Engines in other languages can check themselves against the same files.
 [Vectors/README.md](https://github.com/salah-kit/SalahTimes/blob/main/Vectors/README.md)
 documents the schema.
 

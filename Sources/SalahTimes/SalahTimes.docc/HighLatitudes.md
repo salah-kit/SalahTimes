@@ -109,9 +109,10 @@ on top of the typed results.
 
 The Moonsighting Committee's method doesn't use ``CalculationParameters/highLatitudeRule``.
 ``FajrRule/moonsightingCommittee`` and ``IshaRule/moonsightingCommittee(_:)`` apply the
-committee's seasonal limits instead. Below 55° of latitude, Fajr is no earlier, and Isha no
-later, than a number of minutes from sunrise or sunset that changes through the year. Beyond
-55°, they use a seventh of the night. ``Shafaq`` chooses which twilight ends Isha.
+committee's seasonal limits instead. Fajr is no earlier, and Isha no later, than a number of
+minutes from sunrise or sunset that changes through the year and grows with latitude. From 55°,
+a seventh of the night bounds them as well, as it does with
+``HighLatitudeRule/seventhOfTheNight``. ``Shafaq`` chooses which twilight ends Isha.
 
 ## See Also
 

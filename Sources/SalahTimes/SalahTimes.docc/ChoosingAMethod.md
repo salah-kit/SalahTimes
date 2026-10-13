@@ -26,22 +26,29 @@ let mwl = CalculationMethod.muslimWorldLeague.parameters
 | ``CalculationMethod/ummAlQura`` | 18.5° | 90 minutes after Maghrib | |
 | ``CalculationMethod/karachi`` | 18° | 18° | |
 | ``CalculationMethod/tehran`` | 17.7° | 14° | Maghrib at 4.5° |
-| ``CalculationMethod/diyanet`` | 18° | 17° | Precautionary minutes |
-| ``CalculationMethod/dubai`` | 18.2° | 18.2° | Precautionary minutes |
+| ``CalculationMethod/diyanet`` | 18° | 17° | Sunrise −7, Dhuhr +5, Asr +4, Maghrib +7 minutes |
+| ``CalculationMethod/dubai`` | 18.2° | 18.2° | Angles fitted to official timetables |
 | ``CalculationMethod/kuwait`` | 18° | 17.5° | |
 | ``CalculationMethod/qatar`` | 18° | 90 minutes after Maghrib | |
 | ``CalculationMethod/muis`` | 20° | 18° | |
-| ``CalculationMethod/jakim`` | 20° | 18° | |
-| ``CalculationMethod/kemenag`` | 20° | 18° | |
-| ``CalculationMethod/moonsightingCommittee`` | 18°, seasonal | 18°, seasonal | Its own high-latitude rule |
+| ``CalculationMethod/jakim`` | 18° | 18° | Dhuhr +1 minute |
+| ``CalculationMethod/kemenag`` | 20° | 18° | Rounded up, then +2 minutes (Dhuhr +3, sunrise −3) |
+| ``CalculationMethod/moonsightingCommittee`` | 18°, seasonal | 18°, seasonal | Dhuhr +5, Maghrib +3 minutes; its own high-latitude rule |
 
 The repository's
 [METHODS.md](https://github.com/salah-kit/SalahTimes/blob/main/METHODS.md) gives every value
 with its source. If a value doesn't match what an authority publishes, open an issue with the
 `calculation-method` label.
 
-Every preset uses ``HighLatitudeRule/recommended``, ``Madhab/shafi``, no user adjustments,
-``Rounding/nearest`` and no Ramadan rule. Change any of them on the returned value.
+Every preset uses ``HighLatitudeRule/recommended``, ``Madhab/shafi``, no user adjustments and
+no Ramadan rule, and every preset except Kemenag's rounds to the nearest minute. Change any of
+them on the returned value.
+
+A preset includes only the precautionary minutes and rounding that its authority publishes.
+Some official timetables add minutes they don't document: the UAE's, for example, show Maghrib
+about 3 minutes after sunset. METHODS.md lists the differences measured for each method. If
+your users follow such a timetable to the minute, add those minutes to
+``CalculationParameters/methodAdjustments``.
 
 ### Choose the madhab for Asr
 
@@ -55,7 +62,8 @@ hanafi.madhab = .hanafi
 ```
 
 The madhab is a user's choice, separate from the method. Many Hanafi users in Pakistan and
-India follow Karachi's angles with Hanafi Asr, and many in Turkey follow Diyanet's.
+India follow Karachi's angles with Hanafi Asr. Diyanet, by contrast, publishes Turkey's Asr by
+the Shafi'i shadow, as its preset does.
 
 ### Add minutes
 
@@ -124,9 +132,10 @@ suggestion, and METHODS.md gives the source for each.
 
 ### Lengthen Isha in Ramadan
 
-Umm al-Qura's timetables put Isha 120 minutes after Maghrib during Ramadan instead of 90. Some
-mosques that follow other interval methods do the same, and others don't. Ramadan's start can
-also differ from the calendar by a day. So the rule is off by default, and you opt in:
+Umm al-Qura's timetables put Isha 120 minutes after Maghrib during Ramadan instead of 90.
+Qatar's timetables, which also use 90 minutes, don't change in Ramadan, and mosques elsewhere
+differ. Ramadan's start can also differ from the calendar by a day. So the rule is off by
+default, and you opt in:
 
 ```swift
 var ummAlQura = CalculationMethod.ummAlQura.parameters
