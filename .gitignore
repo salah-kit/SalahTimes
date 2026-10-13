@@ -12,3 +12,6 @@ Local.xcconfig
 /Examples/*/.build*
 /Examples/*/Package.resolved
 /_site
+
+# Official timetables that can not be redistributed (Validation/official-timetables/fetch.py)
+/Validation/official-timetables/cache/

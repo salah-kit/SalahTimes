@@ -1,0 +1,214 @@
+{
+  "comment": "Official timetables compared with SalahTimes. fetch.py reads the fetch blocks; OfficialTimetableTests.swift reads the rest. Times in every CSV are local wall-clock times in timeZone.",
+  "sources": [
+    {
+      "id": "diyanet-istanbul",
+      "authority": "Presidency of Religious Affairs of Turkey (Diyanet)",
+      "place": "Istanbul",
+      "latitude": 41.0082,
+      "longitude": 28.9784,
+      "coordinatesNote": "Diyanet doesn't publish the reference point of a province's timetable. These are the usual coordinates of Istanbul's historic centre (Fatih).",
+      "timeZone": "Europe/Istanbul",
+      "method": "diyanet",
+      "madhab": "shafi",
+      "file": "diyanet-istanbul-2026.csv",
+      "committed": false,
+      "license": "Diyanet's site states no licence for reuse; all rights reserved by default. Not redistributed.",
+      "urls": [
+        "https://namazvakitleri.diyanet.gov.tr/tr-TR/9541/istanbul-icin-namaz-vakti",
+        "https://web.archive.org/web/20260102094304id_/https://namazvakitleri.diyanet.gov.tr/tr-TR/9541/istanbul-icin-namaz-vakti"
+      ],
+      "fetch": {
+        "kind": "diyanet",
+        "page": "https://namazvakitleri.diyanet.gov.tr/tr-TR/9541/istanbul-icin-namaz-vakti",
+        "snapshot": "20260102094304",
+        "year": 2026
+      }
+    },
+    {
+      "id": "diyanet-ankara",
+      "authority": "Presidency of Religious Affairs of Turkey (Diyanet)",
+      "place": "Ankara",
+      "latitude": 39.9334,
+      "longitude": 32.8597,
+      "coordinatesNote": "Diyanet doesn't publish the reference point. These are the usual coordinates of central Ankara (Kizilay).",
+      "timeZone": "Europe/Istanbul",
+      "method": "diyanet",
+      "madhab": "shafi",
+      "file": "diyanet-ankara-2026.csv",
+      "committed": false,
+      "license": "Diyanet's site states no licence for reuse; all rights reserved by default. Not redistributed.",
+      "urls": [
+        "https://namazvakitleri.diyanet.gov.tr/tr-TR/9206/ankara-icin-namaz-vakti",
+        "https://web.archive.org/web/20260102094320id_/https://namazvakitleri.diyanet.gov.tr/tr-TR/9206/ankara-icin-namaz-vakti"
+      ],
+      "fetch": {
+        "kind": "diyanet",
+        "page": "https://namazvakitleri.diyanet.gov.tr/tr-TR/9206/ankara-icin-namaz-vakti",
+        "snapshot": "20260102094320",
+        "year": 2026
+      }
+    },
+    {
+      "id": "jakim-wly01",
+      "authority": "Jabatan Kemajuan Islam Malaysia (JAKIM), e-Solat",
+      "place": "Zone WLY01 (Kuala Lumpur, Putrajaya)",
+      "latitude": 3.1390,
+      "longitude": 101.6869,
+      "coordinatesNote": "JAKIM publishes one timetable per zone without its reference point. These are the usual coordinates of central Kuala Lumpur.",
+      "timeZone": "Asia/Kuala_Lumpur",
+      "method": "jakim",
+      "madhab": "shafi",
+      "file": "jakim-wly01-2026.csv",
+      "committed": false,
+      "license": "e-solat.gov.my states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone=WLY01"
+      ],
+      "fetch": {
+        "kind": "jakim",
+        "zone": "WLY01"
+      }
+    },
+    {
+      "id": "muis-singapore",
+      "authority": "Majlis Ugama Islam Singapura (MUIS), via data.gov.sg",
+      "place": "Singapore",
+      "latitude": 1.3521,
+      "longitude": 103.8198,
+      "coordinatesNote": "MUIS publishes one timetable for Singapore without its reference point. These are the usual coordinates of the island's centre.",
+      "timeZone": "Asia/Singapore",
+      "method": "muis",
+      "madhab": "shafi",
+      "file": "muis-singapore-2026.csv",
+      "committed": true,
+      "license": "Contains information from Muslim Prayer Timetable 2026 accessed on 13 October 2026 from data.gov.sg, which is made available under the terms of the Singapore Open Data Licence version 1.0 (https://data.gov.sg/open-data-licence).",
+      "urls": [
+        "https://data.gov.sg/datasets/d_d441e7242e78efc566024dd5b0d9829c/view",
+        "https://data.gov.sg/api/action/datastore_search?resource_id=d_d441e7242e78efc566024dd5b0d9829c&limit=400"
+      ],
+      "fetch": {
+        "kind": "datagovsg",
+        "resource": "d_d441e7242e78efc566024dd5b0d9829c"
+      }
+    },
+    {
+      "id": "ummalqura-makkah",
+      "authority": "Umm al-Qura calendar (King Abdulaziz City for Science and Technology)",
+      "place": "Makkah",
+      "latitude": 21.426666,
+      "longitude": 39.831666,
+      "coordinatesNote": "The official site's own city list (https://www.ummulqura.org.sa/assets/data/cities.json, id 1002). The service computes for the coordinates it's given, so these are exact.",
+      "timeZone": "Asia/Riyadh",
+      "method": "ummAlQura",
+      "madhab": "shafi",
+      "ramadanIshaMinutes": 120,
+      "file": "ummalqura-makkah-2026.csv",
+      "committed": false,
+      "license": "ummulqura.org.sa states no licence for reuse of its data. Not redistributed.",
+      "urls": [
+        "https://www.ummulqura.org.sa/prayer-times",
+        "https://umqserv.kacst.gov.sa/api/v1/Prayer/GetPrayerByYear?lang=en&format=24&yg=2026&lat=21.426666&lon=39.831666&zone=3"
+      ],
+      "fetch": {
+        "kind": "ummalqura",
+        "year": 2026,
+        "zone": 3
+      }
+    },
+    {
+      "id": "ummalqura-riyadh",
+      "authority": "Umm al-Qura calendar (King Abdulaziz City for Science and Technology)",
+      "place": "Riyadh",
+      "latitude": 24.67,
+      "longitude": 46.69,
+      "coordinatesNote": "The official site's own city list (cities.json, id 1001). Exact.",
+      "timeZone": "Asia/Riyadh",
+      "method": "ummAlQura",
+      "madhab": "shafi",
+      "ramadanIshaMinutes": 120,
+      "file": "ummalqura-riyadh-2026.csv",
+      "committed": false,
+      "license": "ummulqura.org.sa states no licence for reuse of its data. Not redistributed.",
+      "urls": [
+        "https://umqserv.kacst.gov.sa/api/v1/Prayer/GetPrayerByYear?lang=en&format=24&yg=2026&lat=24.67&lon=46.69&zone=3"
+      ],
+      "fetch": {
+        "kind": "ummalqura",
+        "year": 2026,
+        "zone": 3
+      }
+    },
+    {
+      "id": "kemenag-jakarta",
+      "authority": "Indonesia's Ministry of Religious Affairs (Kemenag), Bimas Islam",
+      "place": "Kota Jakarta (DKI Jakarta)",
+      "latitude": -6.1754,
+      "longitude": 106.8272,
+      "coordinatesNote": "Kemenag doesn't show the reference point on the page. These are the usual coordinates of central Jakarta (Monas).",
+      "timeZone": "Asia/Jakarta",
+      "method": "kemenag",
+      "madhab": "shafi",
+      "file": "kemenag-jakarta-2026.csv",
+      "committed": false,
+      "license": "bimasislam.kemenag.go.id states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://bimasislam.kemenag.go.id/jadwalshalat",
+        "https://bimasislam.kemenag.go.id/ajax/getShalatbln (POST x=<province>, y=<city>, bln=<month>, thn=2026)"
+      ],
+      "fetch": {
+        "kind": "kemenag",
+        "province": "DKI JAKARTA",
+        "city": "KOTA JAKARTA",
+        "year": 2026
+      }
+    },
+    {
+      "id": "moonsighting-london-hanafi",
+      "authority": "Moonsighting Committee Worldwide (moonsighting.com)",
+      "place": "London",
+      "latitude": 51.507194,
+      "longitude": -0.116711,
+      "coordinatesNote": "The coordinates the timetable was requested for, so exact. Method 0: Hanafi Asr, shafaq general.",
+      "timeZone": "Europe/London",
+      "method": "moonsightingCommittee",
+      "madhab": "hanafi",
+      "shafaq": "general",
+      "file": "moonsighting-london-hanafi-2026.csv",
+      "committed": false,
+      "license": "moonsighting.com states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.moonsighting.com/pray.php",
+        "https://www.moonsighting.com/praytable.php?year=2026&tz=Europe/London&lat=51.507194&lon=-0.116711&method=0&both=false&time=0"
+      ],
+      "fetch": {
+        "kind": "moonsighting",
+        "year": 2026,
+        "method": 0
+      }
+    },
+    {
+      "id": "moonsighting-london-shafi",
+      "authority": "Moonsighting Committee Worldwide (moonsighting.com)",
+      "place": "London",
+      "latitude": 51.507194,
+      "longitude": -0.116711,
+      "coordinatesNote": "The coordinates the timetable was requested for, so exact. Method 2: Shafi'i, Maliki and Hanbali, compared with shafi Asr and shafaq ahmer.",
+      "timeZone": "Europe/London",
+      "method": "moonsightingCommittee",
+      "madhab": "shafi",
+      "shafaq": "ahmer",
+      "file": "moonsighting-london-shafi-2026.csv",
+      "committed": false,
+      "license": "moonsighting.com states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.moonsighting.com/praytable.php?year=2026&tz=Europe/London&lat=51.507194&lon=-0.116711&method=2&both=false&time=0"
+      ],
+      "fetch": {
+        "kind": "moonsighting",
+        "year": 2026,
+        "method": 2
+      }
+    }
+  ]
+}
