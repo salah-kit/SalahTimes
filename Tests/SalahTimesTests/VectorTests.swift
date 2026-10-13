@@ -11,10 +11,10 @@ struct VectorTests {
     for problem in catalog.problems {
       Issue.record(Comment(rawValue: problem))
     }
-    #expect(catalog.fileCount >= 11)
-    #expect(catalog.times.count >= 700)
-    #expect(catalog.qibla.count >= 20)
-    #expect(catalog.errors.count >= 20)
+    // The exact set, so a lost or misnamed file fails here instead of silently testing less.
+    #expect(Set(catalog.files) == Self.vectorFileNames)
+    #expect(catalog.files.count == Self.vectorFileNames.count, "No file loads twice")
+    #expect(!catalog.times.isEmpty && !catalog.qibla.isEmpty && !catalog.errors.isEmpty)
     let ids = catalog.times.map(\.id) + catalog.qibla.map(\.id) + catalog.errors.map(\.id)
     #expect(Set(ids).count == ids.count, "Vector ids are unique")
     for vector in catalog.times {
@@ -132,7 +132,8 @@ extension VectorTests {
     var errors: [ErrorVector] = []
     var qibla: [QiblaVector] = []
     var problems: [String] = []
-    var fileCount = 0
+    /// The vector files that loaded, relative to `Vectors/`.
+    var files: [String] = []
   }
 
   static let catalog = loadCatalog()
@@ -174,12 +175,35 @@ extension VectorTests {
     for file in files {
       do {
         try load(file, presets: presets, into: &catalog)
-        catalog.fileCount += 1
+        catalog.files.append(relativePath(file, in: directory))
       } catch {
         catalog.problems.append("\(file.lastPathComponent): \(error)")
       }
     }
     return catalog
+  }
+
+  /// Every vector file, relative to `Vectors/`.
+  static let vectorFileNames: Set<String> = [
+    "errors.json",
+    "qibla.json",
+    "times/adjustments-rounding.json",
+    "times/custom.json",
+    "times/date-line-equator.json",
+    "times/dst.json",
+    "times/high-latitude.json",
+    "times/isha-after-midnight.json",
+    "times/madhab.json",
+    "times/methods.json",
+    "times/polar.json",
+    "times/ramadan.json",
+    "times/ranges.json",
+  ]
+
+  private static func relativePath(_ file: URL, in directory: URL) -> String {
+    let parent = file.deletingLastPathComponent().lastPathComponent
+    let name = file.lastPathComponent
+    return parent == directory.lastPathComponent ? name : "\(parent)/\(name)"
   }
 
   /// The files in `Vectors/` that hold data rather than vectors: the presets and the country
@@ -320,16 +344,39 @@ extension VectorTests {
 
   private static func eventTime(_ value: Any) throws -> EventTime {
     if let text = value as? String {
-      let formatter = ISO8601DateFormatter()
-      formatter.formatOptions = [.withInternetDateTime]
-      guard let date = formatter.date(from: text) else { throw LoadError("bad instant \(text)") }
-      return .occurs(date)
+      return .occurs(try instant(text))
     }
     let reasonText = try string(try object(value, "event")["doesNotOccur"], "doesNotOccur")
     guard let reason = NonOccurrence(rawValue: reasonText) else {
       throw LoadError("unknown reason \(reasonText)")
     }
     return .doesNotOccur(reason)
+  }
+
+  /// Parses `"YYYY-MM-DDTHH:MM:SSZ"` in the proleptic Gregorian calendar.
+  ///
+  /// `ISO8601DateFormatter` can't be used: its Gregorian calendar switches to the Julian
+  /// calendar before October 1582, which moves the year-1000 vectors by 5 days.
+  private static func instant(_ text: String) throws -> Date {
+    let parts = text.split(separator: "T")
+    guard parts.count == 2, parts[1].hasSuffix("Z"), let day = GregorianDay(String(parts[0]))
+    else { throw LoadError("bad instant \(text)") }
+    let clock = parts[1].dropLast().split(separator: ":").compactMap { Int($0) }
+    guard clock.count == 3 else { throw LoadError("bad instant \(text)") }
+    let seconds = daysSince1970(day) * 86_400 + clock[0] * 3_600 + clock[1] * 60 + clock[2]
+    return Date(timeIntervalSince1970: TimeInterval(seconds))
+  }
+
+  /// Days from 1970-01-01 in the proleptic Gregorian calendar, by Howard Hinnant's public-domain
+  /// `days_from_civil` (https://howardhinnant.github.io/date_algorithms.html).
+  private static func daysSince1970(_ day: GregorianDay) -> Int {
+    let year = day.month <= 2 ? day.year - 1 : day.year
+    let era = (year >= 0 ? year : year - 399) / 400
+    let yearOfEra = year - era * 400
+    let shiftedMonth = day.month > 2 ? day.month - 3 : day.month + 9
+    let dayOfYear = (153 * shiftedMonth + 2) / 5 + day.day - 1
+    let dayOfEra = yearOfEra * 365 + yearOfEra / 4 - yearOfEra / 100 + dayOfYear
+    return era * 146_097 + dayOfEra - 719_468
   }
 
   private static func object(_ value: Any?, _ name: String) throws -> [String: Any] {

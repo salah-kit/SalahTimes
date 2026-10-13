@@ -85,6 +85,11 @@ PLACES = {
     "kashgar": ("Kashgar", 39.47, 75.99, "Asia/Shanghai"),
     "urumqi": ("Ürümqi", 43.8256, 87.6168, "Asia/Shanghai"),
     "lat-55-north": ("55°N, 12°E", 55.0, 12.0, "Europe/Copenhagen"),
+    "lat-60-north": ("60°N, 0°E", 60.0, 0.0, "Etc/UTC"),
+    "makkah-fixed": ("Makkah", 21.4225, 39.8262, "Etc/GMT-3"),
+    "london-fixed": ("London", 51.5074, -0.1278, "Etc/GMT"),
+    "lon-plus-180": ("16.5°S, 180°E", -16.5, 180.0, "Etc/GMT-12"),
+    "lon-minus-180": ("16.5°S, 180°W", -16.5, -180.0, "Etc/GMT+12"),
     "lat-54.99-north": ("54.99°N, 12°E", 54.99, 12.0, "Europe/Copenhagen"),
     "lat-55-south": ("55°S, 67°W", -55.0, -67.0, "America/Argentina/Ushuaia"),
     "lat-54.99-south": ("54.99°S, 67°W", -54.99, -67.0, "America/Argentina/Ushuaia"),
@@ -253,13 +258,15 @@ def claim_id(vector_id):
 
 
 def time_vector(target, vector_id, description, place, day, parameters=None, method=None,
-                overrides=None, tz=None, move=False, source_note=None, check=None):
+                overrides=None, tz=None, move=False, source_note=None, check=None,
+                as_given=False):
     """Computes one prayer-time vector and appends it to `target`.
 
     `parameters` gives full parameters; or `method` names a key of Vectors/methods.json, with
     optional `overrides`. `tz` replaces the place's time zone. With `move`, a fragile day moves
     to the next good day (the id and description get the actual date). `check(result)` can
-    assert what the vector is meant to show.
+    assert what the vector is meant to show. With `as_given`, the vector writes `parameters`
+    exactly as given, so omitted keys exercise the decoder's defaults.
     """
     name, latitude, longitude, place_tz = PLACES[place]
     zone = tz or place_tz
@@ -300,7 +307,8 @@ def time_vector(target, vector_id, description, place, day, parameters=None, met
         if overrides:
             input_["parameters"] = overrides
     else:
-        input_["parameters"] = canonical_parameters(resolved)
+        input_["parameters"] = (dict(resolved) if as_given
+                                else canonical_parameters(resolved))
     expected = {}
     for event in ref.EVENTS:
         value = result.events[event]
@@ -452,6 +460,27 @@ def build_high_latitude():
                         parameters=dict(MWL, highLatitudeRule=equivalent, rounding="none"))
         assert a.events == b.events, place
     NOTE_WITHIN_BOUND[0] = False
+    # The first and last nights of the 18° twilight season at 60° N (algorithm section 6):
+    # existence is judged at the antitransit, so the evening crossing after one transit and the
+    # morning crossing before the next agree about the night between them. On the night of
+    # 21-22 August the Sun first reaches about -18.16°: 21 August's Isha and 22 August's Fajr
+    # occur, and the night before, neither does. In April the season ends the same way.
+    edge = {"fajr": {"angle": 18}, "isha": {"angle": 18}, "highLatitudeRule": "disabled",
+            "rounding": "none"}
+    edges = (
+        (date(2026, 8, 20), "neither Isha nor the next Fajr: the Sun stays above -18° all night"),
+        (date(2026, 8, 21), "Isha occurs, on the first night the Sun reaches -18°; Fajr, on the "
+                            "night before, doesn't"),
+        (date(2026, 8, 22), "Fajr occurs, ending the night that 21 August's Isha began"),
+        (date(2026, 4, 20), "Isha and Fajr occur: the last full night of the season"),
+        (date(2026, 4, 21), "Fajr occurs, ending 20 April's night; Isha doesn't, the first "
+                            "night the Sun stays above -18°"),
+        (date(2026, 4, 22), "neither occurs"),
+    )
+    for day, what in edges:
+        time_vector(f, f"high-latitude-season-edge-lat-60-north-{slug(day)}",
+                    f"Fajr and Isha at 18° with no bound at {{place}} on {{date}}: {what}.",
+                    "lat-60-north", day, parameters=edge)
     # A Maghrib angle is bounded like Isha.
     for place in ("oslo", "reykjavik"):
         day = date(2026, 6, 21)
@@ -484,18 +513,21 @@ def build_polar():
     )
     days = {
         "tromso": (date(2026, 6, 21), date(2026, 12, 21),
-                   # The Sun stops setting on 18 May and sets again on 26 July. Sunrise returns
-                   # on 26 July, but that day's Fajr has no previous night yet.
-                   date(2026, 5, 17), date(2026, 5, 18), date(2026, 7, 25), date(2026, 7, 26),
-                   date(2026, 7, 27),
+                   # The last sunset before polar day is on 17 May, the last sunrise on 18 May.
+                   # The Sun sets again on 25 July and rises again on 26 July. On 26 July Fajr
+                   # still has no night before it: 25 July's sunset came after the night.
+                   date(2026, 5, 17), date(2026, 5, 18), date(2026, 5, 19), date(2026, 7, 25),
+                   date(2026, 7, 26), date(2026, 7, 27),
                    # Polar night: no sunrise from 28 November; sunrise returns 15 January.
                    date(2026, 11, 27), date(2026, 11, 28), date(2026, 1, 14), date(2026, 1, 15)),
         "longyearbyen": (date(2026, 6, 21), date(2026, 12, 21), date(2026, 4, 18),
-                         date(2026, 4, 19), date(2026, 8, 25), date(2026, 8, 26),
+                         date(2026, 4, 19), date(2026, 8, 24), date(2026, 8, 25),
+                         date(2026, 8, 26),
                          date(2026, 10, 26), date(2026, 10, 27), date(2026, 2, 14),
                          date(2026, 2, 15)),
         "mcmurdo": (date(2026, 6, 21), date(2026, 12, 21), date(2026, 10, 22),
-                    date(2026, 10, 23), date(2026, 2, 20), date(2026, 2, 21),
+                    date(2026, 10, 23), date(2026, 10, 24), date(2026, 2, 19),
+                    date(2026, 2, 20), date(2026, 2, 21),
                     date(2026, 4, 24), date(2026, 4, 25)),
         "north-pole": (date(2026, 6, 21), date(2026, 12, 21)),
         "south-pole": (date(2026, 6, 21), date(2026, 12, 21)),
@@ -564,6 +596,18 @@ def build_date_line_equator():
                     "instants as the day after in Pacific/Apia.", "apia", day - timedelta(1),
                     tz="Pacific/Pago_Pago", parameters=dict(MWL, rounding="none"))
     assert_same_instants(a, b)
+    # Samoa skipped 2011-12-30 when it moved across the date line. The skipped day gets the
+    # next day's events, and its neighbors keep their real nights (algorithm section 5).
+    params = dict(MWL, rounding="none")
+    results = {}
+    for day, what in ((date(2011, 12, 29), "the last day at UTC-10"),
+                      (date(2011, 12, 30), "a day the zone skipped: it gets 31 December's "
+                                           "events"),
+                      (date(2011, 12, 31), "the first day at UTC+14")):
+        results[day] = time_vector(f, f"date-line-apia-skipped-day-{slug(day)}",
+                                   f"Muslim World League angles at {{place}} on {{date}}, {what}.",
+                                   "apia", day, parameters=params)
+    assert_same_instants(results[date(2011, 12, 30)], results[date(2011, 12, 31)])
     return f
 
 
@@ -933,6 +977,24 @@ def build_custom():
                         f"The Moonsighting Committee's rules with the {shafaq} shafaq at {{place}} "
                         f"on {{date}}: {which}.", place, day, parameters=params,
                         check=decided_by)
+    # Vectors that leave out defaulted keys, so a decoder with a wrong default fails. Each is
+    # chosen so that any other value of an omitted key changes an expected time: at London in
+    # June the recommended rule resolves to the seventh of the night and the bound applies.
+    for place, day in (("london", date(2026, 6, 21)), ("oslo", date(2026, 12, 21)),
+                       ("cape-town", date(2026, 3, 20))):
+        time_vector(f, f"custom-defaults-all-{place}-{{date}}",
+                    "Only fajr and isha given at {place} on {date}: maghrib, madhab, "
+                    "highLatitudeRule, nightSpan, adjustments, rounding and ramadanIsha take "
+                    "their defaults.", place, day, parameters=dict(MWL), as_given=True,
+                    move=True)
+    explicit = dict(MWL, maghrib="sunset", madhab="shafi", highLatitudeRule="recommended",
+                    nightSpan="sunsetToFajr", rounding="none")
+    for key in ("maghrib", "madhab", "highLatitudeRule", "nightSpan", "rounding"):
+        params = {name: value for name, value in explicit.items() if name != key}
+        time_vector(f, f"custom-defaults-omit-{key}-london-{{date}}",
+                    f"Every key but {key} given at {{place}} on {{date}}: {key} takes its "
+                    "default.", "london", date(2026, 6, 21), parameters=params, as_given=True,
+                    move=key == "rounding")
     # The Moonsighting Committee in a leap year, after 29 February (day-of-year counting).
     for place in ("london", "cape-town"):
         params = {"fajr": "moonsightingCommittee", "isha": {"moonsightingCommittee": "general"},
@@ -949,6 +1011,68 @@ def build_custom():
                         f"The night from sunset to {'Fajr' if span == 'sunsetToFajr' else 'sunrise'}"
                         " at {place} on {date}.", place, day,
                         parameters=dict(MWL, nightSpan=span, rounding="none"))
+    return f
+
+
+# ---------------------------------------------------------------------------------------------
+# ranges.json
+# ---------------------------------------------------------------------------------------------
+
+
+def build_ranges():
+    f = VectorFile("times/ranges.json",
+                   "The supported range: years across every ΔT polynomial from the year 1000 to "
+                   "3000 (algorithm section 3), and the boundary values that section 2 accepts.")
+    params = dict(MWL, rounding="none")
+    years = (
+        (date(1000, 1, 1), "makkah-fixed", "the first supported day; ΔT from the 500-1600 "
+                                           "polynomial, about 26 minutes"),
+        (date(1300, 6, 15), "makkah-fixed", "ΔT from the 500-1600 polynomial"),
+        (date(1650, 6, 15), "makkah-fixed", "ΔT from the 1600-1700 polynomial"),
+        (date(1750, 6, 15), "london-fixed", "ΔT from the 1700-1800 polynomial"),
+        (date(1830, 6, 15), "makkah-fixed", "ΔT from the 1800-1860 polynomial"),
+        (date(1880, 6, 15), "london", "ΔT from the 1860-1900 polynomial, in Europe/London"),
+        (date(1950, 6, 15), "makkah", "ΔT from the 1941-1961 polynomial, in Asia/Riyadh"),
+        (date(2100, 6, 15), "makkah-fixed", "ΔT from the 2050-2150 expression"),
+        (date(3000, 12, 31), "makkah-fixed", "the last supported day; ΔT from the parabola"),
+    )
+    for day, place, what in years:
+        time_vector(f, f"range-year-{place.replace('-fixed', '')}-{slug(day)}",
+                    f"Muslim World League angles at {{place}} on {{date}}: {what}.", place, day,
+                    parameters=params)
+    # Longitude ±180 is the same meridian: day D at UTC+12 is the same solar day as D-1 at
+    # UTC-12.
+    day = date(2026, 3, 20)
+    a = time_vector(f, f"range-longitude-plus-180-{slug(day)}",
+                    "Longitude 180, the accepted maximum, at {place} in Etc/GMT-12 on {date}.",
+                    "lon-plus-180", day, parameters=params)
+    b = time_vector(f, f"range-longitude-minus-180-{slug(day - timedelta(1))}",
+                    "Longitude -180, the accepted minimum, at {place} in Etc/GMT+12 on {date}: "
+                    "the same instants as longitude 180 a day later at UTC+12.", "lon-minus-180",
+                    day - timedelta(1), parameters=params)
+    assert_same_instants(a, b)
+    ramadan_day = date(2026, 3, 5)
+    boundaries = (
+        ("isha-interval-1440", "An Isha interval of 1440 minutes, the maximum: Isha is a day "
+                               "after Maghrib.", date(2026, 4, 10),
+         {"fajr": {"angle": 18.5}, "isha": {"minutesAfterMaghrib": 1440}}),
+        ("maghrib-angle-30", "A Maghrib angle of 30°, the maximum.", date(2026, 4, 10),
+         {"fajr": {"angle": 18}, "maghrib": {"angle": 30}, "isha": {"angle": 17}}),
+        ("ramadan-interval-1", "A Ramadan interval of 1 minute, the minimum, in Ramadan.",
+         ramadan_day, {"fajr": {"angle": 18.5}, "isha": {"minutesAfterMaghrib": 90},
+                       "ramadanIsha": {"interval": {"minutes": 1, "hijriDayOffset": 0}}}),
+        ("ramadan-offset-plus-30", "A Hijri day offset of +30, the maximum: 2026-01-20 plus 30 "
+                                   "days is 2026-02-19, in Ramadan.", date(2026, 1, 20),
+         {"fajr": {"angle": 18.5}, "isha": {"minutesAfterMaghrib": 90},
+          "ramadanIsha": {"interval": {"minutes": 120, "hijriDayOffset": 30}}}),
+        ("ramadan-offset-minus-30", "A Hijri day offset of -30, the minimum: 2026-04-15 minus 30 "
+                                    "days is 2026-03-16, in Ramadan.", date(2026, 4, 15),
+         {"fajr": {"angle": 18.5}, "isha": {"minutesAfterMaghrib": 90},
+          "ramadanIsha": {"interval": {"minutes": 120, "hijriDayOffset": -30}}}),
+    )
+    for key, text, day, boundary in boundaries:
+        time_vector(f, f"range-{key}-makkah-{slug(day)}", text + " At {place} on {date}.",
+                    "makkah", day, parameters=dict(boundary, rounding="none"))
     return f
 
 
@@ -1193,7 +1317,7 @@ def main():
     methods_path = os.path.join(VECTORS, "methods.json")
     builders = [build_madhab, build_high_latitude, build_polar, build_date_line_equator,
                 build_dst, build_isha_after_midnight, build_adjustments_rounding, build_ramadan,
-                build_custom, build_qibla, build_errors]
+                build_custom, build_ranges, build_qibla, build_errors]
     counts = {}
     for builder in builders:
         vector_file = builder()

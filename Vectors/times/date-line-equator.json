@@ -1978,6 +1978,120 @@
         "lastThirdOfTheNight": "2026-06-21T12:44:56Z"
       },
       "toleranceSeconds": 1
+    },
+    {
+      "id": "date-line-apia-skipped-day-2011-12-29",
+      "description": "Muslim World League angles at Apia on 2011-12-29, the last day at UTC-10.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2011-12-29",
+        "timeZone": "Pacific/Apia",
+        "coordinates": {
+          "latitude": -13.8333,
+          "longitude": -171.7667
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2011-12-29T15:41:33Z",
+        "sunrise": "2011-12-29T17:01:02Z",
+        "dhuhr": "2011-12-29T23:29:11Z",
+        "asr": "2011-12-30T02:54:44Z",
+        "sunset": "2011-12-30T05:57:17Z",
+        "maghrib": "2011-12-30T05:57:17Z",
+        "isha": "2011-12-30T07:11:58Z",
+        "middleOfTheNight": "2011-12-30T10:49:43Z",
+        "lastThirdOfTheNight": "2011-12-30T12:27:12Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "date-line-apia-skipped-day-2011-12-30",
+      "description": "Muslim World League angles at Apia on 2011-12-30, a day the zone skipped: it gets 31 December's events. Isha falls after local midnight, at 2011-12-31 21:12.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2011-12-30",
+        "timeZone": "Pacific/Apia",
+        "coordinates": {
+          "latitude": -13.8333,
+          "longitude": -171.7667
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2011-12-30T15:42:09Z",
+        "sunrise": "2011-12-30T17:01:36Z",
+        "dhuhr": "2011-12-30T23:29:40Z",
+        "asr": "2011-12-31T02:55:06Z",
+        "sunset": "2011-12-31T05:57:41Z",
+        "maghrib": "2011-12-31T05:57:41Z",
+        "isha": "2011-12-31T07:12:19Z",
+        "middleOfTheNight": "2011-12-31T10:50:14Z",
+        "lastThirdOfTheNight": "2011-12-31T12:27:45Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "date-line-apia-skipped-day-2011-12-31",
+      "description": "Muslim World League angles at Apia on 2011-12-31, the first day at UTC+14.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2011-12-31",
+        "timeZone": "Pacific/Apia",
+        "coordinates": {
+          "latitude": -13.8333,
+          "longitude": -171.7667
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2011-12-30T15:42:09Z",
+        "sunrise": "2011-12-30T17:01:36Z",
+        "dhuhr": "2011-12-30T23:29:40Z",
+        "asr": "2011-12-31T02:55:06Z",
+        "sunset": "2011-12-31T05:57:41Z",
+        "maghrib": "2011-12-31T05:57:41Z",
+        "isha": "2011-12-31T07:12:19Z",
+        "middleOfTheNight": "2011-12-31T10:50:14Z",
+        "lastThirdOfTheNight": "2011-12-31T12:27:45Z"
+      },
+      "toleranceSeconds": 1
     }
   ]
 }
