@@ -6843,7 +6843,7 @@
     },
     {
       "id": "polar-bisection-sunset-near-south-pole-2026-03-22",
-      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-03-22: sunset comes from bisection. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysAbove), asr (sunStaysBelow), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds sunset, maghrib.",
+      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-03-22: sunset comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysAbove), asr (sunStaysBelow), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds sunset, maghrib.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-03-22",
@@ -6893,7 +6893,7 @@
     },
     {
       "id": "polar-bisection-isha-near-south-pole-2026-05-07",
-      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-05-07: isha comes from bisection. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysBelow), asr (sunStaysBelow), sunset (sunStaysBelow), maghrib (sunStaysBelow), middleOfTheNight (sunStaysBelow), lastThirdOfTheNight (sunStaysBelow). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds isha.",
+      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-05-07: isha comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysBelow), asr (sunStaysBelow), sunset (sunStaysBelow), maghrib (sunStaysBelow), middleOfTheNight (sunStaysBelow), lastThirdOfTheNight (sunStaysBelow). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds isha.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-05-07",
@@ -6945,7 +6945,7 @@
     },
     {
       "id": "polar-bisection-fajr-near-south-pole-2026-08-01",
-      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-08-01: fajr comes from bisection. Doesn't occur: sunrise (sunStaysBelow), asr (sunStaysBelow), sunset (sunStaysBelow), maghrib (sunStaysBelow), isha (sunStaysBelow), middleOfTheNight (sunStaysBelow), lastThirdOfTheNight (sunStaysBelow). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds fajr.",
+      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-08-01: fajr comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: sunrise (sunStaysBelow), asr (sunStaysBelow), sunset (sunStaysBelow), maghrib (sunStaysBelow), isha (sunStaysBelow), middleOfTheNight (sunStaysBelow), lastThirdOfTheNight (sunStaysBelow). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds fajr.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-08-01",
@@ -6997,7 +6997,7 @@
     },
     {
       "id": "polar-bisection-sunrise-north-pole-2026-03-18",
-      "description": "Muslim World League angles with no high-latitude bound at the North Pole on 2026-03-18: sunrise comes from bisection. Doesn't occur: fajr (sunStaysAbove), asr (sunStaysBelow), sunset (sunStaysAbove), maghrib (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds sunrise.",
+      "description": "Muslim World League angles with no high-latitude bound at the North Pole on 2026-03-18: sunrise comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: fajr (sunStaysAbove), asr (sunStaysBelow), sunset (sunStaysAbove), maghrib (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds sunrise.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-03-18",
@@ -7049,7 +7049,7 @@
     },
     {
       "id": "polar-bisection-asr-lat-86-north-2026-10-02",
-      "description": "Muslim World League angles with no high-latitude bound at 86°N, 0°E on 2026-10-02: asr comes from bisection. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds asr.",
+      "description": "Muslim World League angles with no high-latitude bound at 86°N, 0°E on 2026-10-02: asr comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds asr.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-10-02",
@@ -7094,15 +7094,61 @@
       "toleranceSeconds": 1
     },
     {
-      "id": "polar-bisection-asr-lat-83-south-120w-2026-04-06",
-      "description": "Muslim World League angles with no high-latitude bound at 83°S, 120°W on 2026-04-06: asr comes from bisection. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds asr.",
+      "id": "polar-bisection-asr-hanafi-lat-86-north-120w-2026-10-02",
+      "description": "Muslim World League angles and Hanafi Asr with no high-latitude bound at 86°N, 120°W on 2026-10-02: asr comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds asr.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
-        "date": "2026-04-06",
+        "date": "2026-10-02",
         "timeZone": "Etc/UTC",
         "coordinates": {
-          "latitude": -83.0,
+          "latitude": 86.0,
           "longitude": -120.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "hanafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-10-02T16:58:03Z",
+        "dhuhr": "2026-10-02T19:49:14Z",
+        "asr": "2026-10-02T19:52:16Z",
+        "sunset": "2026-10-02T22:32:41Z",
+        "maghrib": "2026-10-02T22:32:41Z",
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "polar-bisection-asr-lat-86-south-120e-2026-03-30",
+      "description": "Muslim World League angles with no high-latitude bound at 86°S, 120°E on 2026-03-30: asr comes from bisection, and the hour-angle iteration's last iterate is more than 2 s from it. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds asr.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-30",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": -86.0,
+          "longitude": 120.0
         },
         "parameters": {
           "fajr": {
@@ -7122,11 +7168,11 @@
         "fajr": {
           "doesNotOccur": "sunStaysAbove"
         },
-        "sunrise": "2026-04-06T17:46:50Z",
-        "dhuhr": "2026-04-06T20:02:19Z",
-        "asr": "2026-04-06T20:05:43Z",
-        "sunset": "2026-04-06T22:13:37Z",
-        "maghrib": "2026-04-06T22:13:37Z",
+        "sunrise": "2026-03-30T01:08:00Z",
+        "dhuhr": "2026-03-30T04:04:33Z",
+        "asr": "2026-03-30T04:07:21Z",
+        "sunset": "2026-03-30T06:53:18Z",
+        "maghrib": "2026-03-30T06:53:18Z",
         "isha": {
           "doesNotOccur": "sunStaysAbove"
         },
