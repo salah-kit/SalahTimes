@@ -26,6 +26,8 @@ A calculation takes coordinates, a civil day, a time zone and parameters. It fai
 | A Ramadan interval outside [1, 1440] minutes, or its Hijri day offset outside [-30, 30] | `invalidParameters` |
 | Any minute adjustment outside [-1440, 1440] | `invalidParameters` |
 
+`methodAdjustments` and `adjustments` are checked separately. Their sum isn't checked, so together they can move an event by up to 2880 minutes.
+
 ## 3. Time scales
 
 The Julian Day of an instant `t` (UT) is
@@ -124,6 +126,8 @@ For the solar day with transit `T`:
 
 so an object's shadow is `k` times its length plus its noon shadow, and Asr is `crossing(T, hAsr, +1)`. `k` is 1 for `shafi` and 2 for `hanafi`.
 
+As `z` approaches 90, `hAsr` approaches the noon altitude `90 - z`, so in the last days before polar night the crossing's existence test is close to `c = 1` and can decide either way (section 6). The vectors avoid those days.
+
 ## 8. Prayer times for D
 
 Compute the transits `T_{D-1}`, `T_D` and `T_{D+1}`, then:
@@ -167,7 +171,11 @@ The high-latitude rule gives `p`. `recommended` first resolves to `seventhOfTheN
 ### 8.2 Fajr
 
 - `angle(a)`: `boundMorning(crossing(T_D, -a, -1), p(a))`.
-- `moonsightingCommittee`: the raw time is `crossing(T_D, -18, -1)`. If `|φ| > 55`, the result is `boundMorning(raw, 1/7)`. Otherwise the bound is `sunrise - S_fajr` minutes, where `S_fajr` is the seasonal value of section 8.6; if sunrise doesn't occur the raw time stands, and if the raw time is `NOT` or earlier than the bound, the bound is the result. The high-latitude rule isn't used.
+- `moonsightingCommittee`: the raw time is `crossing(T_D, -18, -1)`. The committee's bounds are:
+  - the seasonal bound `sunrise - 60 × S_fajr` seconds, where `S_fajr` is the value of section 8.6, when sunrise occurs;
+  - when `|φ| ≥ 55`, also the seventh bound `sunrise - nightBefore / 7`, when `nightBefore` is defined.
+
+  Fajr is the latest of the raw time, if it occurs, and the bounds that exist. If none of them exists, the raw time's `NOT` stands. The high-latitude rule isn't used.
 
 ### 8.3 Maghrib
 
@@ -178,7 +186,13 @@ The high-latitude rule gives `p`. `recommended` first resolves to `seventhOfTheN
 
 - `angle(a)`: `boundEvening(crossing(T_D, -a, +1), p(a))`.
 - `minutesAfterMaghrib(m)`: Maghrib (section 8.3, before adjustments) plus `m` minutes. It takes Maghrib's reason when Maghrib doesn't occur, and no high-latitude bound applies. The Ramadan rule (section 8.7) can replace `m`.
-- `moonsightingCommittee(shafaq)`: the raw time is `crossing(T_D, -18, +1)`. If `|φ| > 55`, the result is `boundEvening(raw, 1/7)`. Otherwise the bound is `sunset + S_isha(shafaq)` minutes (section 8.6); if sunset doesn't occur the raw time stands, and if the raw time is `NOT` or later than the bound, the bound is the result.
+- `moonsightingCommittee(shafaq)`: the raw time is `crossing(T_D, -18, +1)`. The committee's bounds are:
+  - the seasonal bound `sunset + 60 × S_isha(shafaq)` seconds (section 8.6), when sunset occurs;
+  - when `|φ| ≥ 55`, also the seventh bound `sunset + nightAfter / 7`, when `nightAfter` is defined.
+
+  Isha is the earliest of the raw time, if it occurs, and the bounds that exist. If none of them exists, the raw time's `NOT` stands. The high-latitude rule isn't used.
+
+The committee's booklet compares the 18° time with the seasonal value everywhere, and from 55° adds the seventh of the night as a further limit: "Fajr time is later of the two … Isha time is earlier of the two." Its timetable generator applies the seventh at exactly 55° and -55°.
 
 ### 8.5 The night's middle and last third
 
@@ -212,7 +226,7 @@ With `A = |φ|`, four coefficients `a, b, c, d` (below) give the value in minute
 | `S_isha(ahmer)` | 62 + 17.40 A / 55 | 62 - 7.16 A / 55 | 62 + 5.12 A / 55 | 62 + 19.44 A / 55 |
 | `S_isha(abyad)` | 75 + 25.60 A / 55 | 75 + 7.16 A / 55 | 75 + 36.84 A / 55 | 75 + 81.84 A / 55 |
 
-The value is used unrounded: the bound is `sunrise - 60 × S_fajr` or `sunset + 60 × S_isha` seconds.
+The value is used unrounded, and `A` isn't capped at 55: the bound is `sunrise - 60 × S_fajr` or `sunset + 60 × S_isha` seconds.
 
 ### 8.7 The Ramadan Isha rule
 
@@ -236,7 +250,7 @@ Then every event that occurs is rounded, with `t` in seconds:
 
 `crossing` reports `sunStaysBelow` when the Sun never climbs to the altitude, and `sunStaysAbove` when it never descends to it. Every other non-occurrence takes the reason of the event it depends on:
 
-- Maghrib by `sunset`, and Isha by interval, take sunset's reason.
+- Maghrib by `sunset` takes sunset's reason. Isha by interval takes Maghrib's reason (section 8.4), which is sunset's when Maghrib is `sunset`.
 - A bound needs its night. When the night is undefined, the raw angle time stands, including its reason if it doesn't occur.
 - The night's middle and last third take sunset's reason, or failing that, the reason of the night's end.
 
@@ -249,7 +263,12 @@ The Qibla is the initial bearing of the great circle from the place `(φ1, L1)` 
     ΔL = L2 - L1
     bearing = normalize360(atan2(sin ΔL cos φ2, cos φ1 sin φ2 - sin φ1 cos φ2 cos ΔL))
 
-There's no single direction at the Kaaba itself or at its antipode: when the central angle between the two places is below 1e-9 radians or within 1e-9 radians of π, there's no result.
+There's no single direction at the Kaaba itself or at its antipode. The central angle `σ` between the two places is computed from their unit vectors, which keeps its precision near 0 and near π (the haversine formula loses it near π):
+
+    v(φ, L) = (cos φ cos L, cos φ sin L, sin φ)
+    σ = atan2(|v1 × v2|, v1 · v2)
+
+When `σ` is below 1e-9 radians or above π - 1e-9 radians, there's no result.
 
 ## References
 

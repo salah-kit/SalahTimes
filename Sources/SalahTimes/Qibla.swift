@@ -24,10 +24,18 @@ public enum Qibla {
     let phi2 = radians(kaaba.latitude)
     let deltaLambda = radians(kaaba.longitude - coordinates.longitude)
 
-    // The central angle between the two places, by the haversine formula.
-    let a =
-      pow(sin((phi2 - phi1) / 2), 2) + cos(phi1) * cos(phi2) * pow(sin(deltaLambda / 2), 2)
-    let centralAngle = 2 * atan2(sqrt(a), sqrt(max(0, 1 - a)))
+    // The central angle between the two places, from their unit vectors. Unlike the haversine
+    // formula, it keeps its precision near the antipode (docs/algorithm.md, section 10).
+    let place = unitVector(latitude: coordinates.latitude, longitude: coordinates.longitude)
+    let target = unitVector(latitude: kaaba.latitude, longitude: kaaba.longitude)
+    let cross = (
+      place.y * target.z - place.z * target.y,
+      place.z * target.x - place.x * target.z,
+      place.x * target.y - place.y * target.x
+    )
+    let crossLength = sqrt(cross.0 * cross.0 + cross.1 * cross.1 + cross.2 * cross.2)
+    let dot = place.x * target.x + place.y * target.y + place.z * target.z
+    let centralAngle = atan2(crossLength, dot)
     guard centralAngle > 1e-9, centralAngle < Double.pi - 1e-9 else { return nil }
 
     let y = sin(deltaLambda) * cos(phi2)
@@ -35,6 +43,15 @@ public enum Qibla {
     let bearing = degrees(atan2(y, x))
     let normalized = bearing.truncatingRemainder(dividingBy: 360)
     return normalized < 0 ? normalized + 360 : normalized
+  }
+
+  /// The unit vector `(cos φ cos L, cos φ sin L, sin φ)` of a place, from degrees.
+  private static func unitVector(latitude: Double, longitude: Double) -> (
+    x: Double, y: Double, z: Double
+  ) {
+    let phi = radians(latitude)
+    let lambda = radians(longitude)
+    return (cos(phi) * cos(lambda), cos(phi) * sin(lambda), sin(phi))
   }
 
   private static func radians(_ degrees: Double) -> Double { degrees * .pi / 180 }

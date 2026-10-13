@@ -4,8 +4,8 @@ public enum FajrRule: Hashable, Codable, Sendable {
   case angle(Double)
 
   /// The Moonsighting Committee's definition: the Sun 18° below the horizon, but no earlier than
-  /// the committee's seasonal time before sunrise. Above 55° of latitude, no earlier than the
-  /// last seventh of the night.
+  /// the committee's seasonal time before sunrise. From 55° of latitude, also no earlier than
+  /// the start of the night's last seventh.
   ///
   /// This rule replaces ``CalculationParameters/highLatitudeRule`` for Fajr. METHODS.md cites
   /// the committee's published formula.
@@ -58,8 +58,8 @@ public enum IshaRule: Hashable, Codable, Sendable {
   case minutesAfterMaghrib(Int)
 
   /// The Moonsighting Committee's definition: the Sun 18° below the horizon, but no later than
-  /// the committee's seasonal time after sunset for the chosen twilight. Above 55° of latitude,
-  /// no later than the end of the first seventh of the night.
+  /// the committee's seasonal time after sunset for the chosen twilight. From 55° of latitude,
+  /// also no later than the end of the night's first seventh.
   ///
   /// This rule replaces ``CalculationParameters/highLatitudeRule`` for Isha.
   case moonsightingCommittee(Shafaq)

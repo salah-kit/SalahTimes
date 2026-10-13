@@ -323,11 +323,12 @@ struct EngineTests {
     }
   }
 
-  @Test("Above 55°, the Moonsighting Committee bounds by the night's seventh")
+  @Test("From 55°, the Moonsighting Committee adds the night's seventh to its seasonal bounds")
   func moonsightingSeventh() throws {
     let parameters = CalculationParameters(
       fajr: .moonsightingCommittee, isha: .moonsightingCommittee(.general), rounding: .none)
-    // Aberdeen at the summer solstice: no 18° twilight, so both bounds apply.
+    // Aberdeen at the summer solstice: no 18° twilight, and the seventh is tighter than the
+    // seasonal values, so it decides.
     let june = try Self.times(57.15, -2.09, "Europe/London", "2026-06-21", parameters)
     let before = try Self.times(57.15, -2.09, "Europe/London", "2026-06-20", parameters)
     let after = try Self.times(57.15, -2.09, "Europe/London", "2026-06-22", parameters)
@@ -338,15 +339,66 @@ struct EngineTests {
     #expect(abs(try Self.seconds(june.fajr) - (sunrise - nightBefore / 7)) < 1e-3)
     #expect(abs(try Self.seconds(june.isha) - (sunset + nightAfter / 7)) < 1e-3)
 
-    // In December the 18° times fall within the seventh and stand.
+    // In December the seasonal values are tighter than both the 18° times and the seventh, so
+    // they decide, as they do below 55°: Fajr about 105 minutes before sunrise rather than the
+    // 18° time, about 148 minutes before it.
     let december = try Self.times(57.15, -2.09, "Europe/London", "2026-12-21", parameters)
+    let day = try Self.day("2026-12-21")
+    let fajrMinutes = MoonsightingCommittee.fajrMinutes(day: day, latitude: 57.15)
+    let ishaMinutes = MoonsightingCommittee.ishaMinutes(
+      day: day, latitude: 57.15, shafaq: .general)
+    let decemberSunrise = try Self.seconds(december.sunrise)
+    let decemberSunset = try Self.seconds(december.sunset)
+    #expect(abs(try Self.seconds(december.fajr) - (decemberSunrise - 60 * fajrMinutes)) < 1e-3)
+    #expect(abs(try Self.seconds(december.isha) - (decemberSunset + 60 * ishaMinutes)) < 1e-3)
     var angles = parameters
     angles.fajr = .angle(18)
     angles.isha = .angle(18)
     angles.highLatitudeRule = .disabled
     let raw = try Self.times(57.15, -2.09, "Europe/London", "2026-12-21", angles)
-    #expect(december.fajr == raw.fajr)
-    #expect(december.isha == raw.isha)
+    #expect(try Self.seconds(raw.fajr) < Self.seconds(december.fajr) - 30 * 60)
+    #expect(try Self.seconds(raw.isha) > Self.seconds(december.isha) + 30 * 60)
+  }
+
+  @Test(
+    "The committee's seventh starts at exactly 55°, north and south",
+    arguments: [
+      (55.0, -1.6, "Europe/London", "2026-06-21"),
+      (-55.0, -68.3, "America/Argentina/Ushuaia", "2026-12-21"),
+    ])
+  func moonsightingSeventhBoundary(
+    latitude: Double, longitude: Double, zone: String, dayText: String
+  ) throws {
+    let parameters = CalculationParameters(
+      fajr: .moonsightingCommittee, isha: .moonsightingCommittee(.general), rounding: .none)
+    let day = try Self.day(dayText)
+    func times(_ latitude: Double, _ offset: Int) throws -> PrayerTimes {
+      try PrayerTimes(
+        coordinates: Coordinates(latitude: latitude, longitude: longitude),
+        day: day.adding(days: offset), timeZone: try Self.zone(zone), parameters: parameters)
+    }
+    // At the summer solstice at 55° there's no 18° twilight. The seventh of the night, about
+    // 57 minutes, is tighter than the seasonal values, about 123 and 81 minutes, so it decides
+    // at 55° exactly.
+    let edge = try times(latitude, 0)
+    let sunrise = try Self.seconds(edge.sunrise)
+    let sunset = try Self.seconds(edge.sunset)
+    let nightBefore = sunrise - (try Self.seconds(times(latitude, -1).sunset))
+    let nightAfter = try Self.seconds(times(latitude, 1).sunrise) - sunset
+    #expect(abs(try Self.seconds(edge.fajr) - (sunrise - nightBefore / 7)) < 1e-3)
+    #expect(abs(try Self.seconds(edge.isha) - (sunset + nightAfter / 7)) < 1e-3)
+
+    // A hundredth of a degree closer to the equator, only the seasonal values bound.
+    let inside = latitude - (latitude > 0 ? 0.01 : -0.01)
+    let below = try times(inside, 0)
+    let fajrMinutes = MoonsightingCommittee.fajrMinutes(day: day, latitude: inside)
+    let ishaMinutes = MoonsightingCommittee.ishaMinutes(
+      day: day, latitude: inside, shafaq: .general)
+    #expect(fajrMinutes > 120 && ishaMinutes > 80)
+    let belowSunrise = try Self.seconds(below.sunrise)
+    let belowSunset = try Self.seconds(below.sunset)
+    #expect(abs(try Self.seconds(below.fajr) - (belowSunrise - 60 * fajrMinutes)) < 1e-3)
+    #expect(abs(try Self.seconds(below.isha) - (belowSunset + 60 * ishaMinutes)) < 1e-3)
   }
 
   @Test("The committee's seasonal values follow section 8.6")

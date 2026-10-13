@@ -195,14 +195,12 @@ struct Composition {
       return boundMorning(raw, angle: angle, night: nightBefore)
     case .moonsightingCommittee:
       let raw = observer.morningTwilight(transit: transit, angle: MoonsightingCommittee.angle)
-      if abs(observer.latitude) > MoonsightingCommittee.seventhLatitude {
-        return Self.boundMorning(raw, portion: 1.0 / 7.0, night: nightBefore)
-      }
-      guard let sunriseTime = sunrise.seconds else { return raw }
       let minutes = MoonsightingCommittee.fajrMinutes(day: day, latitude: observer.latitude)
-      let bound = sunriseTime - 60 * minutes
-      guard let t = raw.seconds, t >= bound else { return .occurs(bound) }
-      return raw
+      let seasonal = sunrise.seconds.map { $0 - 60 * minutes }
+      let seventh =
+        MoonsightingCommittee.usesSeventh(latitude: observer.latitude)
+        ? nightBefore.map { $0.sunrise - $0.length / 7 } : nil
+      return Self.combine(raw, seasonal, seventh, by: max)
     }
   }
 
@@ -228,16 +226,28 @@ struct Composition {
       return maghrib.map { $0 + 60 * Double(interval) }
     case .moonsightingCommittee(let shafaq):
       let raw = observer.eveningTwilight(transit: transit, angle: MoonsightingCommittee.angle)
-      if abs(observer.latitude) > MoonsightingCommittee.seventhLatitude {
-        return Self.boundEvening(raw, portion: 1.0 / 7.0, night: nightAfter)
-      }
-      guard let sunsetTime = sunset.seconds else { return raw }
       let minutes = MoonsightingCommittee.ishaMinutes(
         day: day, latitude: observer.latitude, shafaq: shafaq)
-      let bound = sunsetTime + 60 * minutes
-      guard let t = raw.seconds, t <= bound else { return .occurs(bound) }
-      return raw
+      let seasonal = sunset.seconds.map { $0 + 60 * minutes }
+      let seventh =
+        MoonsightingCommittee.usesSeventh(latitude: observer.latitude)
+        ? nightAfter.map { $0.sunset + $0.length / 7 } : nil
+      return Self.combine(raw, seasonal, seventh, by: min)
     }
+  }
+
+  /// Combines the committee's raw time with its bounds that exist (sections 8.2 and 8.4): the
+  /// latest of them for Fajr (`max`) and the earliest for Isha (`min`). With no bound, the raw
+  /// time stands, even when it doesn't occur.
+  static func combine(
+    _ raw: RawEvent, _ seasonal: Double?, _ seventh: Double?,
+    by pick: (Double, Double) -> Double
+  ) -> RawEvent {
+    var result = raw.seconds
+    if let seasonal { result = result.map { pick($0, seasonal) } ?? seasonal }
+    if let seventh { result = result.map { pick($0, seventh) } ?? seventh }
+    guard let result else { return raw }
+    return .occurs(result)
   }
 
   /// The Isha interval after the Ramadan rule (section 8.7).

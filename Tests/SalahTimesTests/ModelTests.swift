@@ -64,4 +64,20 @@ struct ModelTests {
     #expect(Qibla.direction(from: Qibla.kaaba) == nil)
     #expect(Qibla.direction(from: Coordinates(latitude: 91, longitude: 0)) == nil)
   }
+
+  @Test("Qibla resolves places within a few metres of the Kaaba's antipode")
+  func qiblaNearTheAntipode() throws {
+    // The antipode itself has no direction, and neither does a point 1e-11° from it, about
+    // 1e-13 radians, below section 10's 1e-9.
+    let antipode = (latitude: -21.4225241, longitude: -140.1738182)
+    let none = [0, 1e-11].map {
+      Qibla.direction(from: Coordinates(latitude: antipode.latitude + $0, longitude: -140.1738182))
+    }
+    #expect(none == [nil, nil])
+    // 3e-7° north of the antipode, about 5e-9 radians, the Kaaba lies due north. The haversine
+    // formula loses that distance to rounding and reports the antipode itself.
+    let north = Coordinates(latitude: antipode.latitude + 3e-7, longitude: antipode.longitude)
+    let bearing = try #require(Qibla.direction(from: north))
+    #expect(min(bearing, 360 - bearing) < 1e-5)
+  }
 }

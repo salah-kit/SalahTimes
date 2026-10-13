@@ -2,8 +2,14 @@ import Foundation
 
 /// The Moonsighting Committee's seasonal values (docs/algorithm.md, section 8.6).
 enum MoonsightingCommittee {
-  /// The latitude beyond which the committee's rules bound by the night's seventh instead.
+  /// The latitude from which the committee's rules also bound by the night's seventh.
   static let seventhLatitude: Double = 55
+
+  /// Whether the seventh of the night bounds Fajr and Isha at a latitude: from 55°, north or
+  /// south, inclusive.
+  static func usesSeventh(latitude: Double) -> Bool {
+    abs(latitude) >= seventhLatitude
+  }
 
   /// The depression angle of the committee's raw Fajr and Isha.
   static let angle: Double = 18
