@@ -82,11 +82,12 @@ struct Composition {
   }
 
   func compute() -> Times {
-    let previousDay = day.adding(days: -1)
     let nextDay = day.adding(days: 1)
-    let transitPrevious = observer.transit(of: previousDay, in: timeZone)
+    // Section 5: the neighbors are the adjacent solar days, even where the zone skips or repeats
+    // a calendar day.
     let transit = observer.transit(of: day, in: timeZone)
-    let transitNext = observer.transit(of: nextDay, in: timeZone)
+    let transitPrevious = observer.transit(near: transit - Astronomy.secondsPerDay)
+    let transitNext = observer.transit(near: transit + Astronomy.secondsPerDay)
 
     let sunrise = observer.sunrise(transit: transit)
     let sunset = observer.sunset(transit: transit)

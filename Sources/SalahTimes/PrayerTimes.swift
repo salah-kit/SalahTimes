@@ -161,15 +161,22 @@ public enum EventTime: Hashable, Codable, Sendable {
     case doesNotOccur
   }
 
-  /// Decodes `{"occurs": <date>}` or `{"doesNotOccur": "<reason>"}`. The date uses the decoder's
-  /// date strategy.
+  /// Decodes `{"occurs": <date>}` or `{"doesNotOccur": "<reason>"}`, with exactly one of the
+  /// two keys. The date uses the decoder's date strategy.
   ///
   /// - Parameter decoder: The decoder to read from.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    if let date = try container.decodeIfPresent(Date.self, forKey: .occurs) {
-      self = .occurs(date)
-    } else {
+    guard container.allKeys.count == 1, let key = container.allKeys.first else {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: decoder.codingPath,
+          debugDescription: "An event time has exactly one of occurs and doesNotOccur"))
+    }
+    switch key {
+    case .occurs:
+      self = .occurs(try container.decode(Date.self, forKey: .occurs))
+    case .doesNotOccur:
       self = .doesNotOccur(try container.decode(NonOccurrence.self, forKey: .doesNotOccur))
     }
   }

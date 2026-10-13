@@ -11,8 +11,9 @@ import Foundation
 /// let today = GregorianDay(containing: Date(), in: TimeZone(identifier: "Asia/Riyadh")!)
 /// ```
 ///
-/// Years use astronomical numbering, so year 0 is 1 BC. Its string form and its `Codable`
-/// representation are the ISO 8601 calendar date, such as `"2026-03-20"`.
+/// Years use astronomical numbering, so year 0 is 1 BC, and range from -999999 to 999999. Its
+/// string form and its `Codable` representation are the ISO 8601 calendar date, such as
+/// `"2026-03-20"`.
 public struct GregorianDay: Hashable, Comparable, Codable, Sendable, CustomStringConvertible {
   /// The year, in astronomical numbering.
   public let year: Int
@@ -23,16 +24,17 @@ public struct GregorianDay: Hashable, Comparable, Codable, Sendable, CustomStrin
   /// The day of the month, from 1 to 31.
   public let day: Int
 
-  /// Creates a day, or returns `nil` if the month or the day doesn't exist.
+  /// Creates a day, or returns `nil` if the month or the day doesn't exist or the year is
+  /// outside -999999 to 999999.
   ///
   /// - Parameters:
   ///   - year: The year, in astronomical numbering.
   ///   - month: The month, from 1 to 12.
   ///   - day: The day of the month.
   public init?(year: Int, month: Int, day: Int) {
-    guard (1...12).contains(month), day >= 1, day <= Self.daysInMonth(month, year: year) else {
-      return nil
-    }
+    guard Self.years.contains(year), (1...12).contains(month), day >= 1,
+      day <= Self.daysInMonth(month, year: year)
+    else { return nil }
     self.year = year
     self.month = month
     self.day = day
@@ -40,12 +42,19 @@ public struct GregorianDay: Hashable, Comparable, Codable, Sendable, CustomStrin
 
   /// Creates the civil day that contains an instant in a time zone.
   ///
+  /// - Precondition: The instant is finite and falls in a year from -999999 to 999999.
+  ///
   /// - Parameters:
   ///   - date: The instant.
   ///   - timeZone: The time zone whose clock decides which day contains `date`.
   public init(containing date: Date, in timeZone: TimeZone) {
     let local = date.timeIntervalSince1970 + Double(timeZone.secondsFromGMT(for: date))
-    self.init(daysSince1970: Int((local / 86_400).rounded(.down)))
+    let days = (local / 86_400).rounded(.down)
+    precondition(
+      days >= Double(Self.supportedDays.lowerBound)
+        && days <= Double(Self.supportedDays.upperBound),
+      "\(date) is outside the years a GregorianDay holds, -999999 to 999999")
+    self.init(daysSince1970: Int(days))
   }
 
   /// Parses an ISO 8601 calendar date such as `"2026-03-20"`, or returns `nil`.
@@ -75,10 +84,16 @@ public struct GregorianDay: Hashable, Comparable, Codable, Sendable, CustomStrin
 
   /// The day a number of days later, or earlier when `days` is negative.
   ///
+  /// - Precondition: The resulting day falls in a year from -999999 to 999999.
+  ///
   /// - Parameter days: The number of days to add.
   /// - Returns: The resulting day.
   public func adding(days: Int) -> GregorianDay {
-    GregorianDay(daysSince1970: daysSince1970 + days)
+    let (result, overflow) = daysSince1970.addingReportingOverflow(days)
+    precondition(
+      !overflow && Self.supportedDays.contains(result),
+      "\(self) plus \(days) days is outside the years a GregorianDay holds, -999999 to 999999")
+    return GregorianDay(daysSince1970: result)
   }
 
   /// The ISO 8601 calendar date, such as `"2026-03-20"`.
@@ -123,6 +138,16 @@ public struct GregorianDay: Hashable, Comparable, Codable, Sendable, CustomStrin
 }
 
 extension GregorianDay {
+  /// The years a day can have.
+  static let years = -999_999...999_999
+
+  /// ``daysSince1970`` of the first and the last day of ``years``.
+  static let supportedDays: ClosedRange<Int> = {
+    let first = GregorianDay(january1Of: years.lowerBound).daysSince1970
+    let last = GregorianDay(january1Of: years.upperBound + 1).daysSince1970 - 1
+    return first...last
+  }()
+
   /// Days from 1970-01-01 to this day.
   ///
   /// The conversions follow Howard Hinnant's public-domain `days_from_civil` and

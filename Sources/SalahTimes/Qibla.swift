@@ -40,9 +40,8 @@ public enum Qibla {
 
     let y = sin(deltaLambda) * cos(phi2)
     let x = cos(phi1) * sin(phi2) - sin(phi1) * cos(phi2) * cos(deltaLambda)
-    let bearing = degrees(atan2(y, x))
-    let normalized = bearing.truncatingRemainder(dividingBy: 360)
-    return normalized < 0 ? normalized + 360 : normalized
+    // normalize360 maps a tiny negative bearing to 0, not to 360 (section 1).
+    return normalize360(degrees(atan2(y, x)))
   }
 
   /// The unit vector `(cos φ cos L, cos φ sin L, sin φ)` of a place, from degrees.

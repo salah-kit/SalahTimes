@@ -38,7 +38,13 @@ The Sun's position uses Terrestrial Time: `JDE = JD + ΔT / 86400`. ΔT, in seco
 
 | Range of `y` | ΔT |
 |---|---|
-| y < 1900 or y ≥ 2150 | `u = (y - 1820) / 100`; `-20 + 32 u²` |
+| y < -500 or y ≥ 2150 | `u = (y - 1820) / 100`; `-20 + 32 u²` |
+| -500 ≤ y < 500 | `u = y / 100`; `10583.6 - 1014.41 u + 33.78311 u² - 5.952053 u³ - 0.1798452 u⁴ + 0.022174192 u⁵ + 0.0090316521 u⁶` |
+| 500 ≤ y < 1600 | `u = (y - 1000) / 100`; `1574.2 - 556.01 u + 71.23472 u² + 0.319781 u³ - 0.8503463 u⁴ - 0.005050998 u⁵ + 0.0083572073 u⁶` |
+| 1600 ≤ y < 1700 | `t = y - 1600`; `120 - 0.9808 t - 0.01532 t² + t³ / 7129` |
+| 1700 ≤ y < 1800 | `t = y - 1700`; `8.83 + 0.1603 t - 0.0059285 t² + 0.00013336 t³ - t⁴ / 1174000` |
+| 1800 ≤ y < 1860 | `t = y - 1800`; `13.72 - 0.332447 t + 0.0068612 t² + 0.0041116 t³ - 0.00037436 t⁴ + 0.0000121272 t⁵ - 0.0000001699 t⁶ + 0.000000000875 t⁷` |
+| 1860 ≤ y < 1900 | `t = y - 1860`; `7.62 + 0.5737 t - 0.251754 t² + 0.01680668 t³ - 0.0004473624 t⁴ + t⁵ / 233174` |
 | 1900 ≤ y < 1920 | `t = y - 1900`; `-2.79 + 1.494119 t - 0.0598939 t² + 0.0061966 t³ - 0.000197 t⁴` |
 | 1920 ≤ y < 1941 | `t = y - 1920`; `21.20 + 0.84493 t - 0.076100 t² + 0.0020936 t³` |
 | 1941 ≤ y < 1961 | `t = y - 1950`; `29.07 + 0.407 t - t² / 233 + t³ / 2547` |
@@ -47,7 +53,7 @@ The Sun's position uses Terrestrial Time: `JDE = JD + ΔT / 86400`. ΔT, in seco
 | 2005 ≤ y < 2050 | `t = y - 2000`; `62.92 + 0.32217 t + 0.005589 t²` |
 | 2050 ≤ y < 2150 | `-20 + 32 ((y - 1820) / 100)² - 0.5628 (2150 - y)` |
 
-ΔT moves the Sun by a fraction of a second of time for modern dates, so implementations agree to well within the vectors' tolerance even with small differences here.
+This is the table of polynomials published with the *Five Millennium Canon* (https://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html), without the Canon's lunar correction, which applies to its eclipse computations only. ΔT moves the Sun by a fraction of a second of time for modern dates and by about 1.5 seconds in the year 1000.
 
 ## 4. The Sun's position
 
@@ -87,25 +93,32 @@ The events of `D` are computed around one solar transit, `T_D`:
 
 Transits are about 24 hours apart and every real time zone keeps local noon within a few hours of the Sun's transit, so the nearest transit is the one inside `D`. This choice is what makes the date line work: at Kiritimati (UTC+14, 157° W), `D`'s transit falls on `D - 1` in UTC.
 
-`D-1` and `D+1` get their own transits by the same procedure, from their own local noons. Daylight saving time moves `n` by an hour at most, which never changes the nearest transit, so the instants don't depend on whether `Z` observes DST.
+The neighboring solar days come from `T_D`, not from the neighboring civil days: `T_{D-1}` is the transit nearest `T_D - 86400` and `T_{D+1}` the transit nearest `T_D + 86400`, by the same iteration. So they're always the adjacent solar days, even where `Z` skips or repeats a calendar day. Pacific/Apia skipped 2011-12-30: for that day the lookups of step 1 find 2011-12-31's transit, so a skipped day gets the next day's events, and the days around it keep their real nights.
+
+Daylight saving time moves `n` by an hour or two at most, which never changes the nearest transit, so the instants don't depend on whether `Z` observes DST.
 
 ## 6. Altitude crossings
 
-`crossing(T, h*, side)` finds when the Sun reaches altitude `h*` before the transit `T` (`side = -1`, morning) or after it (`side = +1`, evening):
+`crossing(T, h*, side)` finds when the Sun reaches altitude `h*` before the transit `T` (`side = -1`, morning) or after it (`side = +1`, evening). Let
 
-    t = T
-    repeat at most 20 times:
-        compute δ, α and θ at t
-        c = (sin h* - sin φ sin δ) / (cos φ cos δ)
-        if c > 1:  return NOT(sunStaysBelow)
-        if c < -1: return NOT(sunStaysAbove)
-        H0 = acos(c)                                  in [0, 180]
-        step = normalize180(side × H0 - H(t)) / 360 × 86400 seconds
-        t = t + step
-        stop when |step| < 0.001 s
-    return t
+    c(t) = (sin h* - sin φ sin δ(t)) / (cos φ cos δ(t))
 
-`cos φ` is never exactly zero in floating point, so the poles need no special case: there `c` is very large and the test reports the right reason. On a day when the Sun only just reaches `h*`, the iteration can decide either way; the vectors avoid such days.
+with `δ(t)` the declination at instant `t`, and let `A = T + side × 43200` be the antitransit on that side, 12 hours away.
+
+1. The Sun is highest at the transit and lowest at the antitransit, so the event's existence is decided there. If `c(T) > 1`, the Sun stays below `h*` even at the transit: the result is `NOT(sunStaysBelow)`. If `c(A) < -1`, it stays above `h*` even at the antitransit: the result is `NOT(sunStaysAbove)`.
+2. Otherwise the crossing exists. Iterate from `t = A` if `c(T) < -1`, since the Sun then only reaches `h*` near the antitransit, and from `t = T` otherwise:
+
+       repeat at most 20 times:
+           compute δ, α and θ at t
+           H0 = acos(min(1, max(-1, c(t))))           in [0, 180]
+           step = normalize180(side × H0 - H(t)) / 360 × 86400 seconds
+           t = t + step
+           stop when |step| < 0.001 s
+       return t
+
+Testing at the antitransit, where the evening crossing after `T_D` and the morning crossing before `T_{D+1}` meet, makes both agree on whether the Sun reaches `h*` that night, even on the first or last night of a season, when the declination at the transits would say otherwise. The clamp in `H0` only matters while the iterate is far from the crossing.
+
+`cos φ` is never exactly zero in floating point, so the poles need no special case: there `c` is very large and the tests report the right reason. When `c(T)` is within about 1e-4 of 1, or `c(A)` within about 1e-4 of -1, the Sun only just reaches `h*`, and implementations can decide either way; the vectors avoid such days.
 
 ## 7. Astronomical events
 
@@ -230,7 +243,7 @@ The value is used unrounded, and `A` isn't capped at 55: the bound is `sunrise -
 
 ### 8.7 The Ramadan Isha rule
 
-With `ramadanIsha = interval(minutes: m', hijriDayOffset: k)` and Isha `minutesAfterMaghrib(m)` with `m > 0`: if the civil day `D + k` (adding `k` days) falls in month 9 of the Umm al-Qura calendar, Isha for `D` uses `m'` instead of `m`. Nothing else changes, and the rule has no effect on any other Isha rule. The Umm al-Qura calendar is the tabular calendar that ICU calls `islamic-umalqura`, Foundation calls `.islamicUmmAlQura`, and Java calls `HijrahChronology` (Umm al-Qura variant).
+With `ramadanIsha = interval(minutes: m', hijriDayOffset: k)` and Isha `minutesAfterMaghrib(m)` with `m > 0`: if the civil day `D + k` (adding `k` days) falls in month 9 of the Umm al-Qura calendar, Isha for `D` uses `m'` instead of `m`. Nothing else changes, and the rule has no effect on any other Isha rule. The Umm al-Qura calendar is Saudi Arabia's official calendar, which ICU calls `islamic-umalqura` and Foundation `.islamicUmmAlQura`. From 1 Muharram 1300 AH (1882-11-12) to the end of 1600 AH (2174-11-25) it follows its published month table, which Java's `HijrahChronology` also implements. Outside that range it is the arithmetic civil calendar, ICU's `islamic-civil`: an epoch of Friday 16 July 622 (Julian) and leap years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26 and 29 of each 30-year cycle. ICU falls back to it there; `HijrahChronology` rejects those dates, so an engine built on it supplies the civil calendar itself. The other arithmetic variant, `islamic-tbla` (a Thursday epoch), differs: it starts Ramadan 1447 a day earlier.
 
 ### 8.8 Adjustments
 
@@ -248,7 +261,7 @@ Then every event that occurs is rounded, with `t` in seconds:
 
 ## 9. When events don't occur
 
-`crossing` reports `sunStaysBelow` when the Sun never climbs to the altitude, and `sunStaysAbove` when it never descends to it. Every other non-occurrence takes the reason of the event it depends on:
+`crossing` reports `sunStaysBelow` when the Sun doesn't climb to the altitude even at the transit, and `sunStaysAbove` when it doesn't descend to it even at the antitransit (section 6). Every other non-occurrence takes the reason of the event it depends on:
 
 - Maghrib by `sunset` takes sunset's reason. Isha by interval takes Maghrib's reason (section 8.4), which is sunset's when Maghrib is `sunset`.
 - A bound needs its night. When the night is undefined, the raw angle time stands, including its reason if it doesn't occur.
@@ -258,7 +271,7 @@ So during polar day sunrise, sunset, Maghrib, Isha and the night's divisions are
 
 ## 10. Qibla
 
-The Qibla is the initial bearing of the great circle from the place `(φ1, L1)` to the Kaaba `(φ2, L2) = (21.4225241, 39.8261818)` on a spherical Earth, clockwise from true north:
+Coordinates that fail section 2's check give no result. Otherwise the Qibla is the initial bearing of the great circle from the place `(φ1, L1)` to the Kaaba `(φ2, L2) = (21.4225241, 39.8261818)` on a spherical Earth, clockwise from true north:
 
     ΔL = L2 - L1
     bearing = normalize360(atan2(sin ΔL cos φ2, cos φ1 sin φ2 - sin φ1 cos φ2 cos ΔL))

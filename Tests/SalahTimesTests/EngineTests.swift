@@ -264,6 +264,62 @@ struct EngineTests {
     #expect(polarNight.isha == .doesNotOccur(.sunStaysBelow))
   }
 
+  // MARK: Neighboring solar days (section 5)
+
+  @Test("A zone that skips a calendar day keeps the nights around it")
+  func skippedCalendarDay() throws {
+    // Pacific/Apia skipped 2011-12-30 when it moved to the other side of the date line.
+    func times(_ text: String) throws -> PrayerTimes {
+      try Self.times(-13.8333, -171.75, "Pacific/Apia", text, Self.unrounded)
+    }
+    for text in ["2011-12-29", "2011-12-31", "2012-01-01"] {
+      let day = try times(text)
+      let instants = try [
+        day.fajr, day.sunrise, day.dhuhr, day.asr, day.sunset, day.isha, day.middleOfTheNight,
+        day.lastThirdOfTheNight,
+      ].map(Self.seconds)
+      #expect(instants == instants.sorted(), "\(text)'s events are out of order")
+    }
+    // The skipped day gets the next day's events.
+    let skipped = try times("2011-12-30")
+    let next = try times("2011-12-31")
+    for event in PrayerTimes.Event.allCases {
+      #expect(skipped[event] == next[event], "\(event)")
+    }
+  }
+
+  // MARK: Existence at the edges of a season (section 6)
+
+  @Test("A season's first night exists for the evening before and the morning after")
+  func existenceAtSeasonEdges() throws {
+    // Longyearbyen's midnight sun ends on the night of 24 to 25 August 2026. The Sun sets about
+    // 12 hours after the 24th's transit, when the declination has moved on.
+    func longyearbyen(_ text: String) throws -> PrayerTimes {
+      try Self.times(78.22, 15.65, "Arctic/Longyearbyen", text, Self.unrounded)
+    }
+    let night = (evening: try longyearbyen("2026-08-24"), morning: try longyearbyen("2026-08-25"))
+    #expect(try Self.seconds(night.evening.sunset) < Self.seconds(night.morning.sunrise))
+    #expect(try longyearbyen("2026-08-23").sunset == .doesNotOccur(.sunStaysAbove))
+    #expect(night.evening.sunrise == .doesNotOccur(.sunStaysAbove))
+
+    // At 60° N the Sun first reaches 18° below the horizon again on the night of 21 to 22
+    // August 2026, dipping to about 18.16°.
+    let parameters = CalculationParameters(
+      fajr: .angle(18), isha: .angle(18), highLatitudeRule: .disabled, rounding: .none)
+    func sixty(_ text: String) throws -> PrayerTimes {
+      try Self.times(60, 0, "UTC", text, parameters)
+    }
+    let isha = try Self.seconds(sixty("2026-08-21").isha)
+    let fajr = try Self.seconds(sixty("2026-08-22").fajr)
+    #expect(isha < fajr)
+    let observer = Observer(latitude: 60, longitude: 0)
+    #expect(abs(observer.altitude(at: isha) + 18) < 0.01)
+    #expect(abs(observer.altitude(at: fajr) + 18) < 0.01)
+    // A night earlier the Sun stays above 18° below the horizon.
+    #expect(try sixty("2026-08-20").isha == .doesNotOccur(.sunStaysAbove))
+    #expect(try sixty("2026-08-21").fajr == .doesNotOccur(.sunStaysAbove))
+  }
+
   // MARK: Moonsighting Committee (sections 8.2, 8.4 and 8.6)
 
   @Test("Moonsighting Committee at London matches the committee's timetable")

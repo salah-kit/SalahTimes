@@ -69,8 +69,11 @@ struct AstronomyTests {
   func deltaTTable() {
     // NASA, "Historical Values of Delta T", https://eclipse.gsfc.nasa.gov/SEcat5/deltat.html,
     // retrieved 2026-10-13. The polynomials fit the observations to a few tenths of a second.
+    // Before 1600 the table's values are themselves uncertain by tens of seconds, and the
+    // polynomial fits them within a few seconds.
     let observed: [(year: Double, seconds: Double, tolerance: Double)] = [
-      (1900, -3, 0.5), (1950, 29, 0.2), (1960, 33.2, 0.2), (1970, 40.2, 0.2),
+      (1000, 1570, 5), (1300, 490, 5), (1600, 120, 1), (1700, 9, 1), (1800, 14, 1),
+      (1850, 7, 1), (1900, -3, 0.5), (1950, 29, 0.2), (1960, 33.2, 0.2), (1970, 40.2, 0.2),
       (1980, 50.5, 0.2), (1990, 56.9, 0.2), (2000, 63.8, 0.2), (2005, 64.7, 0.2),
     ]
     for row in observed {
@@ -81,9 +84,21 @@ struct AstronomyTests {
 
   @Test("ΔT follows each polynomial of section 3")
   func deltaTPolynomials() {
-    // Values worked by hand from the expressions in docs/algorithm.md, section 3.
-    #expect(abs(Astronomy.deltaT(decimalYear: 1820) - -20) < 1e-9)
+    // Values worked by hand from the expressions in docs/algorithm.md, section 3: each
+    // polynomial's constant term at its origin, and the long-term parabola outside -500...2150.
+    #expect(abs(Astronomy.deltaT(decimalYear: -600) - (-20 + 32 * 24.2 * 24.2)) < 1e-9)
+    #expect(abs(Astronomy.deltaT(decimalYear: 0) - 10_583.6) < 1e-9)
+    #expect(abs(Astronomy.deltaT(decimalYear: 1000) - 1574.2) < 1e-9)
+    #expect(abs(Astronomy.deltaT(decimalYear: 1600) - 120) < 1e-9)
+    #expect(abs(Astronomy.deltaT(decimalYear: 1700) - 8.83) < 1e-9)
+    #expect(abs(Astronomy.deltaT(decimalYear: 1800) - 13.72) < 1e-9)
+    #expect(abs(Astronomy.deltaT(decimalYear: 1860) - 7.62) < 1e-9)
     #expect(abs(Astronomy.deltaT(decimalYear: 2200) - (-20 + 32 * 3.8 * 3.8)) < 1e-9)
+    // The polynomials meet within a second at each boundary between 1600 and 2150.
+    for seam in [1600.0, 1700, 1800, 1860, 1900, 1920, 1941, 1961, 1986, 2005, 2050, 2150] {
+      let jump = Astronomy.deltaT(decimalYear: seam) - Astronomy.deltaT(decimalYear: seam - 1e-9)
+      #expect(abs(jump) < 1, "ΔT jumps by \(jump) s at \(seam)")
+    }
     #expect(abs(Astronomy.deltaT(decimalYear: 1900) - -2.79) < 1e-9)
     #expect(abs(Astronomy.deltaT(decimalYear: 1920) - 21.20) < 1e-9)
     #expect(abs(Astronomy.deltaT(decimalYear: 1950) - 29.07) < 1e-9)

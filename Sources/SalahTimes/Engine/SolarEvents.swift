@@ -93,19 +93,30 @@ struct Observer {
   /// `transit` (section 6).
   func crossing(transit: Double, altitude: Double, side: Double) -> RawEvent {
     let sinAltitude = sin(radians(altitude))
-    var t = transit
-    for _ in 0..<Self.maximumIterations {
-      let sun = Astronomy.sun(at: t)
+    func cosine(_ sun: SunState) -> Double {
       let delta = radians(sun.declination)
-      let c = (sinAltitude - sinLatitude * sin(delta)) / (cosLatitude * cos(delta))
-      if c > 1 { return .doesNotOccur(.sunStaysBelow) }
-      if c < -1 { return .doesNotOccur(.sunStaysAbove) }
-      let h0 = degrees(acos(c))
+      return (sinAltitude - sinLatitude * sin(delta)) / (cosLatitude * cos(delta))
+    }
+    // The Sun is highest at the transit and lowest at the antitransit on this side, so the
+    // event's existence is decided there.
+    let sunAtTransit = Astronomy.sun(at: transit)
+    let atTransit = cosine(sunAtTransit)
+    if atTransit > 1 { return .doesNotOccur(.sunStaysBelow) }
+    let antitransit = transit + side * Astronomy.secondsPerDay / 2
+    let sunAtAntitransit = Astronomy.sun(at: antitransit)
+    if cosine(sunAtAntitransit) < -1 { return .doesNotOccur(.sunStaysAbove) }
+
+    // The Sun only reaches the altitude near the antitransit when it stays above it at the
+    // transit's declination.
+    var (t, sun) = atTransit < -1 ? (antitransit, sunAtAntitransit) : (transit, sunAtTransit)
+    for _ in 0..<Self.maximumIterations {
+      let h0 = degrees(acos(min(1, max(-1, cosine(sun)))))
       let step =
         normalize180(side * h0 - sun.hourAngle(longitude: longitude)) / 360
         * Astronomy.secondsPerDay
       t += step
       if abs(step) < Self.convergence { break }
+      sun = Astronomy.sun(at: t)
     }
     return .occurs(t)
   }
