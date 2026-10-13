@@ -12,16 +12,15 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-env:
-  # macos-26 is the newest generally available macOS image. Its Xcode 26.6 includes the iOS,
-  # watchOS, tvOS and visionOS SDKs, so the platform builds need no download.
-  DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
-
 jobs:
   macos:
     name: macOS
     runs-on: macos-26
     timeout-minutes: 45
+    env:
+      # macos-26 is the newest generally available macOS image. Its Xcode 26.6 includes the
+      # iOS, watchOS, tvOS and visionOS SDKs, so the platform builds need no download.
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
     steps:
       - uses: actions/checkout@v7
         with:
