@@ -121,10 +121,37 @@ struct Observer {
         normalize180(side * h0 - sun.hourAngle(longitude: longitude)) / 360
         * Astronomy.secondsPerDay
       t += step
-      if abs(step) < Self.convergence { break }
+      if abs(step) < Self.convergence {
+        let offset = side * (t - transit)
+        if offset > 0 && offset < Astronomy.secondsPerDay / 2 { return .occurs(t) }
+        break
+      }
       sun = Astronomy.sun(at: t)
     }
-    return .occurs(t)
+    // The declination, not the hour angle, carries the Sun across the altitude here: near a pole,
+    // or within seconds of the transit or antitransit. Bisect between them instead (step 3).
+    return .occurs(bisection(above: transit, below: antitransit, sinAltitude: sinAltitude))
+  }
+
+  /// The number of halvings in section 6's bisection, which take 12 hours below 1 ms.
+  static let bisections = 26
+
+  /// The crossing between an instant where the Sun is at or above an altitude and one where it's
+  /// at or below it, by bisection (section 6, step 3).
+  private func bisection(above: Double, below: Double, sinAltitude: Double) -> Double {
+    var (p, q) = (above, below)
+    for _ in 0..<Self.bisections {
+      let m = (p + q) / 2
+      let sun = Astronomy.sun(at: m)
+      let delta = radians(sun.declination)
+      let h = radians(sun.hourAngle(longitude: longitude))
+      if sinLatitude * sin(delta) + cosLatitude * cos(delta) * cos(h) >= sinAltitude {
+        p = m
+      } else {
+        q = m
+      }
+    }
+    return (p + q) / 2
   }
 
   /// The altitude of the Sun's upper limb at sunrise and sunset: 34' of refraction and a 16'

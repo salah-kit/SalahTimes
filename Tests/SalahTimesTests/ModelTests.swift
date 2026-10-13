@@ -127,6 +127,19 @@ struct ModelTests {
     #expect(try decoder.decode(EventTime.self, from: reason) == .doesNotOccur(.sunStaysBelow))
   }
 
+  @Test("An autoupdating time zone is stored as the zone it stood for")
+  func fixedTimeZone() throws {
+    let current = TimeZone.autoupdatingCurrent
+    let fixed = try #require(TimeZone(identifier: current.identifier))
+    let times = try PrayerTimes(
+      coordinates: Coordinates(latitude: 30.0444, longitude: 31.2357),
+      day: try #require(GregorianDay("2026-03-20")), timeZone: current,
+      parameters: CalculationMethod.egyptian.parameters)
+    #expect(times.timeZone == fixed)
+    let json = String(decoding: try JSONEncoder().encode(times), as: UTF8.self)
+    #expect(!json.contains(#""autoupdating":true"#), "\(json)")
+  }
+
   @Test("Qibla resolves places within a few metres of the Kaaba's antipode")
   func qiblaNearTheAntipode() throws {
     // The antipode itself has no direction, and neither does a point 1e-11° from it, about

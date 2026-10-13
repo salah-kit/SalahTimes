@@ -24,10 +24,12 @@ import Foundation
 /// Every event in a `PrayerTimes` value belongs to the ``day`` you asked for, even when its
 /// instant falls on a neighboring civil day in ``timeZone``:
 /// - Isha can fall after midnight, in summer at high latitudes, or where the clock runs far
-///   ahead of the Sun.
+///   ahead of the Sun. Near and beyond the polar circles, sunset and Maghrib can too.
 /// - The middle of the night and its last third usually fall after midnight.
-/// - At a few high-latitude places east of their time zone's meridian, a Fajr bounded by a
-///   high-latitude rule can fall shortly before the day begins.
+/// - Where the clock runs behind the Sun, a Fajr near solar midnight can fall shortly before the
+///   day begins, and near the polar circles even sunrise can.
+///
+/// Check an event's civil day yourself if you need it; don't assume any event falls on ``day``.
 ///
 /// ## Events that don't occur
 ///
@@ -38,6 +40,10 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
   public let day: GregorianDay
 
   /// The time zone that defines ``day``.
+  ///
+  /// It's a fixed copy of the zone you passed. An autoupdating zone such as
+  /// `TimeZone.autoupdatingCurrent` is stored as the zone it stood for when the times were
+  /// computed, so the value doesn't change when the device's zone does.
   public let timeZone: TimeZone
 
   /// The start of Fajr.
@@ -81,8 +87,10 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
     coordinates: Coordinates, day: GregorianDay, timeZone: TimeZone,
     parameters: CalculationParameters
   ) throws {
+    // Fix an autoupdating zone, so the calculation and the stored zone can't see two zones.
+    let fixed = TimeZone(identifier: timeZone.identifier) ?? timeZone
     self = try Engine.prayerTimes(
-      coordinates: coordinates, day: day, timeZone: timeZone, parameters: parameters)
+      coordinates: coordinates, day: day, timeZone: fixed, parameters: parameters)
   }
 
   init(

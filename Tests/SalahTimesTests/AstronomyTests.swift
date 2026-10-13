@@ -176,6 +176,52 @@ struct AstronomyTests {
     #expect(checked == 402)
   }
 
+  @Test("Crossings agree with a bisection where the declination carries the Sun")
+  func crossingsWhereTheDeclinationDecides() throws {
+    // Near the poles, and when Asr comes within seconds of the transit before polar night, the
+    // changing declination carries the Sun across the altitude and the hour-angle iteration can't
+    // settle. Every crossing must still lie within 12 hours on its side of the transit and agree
+    // with a plain bisection on the altitude.
+    let utc = try #require(TimeZone(identifier: "UTC"))
+    let start = try #require(GregorianDay(year: 2026, month: 1, day: 1))
+    var checked = 0
+    for (latitude, longitude) in [(-89.9975, 139.27), (90, 0), (89.5, 0), (68, 0), (70, 31.1)] {
+      let observer = Observer(latitude: latitude, longitude: longitude)
+      for offset in 0..<365 {
+        let day = start.adding(days: offset)
+        let transit = observer.transit(of: day, in: utc)
+        let z = abs(latitude - Astronomy.sun(at: transit).declination)
+        var crossings: [(altitude: Double, side: Double)] = [
+          (-50.0 / 60, -1), (-50.0 / 60, 1), (-18, -1), (-17, 1),
+        ]
+        if z < 90 { crossings.append((degrees(atan(1 / (1 + tan(radians(z))))), 1)) }
+        for (altitude, side) in crossings {
+          let event = observer.crossing(transit: transit, altitude: altitude, side: side)
+          guard let t = event.seconds else { continue }
+          checked += 1
+          let label = "\(latitude)° \(day) at \(altitude)°, side \(side)"
+          #expect(side * (t - transit) > 0 && side * (t - transit) < 43_200, "\(label)")
+          let root = Self.bisect(observer, transit: transit, altitude: altitude, side: side)
+          #expect(abs(t - root) < 0.01, "\(label): \(t - root) s")
+        }
+      }
+    }
+    #expect(checked > 2_000)
+  }
+
+  /// The instant between a transit and its antitransit on one side where the Sun's altitude
+  /// falls through `altitude`, by bisection to 0.1 ms.
+  private static func bisect(
+    _ observer: Observer, transit: Double, altitude: Double, side: Double
+  ) -> Double {
+    var (above, below) = (transit, transit + side * 43_200)
+    while abs(above - below) > 1e-4 {
+      let middle = (above + below) / 2
+      if observer.altitude(at: middle) >= altitude { above = middle } else { below = middle }
+    }
+    return (above + below) / 2
+  }
+
   @Test("Crossings report which way the Sun fails")
   func crossingNonOccurrence() throws {
     let observer = Observer(latitude: 78.22, longitude: 15.65)

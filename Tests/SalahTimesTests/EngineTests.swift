@@ -320,6 +320,29 @@ struct EngineTests {
     #expect(try sixty("2026-08-21").fajr == .doesNotOccur(.sunStaysAbove))
   }
 
+  @Test("Near the South Pole, events that occur stay in their solar day")
+  func eventsNearThePole() throws {
+    // At Amundsen-Scott station's latitude the declination, not the hour angle, carries the Sun
+    // across each altitude, so these crossings come from section 6's bisection. Before it, they
+    // fell on the neighboring solar day, 24 hours from Dhuhr.
+    let parameters = CalculationParameters(
+      fajr: .angle(18), isha: .angle(17), highLatitudeRule: .disabled, rounding: .none)
+    func pole(_ text: String) throws -> PrayerTimes {
+      try Self.times(-89.9975, 0, "UTC", text, parameters)
+    }
+    let observer = Observer(latitude: -89.9975, longitude: 0)
+    let cases: [(day: String, event: PrayerTimes.Event, altitude: Double)] = [
+      ("2026-03-22", .sunset, -50.0 / 60), ("2026-05-07", .isha, -17), ("2026-08-01", .fajr, -18),
+    ]
+    for (text, event, altitude) in cases {
+      let times = try pole(text)
+      let dhuhr = try Self.seconds(times.dhuhr)
+      let t = try Self.seconds(times[event])
+      #expect(abs(t - dhuhr) < 43_200, "\(text) \(event) is \(t - dhuhr) s from Dhuhr")
+      #expect(abs(observer.altitude(at: t) - altitude) < 1e-4, "\(text) \(event)")
+    }
+  }
+
   // MARK: Moonsighting Committee (sections 8.2, 8.4 and 8.6)
 
   @Test("Moonsighting Committee at London matches the committee's timetable")

@@ -53,7 +53,7 @@ The Sun's position uses Terrestrial Time: `JDE = JD + ΔT / 86400`. ΔT, in seco
 | 2005 ≤ y < 2050 | `t = y - 2000`; `62.92 + 0.32217 t + 0.005589 t²` |
 | 2050 ≤ y < 2150 | `-20 + 32 ((y - 1820) / 100)² - 0.5628 (2150 - y)` |
 
-This is the table of polynomials published with the *Five Millennium Canon* (https://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html), without the Canon's lunar correction, which applies to its eclipse computations only. ΔT moves the Sun by a fraction of a second of time for modern dates and by about 1.5 seconds in the year 1000.
+This is the table of polynomials published with the *Five Millennium Canon* (https://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html), without the Canon's lunar correction, which applies to its eclipse computations only. ΔT moves the Sun's events by about ΔT / 365 seconds of time, since the Sun moves about a degree a day against the stars: a quarter of a second in 2026, about 5 seconds in the year 1000 and 14 seconds in 3000.
 
 ## 4. The Sun's position
 
@@ -120,13 +120,25 @@ with `δ(t)` the declination at instant `t`, and let `A = T + side × 43200` be 
            step = normalize180(side × H0 - H(t)) / 360 × 86400 seconds
            t = t + step
            stop when |step| < 0.001 s
-       return t
+
+   If the loop stopped on a step below 1 ms and `t` lies strictly between `T` and `A`, that is, `0 < side × (t - T) < 43200`, `t` is the crossing.
+3. Otherwise, bisect. The Sun is at or above `h*` at `T` and at or below it at `A`, so the crossing lies between them. Let `p = T` and `q = A`, and repeat 26 times:
+
+       m = (p + q) / 2
+       if sin φ sin δ(m) + cos φ cos δ(m) cos H(m) ≥ sin h*:  p = m
+       else:                                                  q = m
+
+   The crossing is `(p + q) / 2`. Twenty-six halvings take 12 hours below 0.7 ms.
 
 The evening crossing after `T_D` and the morning crossing before `T_{D+1}` are tested at antitransits less than half a minute apart (`T_D + 43200` and `T_{D+1} - 43200`; an apparent solar day isn't exactly 24 hours). So they agree on whether the Sun reaches `h*` that night, even on the first or last night of a season, when the declination at the transits would say otherwise. They can disagree only when the Sun's lowest altitude that night is within about 0.0002° of `h*`.
 
 Starting from the estimate keeps every step small. Starting from `T` instead, a crossing near the antitransit would need a first step of nearly 180° of hour angle, and the transit's residual hour angle, however small, could make `normalize180` send that step half a day the wrong way. The clamp in `H0` only matters while the iterate is far from the crossing.
 
-`cos φ` is never exactly zero in floating point, so the poles need no special case: there `c` is very large and the tests report the right reason. When `c(T)` is within about 1e-4 of 1, or `c(A)` within about 1e-4 of -1, the Sun only just reaches `h*`, and implementations can decide either way; the vectors avoid such days.
+The iteration assumes that the hour angle carries the Sun across `h*`. Near a pole, and when an event comes within seconds of the transit or the antitransit at the edge of polar night or day, the changing declination carries it instead. The iteration can then swing between two instants without settling, or settle on a neighboring day's transit, so step 3 bisects, which needs nothing but the two ends. A scan of 2026 at every whole degree of latitude, at three longitudes, found no need for it below 68°. From 68° to 89°, it was needed for one to six Asr times a year, on the days next to polar night when Asr comes within seconds of the transit, and from 83° for at most two other events a year. Within a tenth of a degree of a pole, it was needed for one or two dozen.
+
+`cos φ` is never exactly zero in floating point, so the poles need no special case: there `c` is very large, the tests report the right reason, and bisection finds the crossings that occur. At a pole the hour angle means nothing and a solar day is only a convention. Once a year the Sun's first rise above `h*` (or its last fall below it) can come after the transit while the declination climbs (or before it while the declination falls). That moment is then in neither half of any solar day, so neither day reports it: one day says `NOT(sunStaysBelow)` and the next `NOT(sunStaysAbove)`. This happens only within about 0.1° of a pole.
+
+When `c(T)` is within about 1e-4 of 1, or `c(A)` within about 1e-4 of -1, the Sun only just reaches `h*`, and implementations can decide either way; the vectors avoid such days.
 
 ## 7. Astronomical events
 
