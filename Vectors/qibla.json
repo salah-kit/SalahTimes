@@ -364,6 +364,21 @@
       "toleranceDegrees": 1e-06
     },
     {
+      "id": "qibla-antipode-3e-7-north",
+      "description": "The Qibla from 3e-7° (about 3 cm, 5.2e-9 rad) north of the antipode, beyond the 1e-9 rad threshold. The exact bearing is 0°; the formula in floating point gives about 1.2e-6°, so the tolerance is 1e-5°.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -21.4225238,
+          "longitude": -140.1738182
+        }
+      },
+      "expected": {
+        "bearing": 1.248e-06
+      },
+      "toleranceDegrees": 1e-05
+    },
+    {
       "id": "qibla-north-pole",
       "description": "The Qibla from the North Pole (longitude 0).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
@@ -445,6 +460,21 @@
       "input": {
         "coordinates": {
           "latitude": -21.4225241,
+          "longitude": -140.1738182
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-antipode-1e-11",
+      "description": "No Qibla at 1e-11° from the Kaaba's antipode, within the 1e-9 rad threshold.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -21.42252409999,
           "longitude": -140.1738182
         }
       },

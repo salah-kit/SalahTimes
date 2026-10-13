@@ -1008,6 +1008,86 @@
       "toleranceSeconds": 1
     },
     {
+      "id": "custom-maghrib-4-interval-60-london-2026-01-20",
+      "description": "Custom parameters (maghrib-4-interval-60) at London on 2026-01-20.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-01-20",
+        "timeZone": "Europe/London",
+        "coordinates": {
+          "latitude": 51.5074,
+          "longitude": -0.1278
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": {
+            "angle": 4
+          },
+          "isha": {
+            "minutesAfterMaghrib": 60
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-01-20T05:55:48Z",
+        "sunrise": "2026-01-20T07:54:39Z",
+        "dhuhr": "2026-01-20T12:11:32Z",
+        "asr": "2026-01-20T14:08:07Z",
+        "sunset": "2026-01-20T16:28:54Z",
+        "maghrib": "2026-01-20T16:52:24Z",
+        "isha": "2026-01-20T17:52:24Z",
+        "middleOfTheNight": "2026-01-20T23:11:57Z",
+        "lastThirdOfTheNight": "2026-01-21T01:26:18Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-maghrib-4-interval-60-london-2026-07-20",
+      "description": "Custom parameters (maghrib-4-interval-60) at London on 2026-07-20. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-07-20",
+        "timeZone": "Europe/London",
+        "coordinates": {
+          "latitude": 51.5074,
+          "longitude": -0.1278
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": {
+            "angle": 4
+          },
+          "isha": {
+            "minutesAfterMaghrib": 60
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-07-20T02:58:33Z",
+        "sunrise": "2026-07-20T04:07:07Z",
+        "dhuhr": "2026-07-20T12:06:55Z",
+        "asr": "2026-07-20T16:22:58Z",
+        "sunset": "2026-07-20T20:05:53Z",
+        "maghrib": "2026-07-20T20:31:45Z",
+        "isha": "2026-07-20T21:31:45Z",
+        "middleOfTheNight": "2026-07-20T23:32:42Z",
+        "lastThirdOfTheNight": "2026-07-21T00:41:38Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
       "id": "custom-maghrib-4-interval-60-sydney-2026-01-20",
       "description": "Custom parameters (maghrib-4-interval-60) at Sydney on 2026-01-20.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
@@ -2371,15 +2451,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-01T05:13:04Z",
+        "fajr": "2026-02-01T05:48:51Z",
         "sunrise": "2026-02-01T07:30:26Z",
         "dhuhr": "2026-02-01T11:30:33Z",
         "asr": "2026-02-01T13:06:22Z",
         "sunset": "2026-02-01T15:31:30Z",
         "maghrib": "2026-02-01T15:31:30Z",
-        "isha": "2026-02-01T17:48:09Z",
-        "middleOfTheNight": "2026-02-01T22:21:28Z",
-        "lastThirdOfTheNight": "2026-02-02T00:38:07Z"
+        "isha": "2026-02-01T17:02:33Z",
+        "middleOfTheNight": "2026-02-01T22:39:03Z",
+        "lastThirdOfTheNight": "2026-02-02T01:01:34Z"
       },
       "toleranceSeconds": 1
     },
@@ -2413,7 +2493,7 @@
         "asr": "2026-05-01T15:24:58Z",
         "sunset": "2026-05-01T19:14:19Z",
         "maghrib": "2026-05-01T19:14:19Z",
-        "isha": "2026-05-01T20:22:41Z",
+        "isha": "2026-05-01T20:20:53Z",
         "middleOfTheNight": "2026-05-01T22:39:26Z",
         "lastThirdOfTheNight": "2026-05-01T23:47:48Z"
       },
@@ -2479,15 +2559,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-01T04:27:59Z",
+        "fajr": "2026-11-01T04:58:02Z",
         "sunrise": "2026-11-01T06:38:37Z",
         "dhuhr": "2026-11-01T11:00:35Z",
         "asr": "2026-11-01T12:50:53Z",
         "sunset": "2026-11-01T15:21:36Z",
         "maghrib": "2026-11-01T15:21:36Z",
-        "isha": "2026-11-01T17:32:58Z",
-        "middleOfTheNight": "2026-11-01T21:55:42Z",
-        "lastThirdOfTheNight": "2026-11-02T00:07:04Z"
+        "isha": "2026-11-01T16:50:07Z",
+        "middleOfTheNight": "2026-11-01T22:11:02Z",
+        "lastThirdOfTheNight": "2026-11-02T00:27:31Z"
       },
       "toleranceSeconds": 1
     },
@@ -3235,15 +3315,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-01T05:13:04Z",
+        "fajr": "2026-02-01T05:48:51Z",
         "sunrise": "2026-02-01T07:30:26Z",
         "dhuhr": "2026-02-01T11:30:33Z",
         "asr": "2026-02-01T13:35:55Z",
         "sunset": "2026-02-01T15:31:30Z",
         "maghrib": "2026-02-01T15:31:30Z",
-        "isha": "2026-02-01T17:48:09Z",
-        "middleOfTheNight": "2026-02-01T22:21:28Z",
-        "lastThirdOfTheNight": "2026-02-02T00:38:07Z"
+        "isha": "2026-02-01T17:02:33Z",
+        "middleOfTheNight": "2026-02-01T22:39:03Z",
+        "lastThirdOfTheNight": "2026-02-02T01:01:34Z"
       },
       "toleranceSeconds": 1
     },
@@ -3277,7 +3357,7 @@
         "asr": "2026-05-01T16:31:17Z",
         "sunset": "2026-05-01T19:14:19Z",
         "maghrib": "2026-05-01T19:14:19Z",
-        "isha": "2026-05-01T20:22:41Z",
+        "isha": "2026-05-01T20:20:53Z",
         "middleOfTheNight": "2026-05-01T22:39:26Z",
         "lastThirdOfTheNight": "2026-05-01T23:47:48Z"
       },
@@ -3343,15 +3423,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-01T04:27:59Z",
+        "fajr": "2026-11-01T04:58:02Z",
         "sunrise": "2026-11-01T06:38:37Z",
         "dhuhr": "2026-11-01T11:00:35Z",
         "asr": "2026-11-01T13:23:53Z",
         "sunset": "2026-11-01T15:21:36Z",
         "maghrib": "2026-11-01T15:21:36Z",
-        "isha": "2026-11-01T17:32:58Z",
-        "middleOfTheNight": "2026-11-01T21:55:42Z",
-        "lastThirdOfTheNight": "2026-11-02T00:07:04Z"
+        "isha": "2026-11-01T16:50:07Z",
+        "middleOfTheNight": "2026-11-01T22:11:02Z",
+        "lastThirdOfTheNight": "2026-11-02T00:27:31Z"
       },
       "toleranceSeconds": 1
     },
@@ -4099,15 +4179,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-01T05:13:04Z",
+        "fajr": "2026-02-01T05:48:51Z",
         "sunrise": "2026-02-01T07:30:26Z",
         "dhuhr": "2026-02-01T11:30:33Z",
         "asr": "2026-02-01T13:06:22Z",
         "sunset": "2026-02-01T15:31:30Z",
         "maghrib": "2026-02-01T15:31:30Z",
-        "isha": "2026-02-01T17:48:09Z",
-        "middleOfTheNight": "2026-02-01T22:21:28Z",
-        "lastThirdOfTheNight": "2026-02-02T00:38:07Z"
+        "isha": "2026-02-01T16:40:06Z",
+        "middleOfTheNight": "2026-02-01T22:39:03Z",
+        "lastThirdOfTheNight": "2026-02-02T01:01:34Z"
       },
       "toleranceSeconds": 1
     },
@@ -4141,7 +4221,7 @@
         "asr": "2026-05-01T15:24:58Z",
         "sunset": "2026-05-01T19:14:19Z",
         "maghrib": "2026-05-01T19:14:19Z",
-        "isha": "2026-05-01T20:22:41Z",
+        "isha": "2026-05-01T20:20:09Z",
         "middleOfTheNight": "2026-05-01T22:39:26Z",
         "lastThirdOfTheNight": "2026-05-01T23:47:48Z"
       },
@@ -4207,15 +4287,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-01T04:27:59Z",
+        "fajr": "2026-11-01T04:58:02Z",
         "sunrise": "2026-11-01T06:38:37Z",
         "dhuhr": "2026-11-01T11:00:35Z",
         "asr": "2026-11-01T12:50:53Z",
         "sunset": "2026-11-01T15:21:36Z",
         "maghrib": "2026-11-01T15:21:36Z",
-        "isha": "2026-11-01T17:32:58Z",
-        "middleOfTheNight": "2026-11-01T21:55:42Z",
-        "lastThirdOfTheNight": "2026-11-02T00:07:04Z"
+        "isha": "2026-11-01T16:27:34Z",
+        "middleOfTheNight": "2026-11-01T22:11:02Z",
+        "lastThirdOfTheNight": "2026-11-02T00:27:31Z"
       },
       "toleranceSeconds": 1
     },
@@ -4963,15 +5043,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-01T05:13:04Z",
+        "fajr": "2026-02-01T05:48:51Z",
         "sunrise": "2026-02-01T07:30:26Z",
         "dhuhr": "2026-02-01T11:30:33Z",
         "asr": "2026-02-01T13:35:55Z",
         "sunset": "2026-02-01T15:31:30Z",
         "maghrib": "2026-02-01T15:31:30Z",
-        "isha": "2026-02-01T17:48:09Z",
-        "middleOfTheNight": "2026-02-01T22:21:28Z",
-        "lastThirdOfTheNight": "2026-02-02T00:38:07Z"
+        "isha": "2026-02-01T16:40:06Z",
+        "middleOfTheNight": "2026-02-01T22:39:03Z",
+        "lastThirdOfTheNight": "2026-02-02T01:01:34Z"
       },
       "toleranceSeconds": 1
     },
@@ -5005,7 +5085,7 @@
         "asr": "2026-05-01T16:31:17Z",
         "sunset": "2026-05-01T19:14:19Z",
         "maghrib": "2026-05-01T19:14:19Z",
-        "isha": "2026-05-01T20:22:41Z",
+        "isha": "2026-05-01T20:20:09Z",
         "middleOfTheNight": "2026-05-01T22:39:26Z",
         "lastThirdOfTheNight": "2026-05-01T23:47:48Z"
       },
@@ -5071,15 +5151,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-01T04:27:59Z",
+        "fajr": "2026-11-01T04:58:02Z",
         "sunrise": "2026-11-01T06:38:37Z",
         "dhuhr": "2026-11-01T11:00:35Z",
         "asr": "2026-11-01T13:23:53Z",
         "sunset": "2026-11-01T15:21:36Z",
         "maghrib": "2026-11-01T15:21:36Z",
-        "isha": "2026-11-01T17:32:58Z",
-        "middleOfTheNight": "2026-11-01T21:55:42Z",
-        "lastThirdOfTheNight": "2026-11-02T00:07:04Z"
+        "isha": "2026-11-01T16:27:34Z",
+        "middleOfTheNight": "2026-11-01T22:11:02Z",
+        "lastThirdOfTheNight": "2026-11-02T00:27:31Z"
       },
       "toleranceSeconds": 1
     },
@@ -5827,15 +5907,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-01T05:13:04Z",
+        "fajr": "2026-02-01T05:48:51Z",
         "sunrise": "2026-02-01T07:30:26Z",
         "dhuhr": "2026-02-01T11:30:33Z",
         "asr": "2026-02-01T13:06:22Z",
         "sunset": "2026-02-01T15:31:30Z",
         "maghrib": "2026-02-01T15:31:30Z",
-        "isha": "2026-02-01T17:48:09Z",
-        "middleOfTheNight": "2026-02-01T22:21:28Z",
-        "lastThirdOfTheNight": "2026-02-02T00:38:07Z"
+        "isha": "2026-02-01T17:05:07Z",
+        "middleOfTheNight": "2026-02-01T22:39:03Z",
+        "lastThirdOfTheNight": "2026-02-02T01:01:34Z"
       },
       "toleranceSeconds": 1
     },
@@ -5935,15 +6015,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-01T04:27:59Z",
+        "fajr": "2026-11-01T04:58:02Z",
         "sunrise": "2026-11-01T06:38:37Z",
         "dhuhr": "2026-11-01T11:00:35Z",
         "asr": "2026-11-01T12:50:53Z",
         "sunset": "2026-11-01T15:21:36Z",
         "maghrib": "2026-11-01T15:21:36Z",
-        "isha": "2026-11-01T17:32:58Z",
-        "middleOfTheNight": "2026-11-01T21:55:42Z",
-        "lastThirdOfTheNight": "2026-11-02T00:07:04Z"
+        "isha": "2026-11-01T16:53:14Z",
+        "middleOfTheNight": "2026-11-01T22:11:02Z",
+        "lastThirdOfTheNight": "2026-11-02T00:27:31Z"
       },
       "toleranceSeconds": 1
     },
@@ -6691,15 +6771,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-01T05:13:04Z",
+        "fajr": "2026-02-01T05:48:51Z",
         "sunrise": "2026-02-01T07:30:26Z",
         "dhuhr": "2026-02-01T11:30:33Z",
         "asr": "2026-02-01T13:35:55Z",
         "sunset": "2026-02-01T15:31:30Z",
         "maghrib": "2026-02-01T15:31:30Z",
-        "isha": "2026-02-01T17:48:09Z",
-        "middleOfTheNight": "2026-02-01T22:21:28Z",
-        "lastThirdOfTheNight": "2026-02-02T00:38:07Z"
+        "isha": "2026-02-01T17:05:07Z",
+        "middleOfTheNight": "2026-02-01T22:39:03Z",
+        "lastThirdOfTheNight": "2026-02-02T01:01:34Z"
       },
       "toleranceSeconds": 1
     },
@@ -6799,15 +6879,15 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-01T04:27:59Z",
+        "fajr": "2026-11-01T04:58:02Z",
         "sunrise": "2026-11-01T06:38:37Z",
         "dhuhr": "2026-11-01T11:00:35Z",
         "asr": "2026-11-01T13:23:53Z",
         "sunset": "2026-11-01T15:21:36Z",
         "maghrib": "2026-11-01T15:21:36Z",
-        "isha": "2026-11-01T17:32:58Z",
-        "middleOfTheNight": "2026-11-01T21:55:42Z",
-        "lastThirdOfTheNight": "2026-11-02T00:07:04Z"
+        "isha": "2026-11-01T16:53:14Z",
+        "middleOfTheNight": "2026-11-01T22:11:02Z",
+        "lastThirdOfTheNight": "2026-11-02T00:27:31Z"
       },
       "toleranceSeconds": 1
     },
@@ -6952,6 +7032,546 @@
         "isha": "2026-11-02T01:39:34Z",
         "middleOfTheNight": "2026-11-02T03:23:00Z",
         "lastThirdOfTheNight": "2026-11-02T04:33:51Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-maghrib-angle-unreached-interval-tromso-2026-07-30",
+      "description": "Maghrib at 4.5° and Isha 90 minutes after it, with no high-latitude bound, at Tromsø on 2026-07-30: the Sun sets but never reaches -4.5°, so Maghrib doesn't occur, and Isha takes Maghrib's reason. Doesn't occur: fajr (sunStaysAbove), maghrib (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-07-30",
+        "timeZone": "Europe/Oslo",
+        "coordinates": {
+          "latitude": 69.65,
+          "longitude": 18.96
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 17.7
+          },
+          "maghrib": {
+            "angle": 4.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-07-30T00:04:13Z",
+        "dhuhr": "2026-07-30T10:50:38Z",
+        "asr": "2026-07-30T15:31:53Z",
+        "sunset": "2026-07-30T21:29:11Z",
+        "maghrib": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-maghrib-angle-bounded-interval-tromso-2026-07-30",
+      "description": "The same angles with the recommended rule at Tromsø on 2026-07-30: Maghrib is bounded by the night's first seventh, and Isha is 90 minutes after that. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-07-31 01:22.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-07-30",
+        "timeZone": "Europe/Oslo",
+        "coordinates": {
+          "latitude": 69.65,
+          "longitude": 18.96
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 17.7
+          },
+          "maghrib": {
+            "angle": 4.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-07-29T23:43:20Z",
+        "sunrise": "2026-07-30T00:04:13Z",
+        "dhuhr": "2026-07-30T10:50:38Z",
+        "asr": "2026-07-30T15:31:53Z",
+        "sunset": "2026-07-30T21:29:11Z",
+        "maghrib": "2026-07-30T21:52:35Z",
+        "isha": "2026-07-30T23:22:35Z",
+        "middleOfTheNight": "2026-07-30T22:39:24Z",
+        "lastThirdOfTheNight": "2026-07-30T23:02:48Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-maghrib-angle-unreached-interval-tromso-2026-08-03",
+      "description": "Maghrib at 4.5° and Isha 90 minutes after it, with no high-latitude bound, at Tromsø on 2026-08-03: the Sun sets but never reaches -4.5°, so Maghrib doesn't occur, and Isha takes Maghrib's reason. Doesn't occur: fajr (sunStaysAbove), maghrib (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-08-03",
+        "timeZone": "Europe/Oslo",
+        "coordinates": {
+          "latitude": 69.65,
+          "longitude": 18.96
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 17.7
+          },
+          "maghrib": {
+            "angle": 4.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-08-03T00:35:47Z",
+        "dhuhr": "2026-08-03T10:50:23Z",
+        "asr": "2026-08-03T15:25:30Z",
+        "sunset": "2026-08-03T20:59:09Z",
+        "maghrib": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-maghrib-angle-bounded-interval-tromso-2026-08-03",
+      "description": "The same angles with the recommended rule at Tromsø on 2026-08-03: Maghrib is bounded by the night's first seventh, and Isha is 90 minutes after that. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-08-04 01:01.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-08-03",
+        "timeZone": "Europe/Oslo",
+        "coordinates": {
+          "latitude": 69.65,
+          "longitude": 18.96
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 17.7
+          },
+          "maghrib": {
+            "angle": 4.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-08-03T00:05:49Z",
+        "sunrise": "2026-08-03T00:35:47Z",
+        "dhuhr": "2026-08-03T10:50:23Z",
+        "asr": "2026-08-03T15:25:30Z",
+        "sunset": "2026-08-03T20:59:09Z",
+        "maghrib": "2026-08-03T21:31:04Z",
+        "isha": "2026-08-03T23:01:04Z",
+        "middleOfTheNight": "2026-08-03T22:34:54Z",
+        "lastThirdOfTheNight": "2026-08-03T23:06:49Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-general-lat-55-north-2026-06-21",
+      "description": "The Moonsighting Committee's rules with the general shafaq at 55°N, 12°E on 2026-06-21: the night's seventh decides both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-06-21",
+        "timeZone": "Europe/Copenhagen",
+        "coordinates": {
+          "latitude": 55.0,
+          "longitude": 12.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "general"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-06-21T01:35:44Z",
+        "sunrise": "2026-06-21T02:32:33Z",
+        "dhuhr": "2026-06-21T11:13:49Z",
+        "asr": "2026-06-21T15:44:09Z",
+        "sunset": "2026-06-21T19:55:06Z",
+        "maghrib": "2026-06-21T19:55:06Z",
+        "isha": "2026-06-21T20:51:54Z",
+        "middleOfTheNight": "2026-06-21T22:45:32Z",
+        "lastThirdOfTheNight": "2026-06-21T23:42:21Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-abyad-lat-55-north-2026-06-21",
+      "description": "The Moonsighting Committee's rules with the abyad shafaq at 55°N, 12°E on 2026-06-21: the night's seventh decides both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-06-21",
+        "timeZone": "Europe/Copenhagen",
+        "coordinates": {
+          "latitude": 55.0,
+          "longitude": 12.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "abyad"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-06-21T01:35:44Z",
+        "sunrise": "2026-06-21T02:32:33Z",
+        "dhuhr": "2026-06-21T11:13:49Z",
+        "asr": "2026-06-21T15:44:09Z",
+        "sunset": "2026-06-21T19:55:06Z",
+        "maghrib": "2026-06-21T19:55:06Z",
+        "isha": "2026-06-21T20:51:54Z",
+        "middleOfTheNight": "2026-06-21T22:45:32Z",
+        "lastThirdOfTheNight": "2026-06-21T23:42:21Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-general-lat-54.99-north-2026-06-21",
+      "description": "The Moonsighting Committee's rules with the general shafaq at 54.99°N, 12°E on 2026-06-21: the seasonal bounds decide both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-06-21",
+        "timeZone": "Europe/Copenhagen",
+        "coordinates": {
+          "latitude": 54.99,
+          "longitude": 12.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "general"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-06-21T00:29:52Z",
+        "sunrise": "2026-06-21T02:32:37Z",
+        "dhuhr": "2026-06-21T11:13:49Z",
+        "asr": "2026-06-21T15:44:07Z",
+        "sunset": "2026-06-21T19:55:01Z",
+        "maghrib": "2026-06-21T19:55:01Z",
+        "isha": "2026-06-21T21:15:50Z",
+        "middleOfTheNight": "2026-06-21T22:12:24Z",
+        "lastThirdOfTheNight": "2026-06-21T22:58:11Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-abyad-lat-54.99-north-2026-06-21",
+      "description": "The Moonsighting Committee's rules with the abyad shafaq at 54.99°N, 12°E on 2026-06-21: the seasonal bounds decide both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-06-22 00:30.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-06-21",
+        "timeZone": "Europe/Copenhagen",
+        "coordinates": {
+          "latitude": 54.99,
+          "longitude": 12.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "abyad"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-06-21T00:29:52Z",
+        "sunrise": "2026-06-21T02:32:37Z",
+        "dhuhr": "2026-06-21T11:13:49Z",
+        "asr": "2026-06-21T15:44:07Z",
+        "sunset": "2026-06-21T19:55:01Z",
+        "maghrib": "2026-06-21T19:55:01Z",
+        "isha": "2026-06-21T22:30:52Z",
+        "middleOfTheNight": "2026-06-21T22:12:24Z",
+        "lastThirdOfTheNight": "2026-06-21T22:58:11Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-general-lat-55-south-2026-12-21",
+      "description": "The Moonsighting Committee's rules with the general shafaq at 55°S, 67°W on 2026-12-21: the night's seventh decides both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-12-21",
+        "timeZone": "America/Argentina/Ushuaia",
+        "coordinates": {
+          "latitude": -55.0,
+          "longitude": -67.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "general"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-12-21T06:47:58Z",
+        "sunrise": "2026-12-21T07:44:48Z",
+        "dhuhr": "2026-12-21T16:26:10Z",
+        "asr": "2026-12-21T20:56:32Z",
+        "sunset": "2026-12-22T01:07:32Z",
+        "maghrib": "2026-12-22T01:07:32Z",
+        "isha": "2026-12-22T02:04:21Z",
+        "middleOfTheNight": "2026-12-22T03:58:00Z",
+        "lastThirdOfTheNight": "2026-12-22T04:54:50Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-abyad-lat-55-south-2026-12-21",
+      "description": "The Moonsighting Committee's rules with the abyad shafaq at 55°S, 67°W on 2026-12-21: the night's seventh decides both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-12-21",
+        "timeZone": "America/Argentina/Ushuaia",
+        "coordinates": {
+          "latitude": -55.0,
+          "longitude": -67.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "abyad"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-12-21T06:47:58Z",
+        "sunrise": "2026-12-21T07:44:48Z",
+        "dhuhr": "2026-12-21T16:26:10Z",
+        "asr": "2026-12-21T20:56:32Z",
+        "sunset": "2026-12-22T01:07:32Z",
+        "maghrib": "2026-12-22T01:07:32Z",
+        "isha": "2026-12-22T02:04:21Z",
+        "middleOfTheNight": "2026-12-22T03:58:00Z",
+        "lastThirdOfTheNight": "2026-12-22T04:54:50Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-general-lat-54.99-south-2026-12-21",
+      "description": "The Moonsighting Committee's rules with the general shafaq at 54.99°S, 67°W on 2026-12-21: the seasonal bounds decide both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-12-21",
+        "timeZone": "America/Argentina/Ushuaia",
+        "coordinates": {
+          "latitude": -54.99,
+          "longitude": -67.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "general"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-12-21T05:41:47Z",
+        "sunrise": "2026-12-21T07:44:52Z",
+        "dhuhr": "2026-12-21T16:26:10Z",
+        "asr": "2026-12-21T20:56:31Z",
+        "sunset": "2026-12-22T01:07:28Z",
+        "maghrib": "2026-12-22T01:07:28Z",
+        "isha": "2026-12-22T02:28:36Z",
+        "middleOfTheNight": "2026-12-22T03:25:02Z",
+        "lastThirdOfTheNight": "2026-12-22T04:10:54Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-abyad-lat-54.99-south-2026-12-21",
+      "description": "The Moonsighting Committee's rules with the abyad shafaq at 54.99°S, 67°W on 2026-12-21: the seasonal bounds decide both Fajr and Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-12-22 00:44.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-12-21",
+        "timeZone": "America/Argentina/Ushuaia",
+        "coordinates": {
+          "latitude": -54.99,
+          "longitude": -67.0
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "abyad"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-12-21T05:41:47Z",
+        "sunrise": "2026-12-21T07:44:52Z",
+        "dhuhr": "2026-12-21T16:26:10Z",
+        "asr": "2026-12-21T20:56:31Z",
+        "sunset": "2026-12-22T01:07:28Z",
+        "maghrib": "2026-12-22T01:07:28Z",
+        "isha": "2026-12-22T03:44:17Z",
+        "middleOfTheNight": "2026-12-22T03:25:02Z",
+        "lastThirdOfTheNight": "2026-12-22T04:10:54Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-general-oslo-2026-12-21",
+      "description": "The Moonsighting Committee's rules with the general shafaq at Oslo on 2026-12-21: the seasonal bounds decide both Fajr and Isha. Fajr is bounded (the angle alone gives 2026-12-21 06:32 local). Isha is bounded (the angle alone gives 2026-12-21 17:57 local).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-12-21",
+        "timeZone": "Europe/Oslo",
+        "coordinates": {
+          "latitude": 59.9139,
+          "longitude": 10.7522
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "general"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-12-21T06:31:53Z",
+        "sunrise": "2026-12-21T08:18:05Z",
+        "dhuhr": "2026-12-21T11:15:03Z",
+        "asr": "2026-12-21T12:07:25Z",
+        "sunset": "2026-12-21T14:12:00Z",
+        "maghrib": "2026-12-21T14:12:00Z",
+        "isha": "2026-12-21T15:54:53Z",
+        "middleOfTheNight": "2026-12-21T22:22:14Z",
+        "lastThirdOfTheNight": "2026-12-22T01:05:39Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "custom-moonsighting-threshold-abyad-oslo-2026-12-21",
+      "description": "The Moonsighting Committee's rules with the abyad shafaq at Oslo on 2026-12-21: the seasonal bounds decide both Fajr and Isha. Fajr is bounded (the angle alone gives 2026-12-21 06:32 local). Isha is bounded (the angle alone gives 2026-12-21 17:57 local).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-12-21",
+        "timeZone": "Europe/Oslo",
+        "coordinates": {
+          "latitude": 59.9139,
+          "longitude": 10.7522
+        },
+        "parameters": {
+          "fajr": "moonsightingCommittee",
+          "maghrib": "sunset",
+          "isha": {
+            "moonsightingCommittee": "abyad"
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-12-21T06:31:53Z",
+        "sunrise": "2026-12-21T08:18:05Z",
+        "dhuhr": "2026-12-21T11:15:03Z",
+        "asr": "2026-12-21T12:07:25Z",
+        "sunset": "2026-12-21T14:12:00Z",
+        "maghrib": "2026-12-21T14:12:00Z",
+        "isha": "2026-12-21T15:54:53Z",
+        "middleOfTheNight": "2026-12-21T22:22:14Z",
+        "lastThirdOfTheNight": "2026-12-22T01:05:39Z"
       },
       "toleranceSeconds": 1
     },

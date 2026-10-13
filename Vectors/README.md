@@ -111,7 +111,7 @@ An event can fall on a neighboring civil day and still belong to `date`: Isha af
 
 `toleranceSeconds` is 1. An instant passes when it's within that many seconds of the expected one, and a non-occurrence passes when the reason matches. The reference's value is rounded to the nearest second before it's written, so a correct engine's value lies within 0.5 s plus floating-point noise. With `rounding` `nearest` or `up`, the expected values are whole minutes.
 
-Most prayer-time vectors (743 of the 786 outside `times/methods.json`) use `"rounding": "none"`, so they check the astronomy to the second.
+Most prayer-time vectors (928 of 1139) use `"rounding": "none"`, so they check the astronomy to the second. In `times/methods.json`, each day appears twice: unrounded (overriding the preset's `rounding`) and exactly as published.
 
 ### Qibla (`kind: qibla`)
 
@@ -124,7 +124,7 @@ Most prayer-time vectors (743 of the 786 outside `times/methods.json`) use `"rou
 }
 ```
 
-`bearing` is degrees clockwise from true north, in [0, 360), or `null` when there's no direction (the Kaaba itself, its antipode, invalid coordinates). Compare on the circle: 359.9999999° and 0° are 1e-7° apart. `qibla-antipode-north` expects 0°, where an engine can return a value just below 360°.
+`bearing` is degrees clockwise from true north, in [0, 360), or `null` when there's no direction (the Kaaba itself, its antipode, invalid coordinates). Compare on the circle: 359.9999999° and 0° are 1e-7° apart. `qibla-antipode-north` expects 0°, where an engine can return a value just below 360°. `qibla-antipode-3e-7-north`, a few centimetres from the antipode, has a wider tolerance (1e-5°) because rounding in the formula leaves about 1e-6° there.
 
 ### Errors (`kind: calculationErrors`)
 
@@ -156,8 +156,12 @@ Every expected value comes from the reference implementation. It follows `docs/a
 
 The reference was checked against outside sources before its values were trusted. Run on 2026-10-13:
 
-- **NOAA's solar calculator.** [`reference/crosscheck_noaa.py`](reference/crosscheck_noaa.py) runs the calculation functions of NOAA's Solar Calculator (`https://gml.noaa.gov/grad/solcalc/main.js`) in Node.js for every unrounded vector below 65° of latitude. Largest differences: sunrise 3.4 s (594 compared), sunset 3.7 s (603), transit 3.6 s (594). NOAA's code ignores ΔT and computes the transit from its equation of time, which explains the few seconds. (The USNO API, `aa.usno.navy.mil/api/rstt/oneday`, reset every connection from the machine that generated these files, so it wasn't used.)
-- **adhan-swift's test data.** adhan-swift (MIT) ships official timetables for eight places as local, minute-rounded times. [`reference/crosscheck_adhan.py`](reference/crosscheck_adhan.py) runs the reference with the matching SalahTimes presets: 2565 of 2772 times agree within one minute, and every other time differs by exactly 2 minutes: 2 of 144 at Ankara (Diyanet, Isha), 2 of 72 at Kuwait City (Fajr and sunrise on one day), and 203 of 2196 at Singapore, where MUIS's published times run one to two minutes later than the plain 20°/18° computation (Dhuhr is always 1 to 2 minutes later, the others are 0 to 1 minute later). That is MUIS adding precautionary minutes, which the method presets, not the algorithm, decide.
+- **NOAA's solar calculator.** [`reference/crosscheck_noaa.py`](reference/crosscheck_noaa.py) runs the calculation functions of NOAA's Solar Calculator (`https://gml.noaa.gov/grad/solcalc/main.js`) in Node.js for every unrounded vector below 65° of latitude. Largest differences: sunrise 3.4 s (607 compared), sunset 3.7 s (616), transit 3.6 s (607). NOAA's code ignores ΔT and computes the transit from its equation of time, which explains the few seconds. (The USNO API, `aa.usno.navy.mil/api/rstt/oneday`, reset every connection from the machine that generated these files, so it wasn't used.)
+- **adhan-swift's test data.** adhan-swift (MIT) ships official timetables for eight places as local, minute-rounded times. [`reference/crosscheck_adhan.py`](reference/crosscheck_adhan.py) runs the reference with the matching presets of `methods.json`. Doha (Qatar), London (Moonsighting Committee), Makkah (Umm al-Qura) and Tehran agree within one minute everywhere. Ankara (Diyanet) and Kuwait City have two times each that differ by 2 minutes. The rest are differences of preset, not of algorithm:
+  - Singapore (MUIS, 2196 times, 1993 within a minute): the published times run 0 to 2 minutes later than the plain 20°/18° calculation, and Dhuhr is always 1 to 2 minutes later, which suggests precautionary minutes the `muis` preset doesn't add.
+  - Dubai (the 2016 Awqaf table, 72 times, 24 within a minute): sunrise is 2 to 4 minutes earlier in the table, and Dhuhr, Asr and Maghrib 2 to 4 minutes later, consistent with the -3/+3/+3/+3 precautionary minutes that the `dubai` preset in `methods.json` doesn't carry. Fajr and Isha agree.
+
+  In total 2517 of 2772 times agree within one minute.
 - **Published Qibla bearings.** timesprayer.com's bearings for Auckland, Cairo, Cape Town, Istanbul, Jakarta, Karachi, London, Los Angeles, New York, Tokyo and Toronto, at the coordinates those pages use, agree with the reference within 0.005°, the pages' rounding. Each Qibla vector's `source` cites its page.
 
 ## Fragility
@@ -169,7 +173,7 @@ A vector is fragile when a correct engine could reasonably compute a different e
 3. **Convergence.** Every transit and crossing iteration converges within its 20 steps.
 4. **Minute rounding.** With `nearest`, no event's unrounded time is within 2 seconds of a half minute; with `up`, none is within 2 seconds of a whole minute.
 
-A case marked `move` (most minute-rounded vectors) moves to the next day that isn't fragile, and its description says so. Any other fragile case stops the generator with an error, so whoever edits the cases picks another day. A fragile preset-as-published vector in `times/methods.json` is skipped, and the generator prints it; its unrounded twin is always written.
+A case marked `move` (most minute-rounded vectors) moves to the next day that isn't fragile, and its description says so. Any other fragile case stops the generator with an error, so whoever edits the cases picks another day. The preset-as-published vectors in `times/methods.json` move this way too; their unrounded twins stay on the equinoxes and solstices.
 
 ## Implementing another engine
 
@@ -183,9 +187,11 @@ A case marked `move` (most minute-rounded vectors) moves to the next day that is
 
 `Tests/SalahTimesTests/VectorTests.swift` is the Swift runner, and a working example of each step.
 
-## Readings of the specification
+## Settled readings
 
-Where `docs/algorithm.md` could be read two ways, the vectors avoid the cases that depend on the reading:
+Some vectors pin down cases where an earlier draft of `docs/algorithm.md` could be read two ways:
 
-- Isha by interval after an angle-based Maghrib that doesn't occur while sunset does (section 8.4 says Isha takes Maghrib's reason; section 9 says sunset's). No vector combines an unreachable Maghrib angle with an interval Isha.
-- When both `methodAdjustments` and `adjustments` stay within ±1440 but their sum doesn't, section 2 doesn't say whether that fails. No vector does it.
+- **Isha by interval after an unreached Maghrib angle.** Isha takes Maghrib's reason (sections 8.4 and 9). `custom-maghrib-angle-unreached-interval-tromso-*` has a Sun that sets but never reaches -4.5°, so Maghrib and Isha are both `sunStaysAbove` while sunset occurs.
+- **Adjustments.** `methodAdjustments` and `adjustments` are each checked against ±1440 minutes, and their sum isn't checked (section 2). `adjust-sum-beyond-limit-makkah-2026-04-10` moves Fajr and Isha by 2000 minutes.
+- **The Moonsighting Committee's rule.** The seasonal bound applies wherever sunrise or sunset occurs, and from 55° (inclusive) the night's seventh is a further bound; Fajr is the latest of the 18° time and the bounds, and Isha the earliest (sections 8.2 and 8.4). `custom-moonsighting-threshold-*` covers 55.0°, -55.0° and ±54.99° in summer, where the seventh decides at 55° and the seasonal bound just inside it, and Oslo in winter, beyond 55°, where the seasonal bound decides.
+- **The Qibla near the antipode.** The central angle comes from unit vectors (section 10). `qibla-antipode-3e-7-north`, 5.2e-9 radians from the antipode, has a bearing; `qibla-none-antipode-1e-11`, inside the 1e-9 radian threshold, doesn't.

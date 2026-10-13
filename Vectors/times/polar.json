@@ -543,7 +543,7 @@
     },
     {
       "id": "polar-moonsighting-tromso-2026-05-17",
-      "description": "The Moonsighting Committee's rules at Tromsø on 2026-05-17. Doesn't occur: isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). Fajr's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "description": "The Moonsighting Committee's rules at Tromsø on 2026-05-17. Doesn't occur: middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-05-18 01:36.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-05-17",
@@ -571,9 +571,7 @@
         "asr": "2026-05-17T15:28:30Z",
         "sunset": "2026-05-17T22:29:22Z",
         "maghrib": "2026-05-17T22:29:22Z",
-        "isha": {
-          "doesNotOccur": "sunStaysAbove"
-        },
+        "isha": "2026-05-17T23:36:56Z",
         "middleOfTheNight": {
           "doesNotOccur": "sunStaysAbove"
         },
@@ -1123,7 +1121,7 @@
     },
     {
       "id": "polar-moonsighting-tromso-2026-07-26",
-      "description": "The Moonsighting Committee's rules at Tromsø on 2026-07-26. Doesn't occur: fajr (sunStaysAbove). Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-07-27 00:24.",
+      "description": "The Moonsighting Committee's rules at Tromsø on 2026-07-26. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-07-27 00:24. Fajr falls before the day begins, at 2026-07-25 23:03.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-07-26",
@@ -1145,9 +1143,7 @@
         }
       },
       "expected": {
-        "fajr": {
-          "doesNotOccur": "sunStaysAbove"
-        },
+        "fajr": "2026-07-25T21:03:04Z",
         "sunrise": "2026-07-25T23:04:36Z",
         "dhuhr": "2026-07-26T10:50:44Z",
         "asr": "2026-07-26T15:37:37Z",
@@ -1439,7 +1435,7 @@
     },
     {
       "id": "polar-moonsighting-tromso-2026-11-27",
-      "description": "The Moonsighting Committee's rules at Tromsø on 2026-11-27. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-11-27 05:52 local).",
+      "description": "The Moonsighting Committee's rules at Tromsø on 2026-11-27. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-11-27 05:52 local). Isha is bounded (the angle alone gives 2026-11-27 17:10 local).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-11-27",
@@ -1461,7 +1457,7 @@
         }
       },
       "expected": {
-        "fajr": "2026-11-27T07:01:32Z",
+        "fajr": "2026-11-27T08:32:52Z",
         "sunrise": "2026-11-27T10:20:57Z",
         "dhuhr": "2026-11-27T10:31:45Z",
         "asr": {
@@ -1469,7 +1465,7 @@
         },
         "sunset": "2026-11-27T10:41:50Z",
         "maghrib": "2026-11-27T10:41:50Z",
-        "isha": "2026-11-27T16:10:30Z",
+        "isha": "2026-11-27T12:21:04Z",
         "middleOfTheNight": "2026-11-27T19:48:07Z",
         "lastThirdOfTheNight": "2026-11-27T22:50:12Z"
       },
@@ -1997,7 +1993,7 @@
     },
     {
       "id": "polar-moonsighting-tromso-2026-01-15",
-      "description": "The Moonsighting Committee's rules at Tromsø on 2026-01-15. Doesn't occur: asr (sunStaysBelow). Isha is bounded (the angle alone gives 2026-01-15 17:34 local).",
+      "description": "The Moonsighting Committee's rules at Tromsø on 2026-01-15. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-01-15 06:13 local). Isha is bounded (the angle alone gives 2026-01-15 17:34 local).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-01-15",
@@ -2019,7 +2015,7 @@
         }
       },
       "expected": {
-        "fajr": "2026-01-15T05:13:51Z",
+        "fajr": "2026-01-15T08:41:13Z",
         "sunrise": "2026-01-15T10:29:18Z",
         "dhuhr": "2026-01-15T10:53:33Z",
         "asr": {
@@ -2027,9 +2023,9 @@
         },
         "sunset": "2026-01-15T11:18:33Z",
         "maghrib": "2026-01-15T11:18:33Z",
-        "isha": "2026-01-15T14:34:57Z",
-        "middleOfTheNight": "2026-01-15T21:07:45Z",
-        "lastThirdOfTheNight": "2026-01-16T00:24:09Z"
+        "isha": "2026-01-15T12:57:46Z",
+        "middleOfTheNight": "2026-01-15T21:51:58Z",
+        "lastThirdOfTheNight": "2026-01-16T01:23:07Z"
       },
       "toleranceSeconds": 1
     },
@@ -2965,7 +2961,7 @@
     },
     {
       "id": "polar-moonsighting-longyearbyen-2026-08-25",
-      "description": "The Moonsighting Committee's rules at Longyearbyen on 2026-08-25. Doesn't occur: fajr (sunStaysAbove). Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-08-26 00:14.",
+      "description": "The Moonsighting Committee's rules at Longyearbyen on 2026-08-25. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-08-26 00:14. Fajr falls before the day begins, at 2026-08-24 23:38.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-08-25",
@@ -2987,9 +2983,7 @@
         }
       },
       "expected": {
-        "fajr": {
-          "doesNotOccur": "sunStaysAbove"
-        },
+        "fajr": "2026-08-24T21:38:24Z",
         "sunrise": "2026-08-24T23:32:33Z",
         "dhuhr": "2026-08-25T10:59:31Z",
         "asr": "2026-08-25T14:59:23Z",
@@ -3281,7 +3275,7 @@
     },
     {
       "id": "polar-moonsighting-longyearbyen-2026-10-26",
-      "description": "The Moonsighting Committee's rules at Longyearbyen on 2026-10-26. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-10-26 03:42 local).",
+      "description": "The Moonsighting Committee's rules at Longyearbyen on 2026-10-26. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-10-26 03:42 local). Isha is bounded (the angle alone gives 2026-10-26 19:35 local).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-10-26",
@@ -3303,7 +3297,7 @@
         }
       },
       "expected": {
-        "fajr": "2026-10-26T06:58:47Z",
+        "fajr": "2026-10-26T08:23:45Z",
         "sunrise": "2026-10-26T10:11:18Z",
         "dhuhr": "2026-10-26T10:41:22Z",
         "asr": {
@@ -3311,7 +3305,7 @@
         },
         "sunset": "2026-10-26T11:09:16Z",
         "maghrib": "2026-10-26T11:09:16Z",
-        "isha": "2026-10-26T18:35:08Z",
+        "isha": "2026-10-26T12:39:42Z",
         "middleOfTheNight": "2026-10-26T18:59:38Z",
         "lastThirdOfTheNight": "2026-10-26T21:36:25Z"
       },
@@ -3839,7 +3833,7 @@
     },
     {
       "id": "polar-moonsighting-longyearbyen-2026-02-15",
-      "description": "The Moonsighting Committee's rules at Longyearbyen on 2026-02-15. Doesn't occur: asr (sunStaysBelow). Isha is bounded (the angle alone gives 2026-02-15 20:08 local).",
+      "description": "The Moonsighting Committee's rules at Longyearbyen on 2026-02-15. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-02-15 04:19 local). Isha is bounded (the angle alone gives 2026-02-15 20:08 local).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-02-15",
@@ -3861,7 +3855,7 @@
         }
       },
       "expected": {
-        "fajr": "2026-02-15T03:19:07Z",
+        "fajr": "2026-02-15T09:09:12Z",
         "sunrise": "2026-02-15T10:56:53Z",
         "dhuhr": "2026-02-15T11:11:30Z",
         "asr": {
@@ -3869,9 +3863,9 @@
         },
         "sunset": "2026-02-15T11:28:18Z",
         "maghrib": "2026-02-15T11:28:18Z",
-        "isha": "2026-02-15T14:43:23Z",
-        "middleOfTheNight": "2026-02-15T21:13:33Z",
-        "lastThirdOfTheNight": "2026-02-16T00:28:38Z"
+        "isha": "2026-02-15T12:59:06Z",
+        "middleOfTheNight": "2026-02-15T21:57:19Z",
+        "lastThirdOfTheNight": "2026-02-16T01:26:59Z"
       },
       "toleranceSeconds": 1
     },
@@ -4415,7 +4409,7 @@
     },
     {
       "id": "polar-moonsighting-mcmurdo-2026-10-22",
-      "description": "The Moonsighting Committee's rules at McMurdo Station on 2026-10-22. Doesn't occur: isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). Fajr's angle isn't reached (sunStaysAbove); the bound gives the time.",
+      "description": "The Moonsighting Committee's rules at McMurdo Station on 2026-10-22. Doesn't occur: middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-10-23 02:06.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-10-22",
@@ -4443,9 +4437,7 @@
         "asr": "2026-10-22T04:42:41Z",
         "sunset": "2026-10-22T11:59:47Z",
         "maghrib": "2026-10-22T11:59:47Z",
-        "isha": {
-          "doesNotOccur": "sunStaysAbove"
-        },
+        "isha": "2026-10-22T13:06:36Z",
         "middleOfTheNight": {
           "doesNotOccur": "sunStaysAbove"
         },
@@ -4789,7 +4781,7 @@
     },
     {
       "id": "polar-moonsighting-mcmurdo-2026-02-20",
-      "description": "The Moonsighting Committee's rules at McMurdo Station on 2026-02-20. Doesn't occur: fajr (sunStaysAbove). Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-02-21 01:19.",
+      "description": "The Moonsighting Committee's rules at McMurdo Station on 2026-02-20. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time. Isha falls after local midnight, at 2026-02-21 01:19.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-02-20",
@@ -4811,9 +4803,7 @@
         }
       },
       "expected": {
-        "fajr": {
-          "doesNotOccur": "sunStaysAbove"
-        },
+        "fajr": "2026-02-19T11:51:00Z",
         "sunrise": "2026-02-19T13:46:13Z",
         "dhuhr": "2026-02-20T01:07:04Z",
         "asr": "2026-02-20T05:09:17Z",
@@ -5105,7 +5095,7 @@
     },
     {
       "id": "polar-moonsighting-mcmurdo-2026-04-24",
-      "description": "The Moonsighting Committee's rules at McMurdo Station on 2026-04-24. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-04-24 05:02 local).",
+      "description": "The Moonsighting Committee's rules at McMurdo Station on 2026-04-24. Doesn't occur: asr (sunStaysBelow). Fajr is bounded (the angle alone gives 2026-04-24 05:02 local). Isha is bounded (the angle alone gives 2026-04-24 20:36 local).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
       "input": {
         "date": "2026-04-24",
@@ -5127,7 +5117,7 @@
         }
       },
       "expected": {
-        "fajr": "2026-04-23T21:00:40Z",
+        "fajr": "2026-04-23T22:24:00Z",
         "sunrise": "2026-04-24T00:11:07Z",
         "dhuhr": "2026-04-24T00:51:33Z",
         "asr": {
@@ -5135,7 +5125,7 @@
         },
         "sunset": "2026-04-24T01:29:56Z",
         "maghrib": "2026-04-24T01:29:56Z",
-        "isha": "2026-04-24T08:36:12Z",
+        "isha": "2026-04-24T02:59:33Z",
         "middleOfTheNight": "2026-04-24T09:19:30Z",
         "lastThirdOfTheNight": "2026-04-24T11:56:02Z"
       },
