@@ -12,7 +12,7 @@ SalahTimes computes the five daily prayers, sunrise, sunset and the night's midd
 
 - **An engine written from published sources.** The Sun's position follows Jean Meeus' *Astronomical Algorithms*. [docs/algorithm.md](docs/algorithm.md) specifies every step, so other languages can reproduce it.
 - **Published methods.** Fourteen presets, from the Muslim World League to Diyanet, JAKIM, Kemenag and the Moonsighting Committee. [METHODS.md](METHODS.md) gives each value with its source. You can change any parameter or build your own method.
-- **High latitudes.** Rules keep Fajr and Isha reasonable where twilight lasts all night. The recommended rule works by absolute latitude, so it serves Ushuaia as well as Oslo. Each prayer is bounded by its own night, so times never cross.
+- **High latitudes.** Rules keep Fajr and Isha reasonable where twilight lasts all night. The recommended rule works by absolute latitude, so it serves Ushuaia as well as Oslo. Each prayer is bounded by its own night, so a bounded Isha never falls after the next bounded Fajr.
 - **Typed non-occurrence.** When the Sun doesn't set or doesn't reach an angle, the event is `.doesNotOccur(reason)`. SalahTimes never invents a time.
 - **Qibla.** The great-circle direction of the Kaaba from any place.
 - **Shared vectors.** The JSON in [Vectors/](Vectors/README.md) comes from an independent reference implementation. Engines in other languages can check themselves against the same files. [docs/validation.md](docs/validation.md) describes how the results are checked.
