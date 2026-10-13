@@ -311,7 +311,7 @@ class Diagnostics:
     """Collects the margins the generator uses to reject fragile vectors."""
 
     def __init__(self):
-        # min over every crossing of |c(T) - 1|, |c(T) + 1| and |c(A) + 1| (section 6)
+        # min over every crossing of |c(T) - 1| and |c(A) + 1| (section 6)
         self.min_c_margin = math.inf
         self.min_asr_margin = math.inf  # min of |z - 90| at every Asr computed
         self.unconverged = []  # descriptions of iterations that hit 20 steps
@@ -319,11 +319,10 @@ class Diagnostics:
     def note_c(self, c_transit, c_antitransit):
         """Records how close a crossing's existence tests came to deciding the other way.
 
-        |c(T) - 1| and |c(A) + 1| decide existence. |c(T) + 1| picks where the iteration starts;
-        it shouldn't change the result, but it's tracked too, to stay on the safe side.
+        Only |c(T) - 1| and |c(A) + 1| decide existence. The starting estimate depends on c(T)
+        continuously, so c(T) near -1 isn't a knife edge and isn't tracked.
         """
-        self.min_c_margin = min(self.min_c_margin, abs(c_transit - 1), abs(c_transit + 1),
-                                abs(c_antitransit + 1))
+        self.min_c_margin = min(self.min_c_margin, abs(c_transit - 1), abs(c_antitransit + 1))
 
 
 # ---------------------------------------------------------------------------------------------
@@ -389,9 +388,10 @@ def crossing(T, altitude, side, latitude, longitude, diag):
     if c_antitransit < -1:
         return NotOccur(SUN_STAYS_ABOVE)  # above the altitude even at the antitransit
 
-    # The crossing exists. If the Sun is above the altitude all through the transit's day
-    # (c(T) < -1), it only reaches the altitude near the antitransit, so start there.
-    t = A if c_transit < -1 else T
+    # The crossing exists. Start from the first estimate, T + side × acos(c(T)): it's A when
+    # c(T) <= -1, where the Sun only reaches the altitude near the antitransit. Starting there
+    # keeps every step small, so normalize180 never wraps a step half a day the wrong way.
+    t = T + side * math.degrees(math.acos(max(-1.0, c_transit))) / 360 * 86400
     for _ in range(20):
         position = sun(t)
         c = min(1.0, max(-1.0, c_of(position[0])))
