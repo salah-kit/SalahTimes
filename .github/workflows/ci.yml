@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  macos:
+    name: macOS
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      # macos-26 is the newest generally available macOS image. Its Xcode 26.6 includes the
+      # iOS, watchOS, tvOS and visionOS SDKs, so the platform builds need no download.
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Show the toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Build
+        run: swift build
+
+      - name: Test
+        run: swift test
+
+      - name: Build for iOS
+        run: >-
+          xcodebuild build -scheme SalahTimes -destination 'generic/platform=iOS'
+          -derivedDataPath .derived
+
+      - name: Build for watchOS
+        run: >-
+          xcodebuild build -scheme SalahTimes -destination 'generic/platform=watchOS'
+          -derivedDataPath .derived
+
+      - name: Build for tvOS
+        run: >-
+          xcodebuild build -scheme SalahTimes -destination 'generic/platform=tvOS'
+          -derivedDataPath .derived
+
+      - name: Build for visionOS
+        run: >-
+          xcodebuild build -scheme SalahTimes -destination 'generic/platform=visionOS'
+          -derivedDataPath .derived
+
+      - name: Build the example with nonisolated default isolation
+        run: swift build --package-path Examples/PrayerTimesCLI
+
+      - name: Build the example with MainActor default isolation
+        run: >-
+          swift build --package-path Examples/PrayerTimesCLI
+          --build-path Examples/PrayerTimesCLI/.build-mainactor
+          -Xswiftc -default-isolation -Xswiftc MainActor
+
+      - name: Build the documentation, failing on any DocC warning
+        run: >-
+          xcodebuild docbuild -scheme SalahTimes -destination 'generic/platform=macOS'
+          -derivedDataPath .derived OTHER_DOCC_FLAGS=--warnings-as-errors
+
+  linux:
+    name: Linux
+    runs-on: ubuntu-24.04
+    container: swift:6.4.0-noble
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Show the toolchain
+        run: swift --version
+
+      - name: Build
+        run: swift build
+
+      - name: Test
+        run: swift test
+
+      - name: Build the example
+        run: swift build --package-path Examples/PrayerTimesCLI
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    container: swift:6.4.0-noble
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check formatting
+        run: swift format lint --strict --recursive Package.swift Sources Tests Examples

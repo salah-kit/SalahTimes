@@ -1,0 +1,68 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+
+jobs:
+  build:
+    name: Build the site
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # The docs need no package dependency: xcodebuild builds the archive and docc turns it
+      # into a static site served from https://salah-kit.github.io/SalahTimes/.
+      - name: Build the documentation archive
+        run: >-
+          xcodebuild docbuild -scheme SalahTimes -destination 'generic/platform=macOS'
+          -derivedDataPath .derived OTHER_DOCC_FLAGS=--warnings-as-errors
+
+      - name: Transform the archive for static hosting
+        run: |
+          archive=$(find .derived/Build/Products -type d -name SalahTimes.doccarchive | head -n 1)
+          test -n "$archive"
+          xcrun docc process-archive transform-for-static-hosting "$archive" \
+            --hosting-base-path SalahTimes --output-path _site
+          # Send the site's root to the module's documentation.
+          printf '%s\n' \
+            '<!doctype html>' \
+            '<meta charset="utf-8">' \
+            '<meta http-equiv="refresh" content="0; url=documentation/salahtimes/">' \
+            '<link rel="canonical" href="documentation/salahtimes/">' \
+            '<title>SalahTimes</title>' \
+            '<a href="documentation/salahtimes/">SalahTimes documentation</a>' \
+            > _site/index.html
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}documentation/salahtimes/
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
