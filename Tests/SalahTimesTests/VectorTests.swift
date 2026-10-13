@@ -182,14 +182,18 @@ extension VectorTests {
     return catalog
   }
 
+  /// The files in `Vectors/` that hold data rather than vectors: the presets and the country
+  /// suggestions.
+  static let dataFiles: Set<String> = ["methods.json", "country-methods.json"]
+
   /// Every vector file: the `.json` files in `Vectors/` and `Vectors/times/`, except
-  /// `methods.json`, which holds presets.
+  /// ``dataFiles``.
   private static func vectorFiles(in directory: URL) throws -> [URL] {
     var files: [URL] = []
     for folder in [directory, directory.appendingPathComponent("times")] {
       let names = try FileManager.default.contentsOfDirectory(atPath: folder.path)
       for name in names.sorted() where name.hasSuffix(".json") {
-        if folder == directory && name == "methods.json" { continue }
+        if folder == directory && dataFiles.contains(name) { continue }
         files.append(folder.appendingPathComponent(name))
       }
     }

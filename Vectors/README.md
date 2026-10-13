@@ -8,7 +8,8 @@ The expected values come from an independent reference implementation in Python,
 
 | File | What it covers |
 |---|---|
-| `methods.json` | The method presets: each method's parameters, keyed by name. It holds no vectors. |
+| `methods.json` | The method presets: each method's parameters, keyed by name, with their sources. It holds no vectors. |
+| `country-methods.json` | The sourced country suggestions: an ISO 3166-1 alpha-2 code to a method name and its source. It holds no vectors. |
 | `times/methods.json` | Every preset at its region, a place far from it and a southern-hemisphere place, on 2026's equinoxes and solstices, as published and unrounded. |
 | `times/madhab.json` | Shafi'i and Hanafi Asr from the equator to the Arctic, in both hemispheres. |
 | `times/high-latitude.json` | Each high-latitude rule from 48° to 65°, north and south, in each season, where the bound applies and where it doesn't. |
@@ -174,7 +175,7 @@ A case marked `move` (most minute-rounded vectors) moves to the next day that is
 
 1. Implement `docs/algorithm.md`.
 2. Load `methods.json` into a map from method name to parameters.
-3. For each file in `Vectors/` and `Vectors/times/` other than `methods.json`, check `schemaVersion` is 1, and read `kind`.
+3. For each file in `Vectors/` and `Vectors/times/` other than `methods.json` and `country-methods.json`, check `schemaVersion` is 1, and read `kind`.
 4. For each `prayerTimes` vector, resolve the parameters: the preset named by `method`, with `parameters`' top-level keys replacing the preset's, or `parameters` alone. Decode them with the defaults above. Run the calculation for `date` in `timeZone` at `coordinates`, and compare each of the nine events: an instant within `toleranceSeconds`, or the same non-occurrence reason.
 5. For each `qibla` vector, compare the bearing on the circle within `toleranceDegrees`, or expect no bearing.
 6. For each `calculationErrors` vector, expect the calculation to fail with `error`.
