@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "prayerTimes",
-  "description": "The supported range: years across every ΔT polynomial from the year 1000 to 3000 (algorithm section 3), and the boundary values that section 2 accepts.",
+  "description": "The supported range: its first and last days, 1000-01-01 and 3000-12-31, proleptic Gregorian dates before 1582, years in several of section 3's ΔT polynomials, and the boundary values that section 2 accepts. At the 1 s tolerance, only the years 1000, 1300 and 3000 here are sensitive to ΔT.",
   "vectors": [
     {
       "id": "range-year-makkah-1000-01-01",

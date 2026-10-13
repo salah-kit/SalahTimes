@@ -409,7 +409,27 @@ def crossing(T, altitude, side, latitude, longitude, diag):
         math.degrees(math.asin(max(-1.0, min(1.0, sin_phi * sind(delta_A)
                                                - cos_phi * cosd(delta_A))))),
         altitude)
+    def crossings_in_half_day():
+        """How many times the Sun crosses the altitude between T and A, sampled every 21.6 s."""
+        count = 0
+        previous = None
+        for k in range(0, 2001):
+            above = sin_altitude(T + side * 43200 * k / 2000) >= sin_h
+            if previous is not None and above != previous:
+                count += 1
+            previous = above
+        return count
+
+    # Near the poles the Sun isn't always highest at T and lowest at A (section 6), so a rise
+    # and set inside one half day can escape the existence tests. Check those half days.
+    check_half_day = abs(latitude) >= 85
+
     # Step 1: existence.
+    if c_transit > 1 or c_antitransit < -1:
+        if check_half_day and crossings_in_half_day() != 0:
+            diag.path_fragile.append(f"crossing at {altitude} side {side}: reported as not "
+                                     "occurring, but the Sun crosses the altitude in the half "
+                                     "day")
     if c_transit > 1:
         return NotOccur(SUN_STAYS_BELOW)  # below the altitude even at the transit
     if c_antitransit < -1:
@@ -442,6 +462,9 @@ def crossing(T, altitude, side, latitude, longitude, diag):
         diag.path_fragile.append(f"crossing at {altitude} side {side}: the choice between "
                                  "the iteration and bisection sits on a threshold")
     if settled and 0 < offset < 43200:
+        if check_half_day and crossings_in_half_day() != 1:
+            diag.path_fragile.append(f"crossing at {altitude} side {side}: the Sun crosses it "
+                                     "more than once in the half day")
         return t
 
     # Step 3: bisect between T, where the Sun is at or above the altitude, and A, where it's at
@@ -457,13 +480,7 @@ def crossing(T, altitude, side, latitude, longitude, diag):
     diag.bisected.append((result, altitude, side))
     # Bisection is deterministic, but it finds a crossing that another engine's arithmetic
     # could place elsewhere if the Sun crosses the altitude more than once in the half day.
-    crossings = 0
-    previous = None
-    for k in range(0, 2001):
-        above = sin_altitude(T + side * 43200 * k / 2000) >= sin_h
-        if previous is not None and above != previous:
-            crossings += 1
-        previous = above
+    crossings = crossings_in_half_day()
     if crossings != 1:
         diag.path_fragile.append(f"crossing at {altitude} side {side}: the Sun crosses it "
                                  f"{crossings} times in the half day")
