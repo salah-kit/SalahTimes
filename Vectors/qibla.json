@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 1,
+  "kind": "qibla",
+  "description": "The Qibla bearing, in degrees clockwise from true north, at places worldwide, near the Kaaba's antipode and at the poles, and the inputs with no result.",
+  "vectors": [
+    {
+      "id": "qibla-madinah",
+      "description": "The Qibla from Madinah.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 24.4672,
+          "longitude": 39.6111
+        }
+      },
+      "expected": {
+        "bearing": 176.235614613
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-jeddah",
+      "description": "The Qibla from Jeddah.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 21.5433,
+          "longitude": 39.1728
+        }
+      },
+      "expected": {
+        "bearing": 101.115668623
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-riyadh",
+      "description": "The Qibla from Riyadh.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 24.7136,
+          "longitude": 46.6753
+        }
+      },
+      "expected": {
+        "bearing": 243.798182485
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-cairo",
+      "description": "The Qibla from Cairo.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-cairo.html, fetched 2026-10-13: 136.21° at (30.05, 31.25); the reference gives 136.207° there",
+      "input": {
+        "coordinates": {
+          "latitude": 30.0444,
+          "longitude": 31.2357
+        }
+      },
+      "expected": {
+        "bearing": 136.137263805
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-istanbul",
+      "description": "The Qibla from Istanbul.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-istanbul.html, fetched 2026-10-13: 151.62° at (41.0082376, 28.9783589); the reference gives 151.621° there",
+      "input": {
+        "coordinates": {
+          "latitude": 41.0082,
+          "longitude": 28.9784
+        }
+      },
+      "expected": {
+        "bearing": 151.620607517
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-london",
+      "description": "The Qibla from London.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-london.html, fetched 2026-10-13: 118.99° at (51.5057508064, -0.119819641113); the reference gives 118.994° there",
+      "input": {
+        "coordinates": {
+          "latitude": 51.5072,
+          "longitude": -0.1276
+        }
+      },
+      "expected": {
+        "bearing": 118.987253083
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-new-york",
+      "description": "The Qibla from New York.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-new-york.html, fetched 2026-10-13: 58.49° at (40.75, -73.9967); the reference gives 58.486° there",
+      "input": {
+        "coordinates": {
+          "latitude": 40.7128,
+          "longitude": -74.006
+        }
+      },
+      "expected": {
+        "bearing": 58.481696501
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-los-angeles",
+      "description": "The Qibla from Los Angeles.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-los-angeles.html, fetched 2026-10-13: 23.73° at (34.0632115, -118.366019); the reference gives 23.731° there",
+      "input": {
+        "coordinates": {
+          "latitude": 34.0522,
+          "longitude": -118.2437
+        }
+      },
+      "expected": {
+        "bearing": 23.857084256
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-toronto",
+      "description": "The Qibla from Toronto.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-toronto.html, fetched 2026-10-13: 54.58° at (43.653226, -79.383184); the reference gives 54.581° there",
+      "input": {
+        "coordinates": {
+          "latitude": 43.6532,
+          "longitude": -79.3832
+        }
+      },
+      "expected": {
+        "bearing": 54.580621318
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-rio-de-janeiro",
+      "description": "The Qibla from Rio de Janeiro.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -22.9068,
+          "longitude": -43.1729
+        }
+      },
+      "expected": {
+        "bearing": 67.612193525
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-cape-town",
+      "description": "The Qibla from Cape Town.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-cape-town.html, fetched 2026-10-13: 23.35° at (-33.9248685, 18.4240553); the reference gives 23.353° there",
+      "input": {
+        "coordinates": {
+          "latitude": -33.9249,
+          "longitude": 18.4241
+        }
+      },
+      "expected": {
+        "bearing": 23.352513838
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-karachi",
+      "description": "The Qibla from Karachi.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-karachi.html, fetched 2026-10-13: 267.74° at (24.861462, 67.009939); the reference gives 267.744° there",
+      "input": {
+        "coordinates": {
+          "latitude": 24.8607,
+          "longitude": 67.0011
+        }
+      },
+      "expected": {
+        "bearing": 267.741059701
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-jakarta",
+      "description": "The Qibla from Jakarta.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-jakarta.html, fetched 2026-10-13: 295.15° at (-6.208763, 106.845599); the reference gives 295.152° there",
+      "input": {
+        "coordinates": {
+          "latitude": -6.2088,
+          "longitude": 106.8456
+        }
+      },
+      "expected": {
+        "bearing": 295.151756286
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-tokyo",
+      "description": "The Qibla from Tokyo.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-tokyo.html, fetched 2026-10-13: 293.04° at (35.709026, 139.731993); the reference gives 293.042° there",
+      "input": {
+        "coordinates": {
+          "latitude": 35.6762,
+          "longitude": 139.6503
+        }
+      },
+      "expected": {
+        "bearing": 292.998709741
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-sydney",
+      "description": "The Qibla from Sydney.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -33.8688,
+          "longitude": 151.2093
+        }
+      },
+      "expected": {
+        "bearing": 277.499604449
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-auckland",
+      "description": "The Qibla from Auckland.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py); timesprayer.com/en/direction-qibla-auckland.html, fetched 2026-10-13: 261.2° at (-36.8484597, 174.7633315); the reference gives 261.197° there",
+      "input": {
+        "coordinates": {
+          "latitude": -36.8485,
+          "longitude": 174.7633
+        }
+      },
+      "expected": {
+        "bearing": 261.197326404
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-reykjavik",
+      "description": "The Qibla from Reykjavik.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 64.1466,
+          "longitude": -21.9426
+        }
+      },
+      "expected": {
+        "bearing": 106.117644124
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-anchorage",
+      "description": "The Qibla from Anchorage.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 61.2181,
+          "longitude": -149.9003
+        }
+      },
+      "expected": {
+        "bearing": 350.883076116
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-honolulu",
+      "description": "The Qibla from Honolulu.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 21.3069,
+          "longitude": -157.8583
+        }
+      },
+      "expected": {
+        "bearing": 336.886430743
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-papeete",
+      "description": "The Qibla from Papeete, near the antipode.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -17.5516,
+          "longitude": -149.5585
+        }
+      },
+      "expected": {
+        "bearing": 295.149385353
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-rikitea",
+      "description": "The Qibla from Rikitea, near the antipode.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -23.1203,
+          "longitude": -134.9692
+        }
+      },
+      "expected": {
+        "bearing": 108.417730952
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-adamstown",
+      "description": "The Qibla from Adamstown, Pitcairn, near the antipode.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -25.066,
+          "longitude": -130.1015
+        }
+      },
+      "expected": {
+        "bearing": 109.442418775
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-antipode-north",
+      "description": "The Qibla from 0.01° north of the antipode.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -21.4125241,
+          "longitude": -140.1738182
+        }
+      },
+      "expected": {
+        "bearing": 0.0
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-antipode-east",
+      "description": "The Qibla from 0.01° east of the antipode.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -21.4225241,
+          "longitude": -140.1638182
+        }
+      },
+      "expected": {
+        "bearing": 89.998173786
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-north-pole",
+      "description": "The Qibla from the North Pole (longitude 0).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 90.0,
+          "longitude": 0.0
+        }
+      },
+      "expected": {
+        "bearing": 140.1738182
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-south-pole",
+      "description": "The Qibla from the South Pole (longitude 0).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -90.0,
+          "longitude": 0.0
+        }
+      },
+      "expected": {
+        "bearing": 39.8261818
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-date-line-east",
+      "description": "The Qibla from the date line, longitude 180.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 0.0,
+          "longitude": 180.0
+        }
+      },
+      "expected": {
+        "bearing": 301.491834181
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-date-line-west",
+      "description": "The Qibla from the date line, longitude -180.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 0.0,
+          "longitude": -180.0
+        }
+      },
+      "expected": {
+        "bearing": 301.491834181
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-kaaba",
+      "description": "No Qibla at the Kaaba itself.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 21.4225241,
+          "longitude": 39.8261818
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-antipode",
+      "description": "No Qibla at the Kaaba's antipode.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -21.4225241,
+          "longitude": -140.1738182
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-latitude-above-90",
+      "description": "No Qibla at a latitude above 90.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 90.5,
+          "longitude": 0.0
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-latitude-below-minus-90",
+      "description": "No Qibla at a latitude below -90.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": -91.0,
+          "longitude": 0.0
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-longitude-above-180",
+      "description": "No Qibla at a longitude above 180.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 0.0,
+          "longitude": 180.5
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-longitude-below-minus-180",
+      "description": "No Qibla at a longitude below -180.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 0.0,
+          "longitude": -200.0
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-latitude-nan",
+      "description": "No Qibla at a latitude that isn't a number.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": "NaN",
+          "longitude": 0.0
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    },
+    {
+      "id": "qibla-none-longitude-infinite",
+      "description": "No Qibla at an infinite longitude.",
+      "source": "docs/algorithm.md section 10; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "coordinates": {
+          "latitude": 0.0,
+          "longitude": "+Infinity"
+        }
+      },
+      "expected": {
+        "bearing": null
+      },
+      "toleranceDegrees": 1e-06
+    }
+  ]
+}
