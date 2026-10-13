@@ -6842,6 +6842,212 @@
       "toleranceSeconds": 1
     },
     {
+      "id": "polar-bisection-sunset-near-south-pole-2026-03-22",
+      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-03-22: sunset comes from bisection. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysAbove), asr (sunStaysBelow), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds sunset, maghrib.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-22",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": -89.9975,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "dhuhr": "2026-03-22T12:06:52Z",
+        "asr": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "sunset": "2026-03-22T17:16:51Z",
+        "maghrib": "2026-03-22T17:16:51Z",
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "polar-bisection-isha-near-south-pole-2026-05-07",
+      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-05-07: isha comes from bisection. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysBelow), asr (sunStaysBelow), sunset (sunStaysBelow), maghrib (sunStaysBelow), middleOfTheNight (sunStaysBelow), lastThirdOfTheNight (sunStaysBelow). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds isha.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-05-07",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": -89.9975,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "dhuhr": "2026-05-07T11:56:34Z",
+        "asr": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "sunset": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "maghrib": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "isha": "2026-05-07T20:43:14Z",
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysBelow"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "polar-bisection-fajr-near-south-pole-2026-08-01",
+      "description": "Muslim World League angles with no high-latitude bound at 89.9975°S, 0°E on 2026-08-01: fajr comes from bisection. Doesn't occur: sunrise (sunStaysBelow), asr (sunStaysBelow), sunset (sunStaysBelow), maghrib (sunStaysBelow), isha (sunStaysBelow), middleOfTheNight (sunStaysBelow), lastThirdOfTheNight (sunStaysBelow). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds fajr.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-08-01",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": -89.9975,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-08-01T05:49:18Z",
+        "sunrise": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "dhuhr": "2026-08-01T12:06:22Z",
+        "asr": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "sunset": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "maghrib": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "isha": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysBelow"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "polar-bisection-sunrise-north-pole-2026-03-18",
+      "description": "Muslim World League angles with no high-latitude bound at the North Pole on 2026-03-18: sunrise comes from bisection. Doesn't occur: fajr (sunStaysAbove), asr (sunStaysBelow), sunset (sunStaysAbove), maghrib (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove). The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step 3) finds sunrise.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-18",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 90.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-03-18T12:01:41Z",
+        "dhuhr": "2026-03-18T12:08:03Z",
+        "asr": {
+          "doesNotOccur": "sunStaysBelow"
+        },
+        "sunset": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "maghrib": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
       "id": "polar-mwl-nearest-tromso-2026-06-21",
       "description": "Muslim World League angles at Tromsø on 2026-06-21, rounded to the nearest minute. Doesn't occur: fajr (sunStaysAbove), sunrise (sunStaysAbove), sunset (sunStaysAbove), maghrib (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove).",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",

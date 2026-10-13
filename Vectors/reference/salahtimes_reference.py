@@ -313,8 +313,15 @@ class Diagnostics:
     def __init__(self):
         # min over every crossing of |c(T) - 1| and |c(A) + 1| (section 6)
         self.min_c_margin = math.inf
+        # min over every crossing of the distance in degrees between h* and the Sun's highest
+        # and lowest altitudes (at H = 0 and H = 180, with the declination at T and at A). It's
+        # the existence margin in altitude, which still means something at the poles, where
+        # cos φ is about 6e-17 and c is huge.
+        self.min_altitude_margin = math.inf
         self.min_asr_margin = math.inf  # min of |z - 90| at every Asr computed
-        self.unconverged = []  # descriptions of iterations that hit 20 steps
+        self.unconverged = []  # descriptions of transit iterations that hit 20 steps
+        self.bisected = []  # (instant, altitude, side) of crossings found by bisection
+        self.path_fragile = []  # crossings where another engine could take the other path
 
     def note_c(self, c_transit, c_antitransit):
         """Records how close a crossing's existence tests came to deciding the other way.
@@ -323,6 +330,10 @@ class Diagnostics:
         continuously, so c(T) near -1 isn't a knife edge and isn't tracked.
         """
         self.min_c_margin = min(self.min_c_margin, abs(c_transit - 1), abs(c_antitransit + 1))
+
+    def note_altitudes(self, highest, lowest, altitude):
+        self.min_altitude_margin = min(self.min_altitude_margin, abs(highest - altitude),
+                                       abs(lowest - altitude))
 
 
 # ---------------------------------------------------------------------------------------------
@@ -370,7 +381,8 @@ def crossing(T, altitude, side, latitude, longitude, diag):
     """When the Sun reaches `altitude` before (side -1) or after (side +1) the transit T.
 
     Existence is decided where the Sun is highest (the transit T) and lowest (the antitransit
-    A = T + side × 43200 s), then the iteration finds the instant.
+    A = T + side × 43200 s). The hour-angle iteration then finds the instant, and bisection
+    between T and A takes over when the iteration doesn't settle inside that half day.
     """
     sin_phi = sind(latitude)
     cos_phi = cosd(latitude)
@@ -379,29 +391,83 @@ def crossing(T, altitude, side, latitude, longitude, diag):
     def c_of(delta):
         return (sin_h - sin_phi * sind(delta)) / (cos_phi * cosd(delta))
 
+    def sin_altitude(t):
+        position = sun(t)
+        delta = position[0]
+        H = hour_angle(t, longitude, position)
+        return sin_phi * sind(delta) + cos_phi * cosd(delta) * cosd(H)
+
     A = T + side * 43200
-    c_transit = c_of(sun(T)[0])
-    c_antitransit = c_of(sun(A)[0])
+    delta_T = sun(T)[0]
+    delta_A = sun(A)[0]
+    c_transit = c_of(delta_T)
+    c_antitransit = c_of(delta_A)
     diag.note_c(c_transit, c_antitransit)
+    diag.note_altitudes(
+        math.degrees(math.asin(max(-1.0, min(1.0, sin_phi * sind(delta_T)
+                                               + cos_phi * cosd(delta_T))))),
+        math.degrees(math.asin(max(-1.0, min(1.0, sin_phi * sind(delta_A)
+                                               - cos_phi * cosd(delta_A))))),
+        altitude)
+    # Step 1: existence.
     if c_transit > 1:
         return NotOccur(SUN_STAYS_BELOW)  # below the altitude even at the transit
     if c_antitransit < -1:
         return NotOccur(SUN_STAYS_ABOVE)  # above the altitude even at the antitransit
 
-    # The crossing exists. Start from the first estimate, T + side × acos(c(T)): it's A when
-    # c(T) <= -1, where the Sun only reaches the altitude near the antitransit. Starting there
-    # keeps every step small, so normalize180 never wraps a step half a day the wrong way.
+    # Step 2: the crossing exists. Start from the first estimate, T + side × acos(c(T)): it's A
+    # when c(T) <= -1, where the Sun only reaches the altitude near the antitransit. Starting
+    # there keeps every step small, so normalize180 never wraps a step half a day the wrong way.
     t = T + side * math.degrees(math.acos(max(-1.0, c_transit))) / 360 * 86400
+    settled = False
+    step = math.inf
+    iterations = 0
     for _ in range(20):
+        iterations += 1
         position = sun(t)
         c = min(1.0, max(-1.0, c_of(position[0])))
         H0 = math.degrees(math.acos(c))
         step = normalize180(side * H0 - hour_angle(t, longitude, position)) / 360 * 86400
         t += step
         if abs(step) < 0.001:
-            return t
-    diag.unconverged.append(f"crossing at {altitude} side {side}")
-    return t
+            settled = True
+            break
+    offset = side * (t - T)
+    # Another engine takes the other path (iteration or bisection) only if the window test sits
+    # on its edge, or if the 20th and last step sits on the 1 ms threshold. A threshold step
+    # earlier on only delays settling by one step, which moves t by under a millisecond.
+    near_window_edge = abs(offset) < 1 or abs(offset - 43200) < 1
+    last_step_on_threshold = iterations == 20 and abs(abs(step) - 0.001) < 1e-4
+    if (settled and near_window_edge) or last_step_on_threshold:
+        diag.path_fragile.append(f"crossing at {altitude} side {side}: the choice between "
+                                 "the iteration and bisection sits on a threshold")
+    if settled and 0 < offset < 43200:
+        return t
+
+    # Step 3: bisect between T, where the Sun is at or above the altitude, and A, where it's at
+    # or below it.
+    p, q = T, A
+    for _ in range(26):
+        m = (p + q) / 2
+        if sin_altitude(m) >= sin_h:
+            p = m
+        else:
+            q = m
+    result = (p + q) / 2
+    diag.bisected.append((result, altitude, side))
+    # Bisection is deterministic, but it finds a crossing that another engine's arithmetic
+    # could place elsewhere if the Sun crosses the altitude more than once in the half day.
+    crossings = 0
+    previous = None
+    for k in range(0, 2001):
+        above = sin_altitude(T + side * 43200 * k / 2000) >= sin_h
+        if previous is not None and above != previous:
+            crossings += 1
+        previous = above
+    if crossings != 1:
+        diag.path_fragile.append(f"crossing at {altitude} side {side}: the Sun crosses it "
+                                 f"{crossings} times in the half day")
+    return result
 
 
 # ---------------------------------------------------------------------------------------------

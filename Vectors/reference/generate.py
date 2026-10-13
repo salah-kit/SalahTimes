@@ -33,6 +33,7 @@ REFERENCE = "SalahTimes reference implementation (Vectors/reference/salahtimes_r
 # Fragility thresholds (Vectors/README.md, "Fragility").
 C_MARGIN = 1e-4  # no evaluated c within this of ±1
 ASR_MARGIN = 1e-4  # no Asr zenith distance within this many degrees of 90
+ALTITUDE_MARGIN = 1e-3  # no h* within this many degrees of the Sun's highest or lowest altitude
 ROUNDING_MARGIN = 2.0  # no minute-rounded value within this many seconds of a rounding boundary
 MAX_MOVE_DAYS = 14
 
@@ -73,6 +74,7 @@ PLACES = {
     "mcmurdo": ("McMurdo Station", -77.85, 166.67, "Antarctica/McMurdo"),
     "north-pole": ("the North Pole", 90.0, 0.0, "Etc/UTC"),
     "south-pole": ("the South Pole", -90.0, 0.0, "Etc/UTC"),
+    "near-south-pole": ("89.9975°S, 0°E", -89.9975, 0.0, "Etc/UTC"),
     "kiritimati": ("Kiritimati", 1.87, -157.4, "Pacific/Kiritimati"),
     "apia": ("Apia", -13.8333, -171.7667, "Pacific/Apia"),
     "nukualofa": ("Nuku'alofa", -21.1394, -175.2049, "Pacific/Tongatapu"),
@@ -145,8 +147,13 @@ def fragility(result, rounding):
         reasons.append(f"an existence test is {diag.min_c_margin:.2e} from the threshold")
     if diag.min_asr_margin < ASR_MARGIN:
         reasons.append(f"Asr's zenith distance is {diag.min_asr_margin:.2e}° from 90°")
+    if diag.min_altitude_margin < ALTITUDE_MARGIN:
+        reasons.append(f"an altitude is {diag.min_altitude_margin:.2e}° from the Sun's highest "
+                       "or lowest altitude")
     if diag.unconverged:
         reasons.append("an iteration didn't converge: " + ", ".join(diag.unconverged))
+    if diag.path_fragile:
+        reasons.append("; ".join(diag.path_fragile))
     if rounding in ("nearest", "up"):
         for name, value in result.unrounded.items():
             if not ref.occurs(value):
@@ -188,6 +195,26 @@ def auto_notes(result, place_tz, day, raw_params):
                          f"{local_text(raw, place_tz)} local).")
         elif NOTE_WITHIN_BOUND[0] and rule_has_bound(params, prayer, result):
             notes.append(f"{prayer.capitalize()}'s angle time is within its bound.")
+    bisected = [b[0] for b in result.diag.bisected]
+    if bisected:
+        shown = []
+        for name in ref.EVENTS:
+            value = trace.get(name, result.unrounded[name]) if name in ("fajr", "maghrib",
+                                                                        "isha") else None
+            candidates = [result.unrounded[name]] + ([value] if value is not None else [])
+            if any(ref.occurs(v) and any(abs(v - b) < 1e-6 for b in bisected)
+                   for v in candidates):
+                shown.append(name)
+        others = len(bisected) - len(shown)
+        text = "The hour-angle iteration doesn't settle, so bisection (algorithm section 6, step "
+        text += "3) finds "
+        parts = []
+        if shown:
+            parts.append(", ".join(shown))
+        if others > 0:
+            parts.append(f"{others} other crossing{'s' if others > 1 else ''} behind the bounds "
+                         "or the nights")
+        notes.append(text + " and ".join(parts) + ".")
     if trace.get("ramadanApplied"):
         notes.append("The Ramadan interval applies.")
     isha = events["isha"]
@@ -538,6 +565,23 @@ def build_polar():
                 time_vector(f, f"polar-{label}-{place}-{slug(day)}",
                             f"{label_text(label)} at {{place}} on {{date}}.", place, day,
                             parameters=params)
+    # Crossings that the hour-angle iteration can't settle, so bisection finds them (algorithm
+    # section 6, step 3): near a pole the declination, not the hour angle, carries the Sun
+    # across the altitude.
+    disabled = dict(MWL, highLatitudeRule="disabled", rounding="none")
+    for place, day, event in (("near-south-pole", date(2026, 3, 22), "sunset"),
+                              ("near-south-pole", date(2026, 5, 7), "isha"),
+                              ("near-south-pole", date(2026, 8, 1), "fajr"),
+                              ("north-pole", date(2026, 3, 18), "sunrise")):
+        def bisected(result, event=event):
+            value = result.trace.get(event, result.unrounded[event])
+            assert ref.occurs(value)
+            assert any(abs(value - b[0]) < 1e-6 for b in result.diag.bisected), event
+
+        time_vector(f, f"polar-bisection-{event}-{place}-{slug(day)}",
+                    f"Muslim World League angles with no high-latitude bound at {{place}} on "
+                    f"{{date}}: {event} comes from bisection.", place, day,
+                    parameters=disabled, check=bisected)
     # Minute rounding leaves non-occurrence alone.
     time_vector(f, "polar-mwl-nearest-tromso-{date}",
                 "Muslim World League angles at {place} on {date}, rounded to the nearest minute.",
@@ -989,12 +1033,45 @@ def build_custom():
                     move=True)
     explicit = dict(MWL, maghrib="sunset", madhab="shafi", highLatitudeRule="recommended",
                     nightSpan="sunsetToFajr", rounding="none")
-    for key in ("maghrib", "madhab", "highLatitudeRule", "nightSpan", "rounding"):
+    # London (51.5°) resolves `recommended` to the seventh of the night; Zurich (47.4°) to the
+    # middle, where a seventh bound would cut Isha short. Between them, every other rule
+    # changes an expected time.
+    omissions = [(key, "london") for key in ("maghrib", "madhab", "highLatitudeRule",
+                                              "nightSpan", "rounding")]
+    omissions.insert(3, ("highLatitudeRule", "zurich"))
+    written = {}
+    for key, place in omissions:
         params = {name: value for name, value in explicit.items() if name != key}
-        time_vector(f, f"custom-defaults-omit-{key}-london-{{date}}",
+        time_vector(f, f"custom-defaults-omit-{key}-{place}-{{date}}",
                     f"Every key but {key} given at {{place}} on {{date}}: {key} takes its "
-                    "default.", "london", date(2026, 6, 21), parameters=params, as_given=True,
+                    "default.", place, date(2026, 6, 21), parameters=params, as_given=True,
                     move=key == "rounding")
+        written.setdefault(key, []).append(
+            (place, date.fromisoformat(f.vectors[-1]["input"]["date"]), params,
+             f.vectors[-1]["expected"]))
+    # Check the claim: any other value of an omitted key changes an expected time in at least
+    # one of the vectors that omit it. Enumerations are checked in full; for `maghrib`, an
+    # angle stands for the other case.
+    alternatives = {
+        "maghrib": [{"angle": 4.5}, {"angle": 1}],
+        "madhab": ["hanafi"],
+        "highLatitudeRule": ["middleOfTheNight", "seventhOfTheNight", "twilightAngle",
+                             "disabled"],
+        "nightSpan": ["sunsetToSunrise"],
+        "rounding": ["none", "up"],
+    }
+    for key, values in alternatives.items():
+        for value in values:
+            changed = False
+            for place, day, params, expected in written[key]:
+                _, latitude, longitude, zone = PLACES[place]
+                other = ref.prayer_times(latitude, longitude, day, zone, dict(params, **{key: value}))
+                for event in ref.EVENTS:
+                    got = other.events[event]
+                    text = (iso_instant(got) if ref.occurs(got)
+                            else {"doesNotOccur": got.reason})
+                    changed = changed or text != expected[event]
+            assert changed, f"{key} = {value} doesn't change any omit-{key} vector"
     # The Moonsighting Committee in a leap year, after 29 February (day-of-year counting).
     for place in ("london", "cape-town"):
         params = {"fajr": "moonsightingCommittee", "isha": {"moonsightingCommittee": "general"},
