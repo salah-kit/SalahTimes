@@ -10,12 +10,12 @@ Majlis Ugama Islam Singapura (MUIS), via data.gov.sg. 365 days. Compared with `m
 
 | Prayer | Mean | Min | Max | Preset exact | Preset within 1 min |
 |---|---:|---:|---:|---:|---:|
-| fajr | +0.49 | -0.42 | +1.52 | 53% | 100% |
-| sunrise | +0.50 | -0.36 | +1.41 | 52% | 100% |
-| dhuhr | +1.58 | +0.75 | +2.46 | 0% | 41% |
-| asr | +0.51 | -1.13 | +1.49 | 41% | 100% |
-| maghrib | +0.60 | -0.29 | +1.86 | 45% | 97% |
-| isha | +0.53 | -0.33 | +1.48 | 48% | 100% |
+| fajr | +0.49 | -0.42 | +1.52 | 67% | 100% |
+| sunrise | +0.50 | -0.36 | +1.41 | 73% | 100% |
+| dhuhr | +0.58 | -0.25 | +1.46 | 78% | 100% |
+| asr | +0.51 | -1.13 | +1.49 | 62% | 99% |
+| maghrib | +0.60 | -0.29 | +1.86 | 73% | 100% |
+| isha | +0.53 | -0.33 | +1.48 | 80% | 100% |
 
 ### diyanet-istanbul: Istanbul
 
@@ -49,9 +49,9 @@ Jabatan Kemajuan Islam Malaysia (JAKIM), e-Solat. 365 days. Compared with `jakim
 
 | Prayer | Mean | Min | Max | Preset exact | Preset within 1 min |
 |---|---:|---:|---:|---:|---:|
-| fajr | +10.29 | +8.87 | +12.01 | 0% | 0% |
+| fajr | +1.88 | +0.72 | +3.28 | 0% | 31% |
 | sunrise | -0.80 | -1.37 | -0.18 | 20% | 100% |
-| dhuhr | +2.77 | +2.26 | +3.28 | 0% | 0% |
+| dhuhr | +1.77 | +1.26 | +2.28 | 0% | 24% |
 | asr | +1.75 | +0.70 | +3.28 | 0% | 35% |
 | maghrib | +1.93 | +0.77 | +3.17 | 0% | 28% |
 | isha | +1.97 | +0.73 | +3.25 | 0% | 26% |
@@ -88,12 +88,12 @@ Indonesia's Ministry of Religious Affairs (Kemenag), Bimas Islam. 365 days. Comp
 
 | Prayer | Mean | Min | Max | Preset exact | Preset within 1 min |
 |---|---:|---:|---:|---:|---:|
-| fajr | +2.43 | +1.96 | +2.97 | 0% | 0% |
-| sunrise | -3.23 | -3.78 | -2.60 | 0% | 0% |
-| dhuhr | +3.50 | +2.95 | +4.06 | 0% | 0% |
-| asr | +2.45 | +1.85 | +3.29 | 0% | 0% |
-| maghrib | +3.17 | +2.66 | +3.93 | 0% | 0% |
-| isha | +2.44 | +1.96 | +3.35 | 0% | 0% |
+| fajr | +0.43 | -0.04 | +0.97 | 96% | 100% |
+| sunrise | -0.23 | -0.78 | +0.40 | 25% | 100% |
+| dhuhr | +0.50 | -0.05 | +1.06 | 96% | 100% |
+| asr | +0.45 | -0.15 | +1.29 | 85% | 100% |
+| maghrib | +0.47 | -0.04 | +1.26 | 97% | 100% |
+| isha | +0.44 | -0.04 | +1.35 | 95% | 100% |
 
 ### moonsighting-london-hanafi: London
 
