@@ -27,12 +27,12 @@ let mwl = CalculationMethod.muslimWorldLeague.parameters
 | ``CalculationMethod/karachi`` | 18° | 18° | |
 | ``CalculationMethod/tehran`` | 17.7° | 14° | Maghrib at 4.5° |
 | ``CalculationMethod/diyanet`` | 18° | 17° | Sunrise −7, Dhuhr +5, Asr +4, Maghrib +7 minutes |
-| ``CalculationMethod/dubai`` | 18.2° | 18.2° | Angles fitted to official timetables |
+| ``CalculationMethod/dubai`` | 18.2° | 18.2° | Sunrise −3, Dhuhr, Asr and Maghrib +3 minutes, fitted to official timetables |
 | ``CalculationMethod/kuwait`` | 18° | 17.5° | |
 | ``CalculationMethod/qatar`` | 18° | 90 minutes after Maghrib | |
-| ``CalculationMethod/muis`` | 20° | 18° | |
+| ``CalculationMethod/muis`` | 20° | 18° | Dhuhr +1 minute, rounded up, fitted to the official timetable |
 | ``CalculationMethod/jakim`` | 18° | 18° | Dhuhr +1 minute |
-| ``CalculationMethod/kemenag`` | 20° | 18° | Rounded up, then +2 minutes (Dhuhr +3, sunrise −3) |
+| ``CalculationMethod/kemenag`` | 20° | 18° | Maghrib at 1°; rounded up, then +2 minutes (Dhuhr +3, sunrise −3) |
 | ``CalculationMethod/moonsightingCommittee`` | 18°, seasonal | 18°, seasonal | Dhuhr +5, Maghrib +3 minutes; its own high-latitude rule |
 
 The repository's
@@ -41,14 +41,15 @@ with its source. If a value doesn't match what an authority publishes, open an i
 `calculation-method` label.
 
 Every preset uses ``HighLatitudeRule/recommended``, ``Madhab/shafi``, no user adjustments and
-no Ramadan rule, and every preset except Kemenag's rounds to the nearest minute. Change any of
-them on the returned value.
+no Ramadan rule, and every preset except Kemenag's and MUIS's rounds to the nearest minute.
+Change any of them on the returned value.
 
-A preset includes only the precautionary minutes and rounding that its authority publishes.
-Some official timetables add minutes they don't document: the UAE's, for example, show Maghrib
-about 3 minutes after sunset. METHODS.md lists the differences measured for each method. If
-your users follow such a timetable to the minute, add those minutes to
-``CalculationParameters/methodAdjustments``.
+When an authority documents its rules, its preset follows them. When it publishes only
+timetables, as MUIS and the UAE's authority do, its preset is fitted to them. Some official
+timetables add minutes beyond their authority's documented rules: Malaysia's e-Solat times, for
+example, run about 2 minutes after JAKIM's published method. METHODS.md lists the differences
+measured for each method. If your users follow such a timetable to the minute, add those
+minutes to ``CalculationParameters/methodAdjustments``.
 
 ### Choose the madhab for Asr
 

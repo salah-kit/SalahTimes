@@ -32,8 +32,8 @@ struct AdhanParityTests {
 
   /// Known differences, keyed by file name and then by prayer.
   ///
-  /// adhan-swift's own tests allow two minutes for exactly these three files (their `variance`
-  /// key), so adhan-swift doesn't reproduce them within a minute either.
+  /// adhan-swift's own tests allow two minutes for these files (their `variance` key), so
+  /// adhan-swift doesn't reproduce them within a minute either.
   static let knownDifferences: [String: [String: KnownDifference]] = [
     "Ankara-Turkey": [
       "isha": KnownDifference(
@@ -50,19 +50,6 @@ struct AdhanParityTests {
           + "days agree within a minute."),
       "sunrise": KnownDifference(
         maximumMinutes: 2, reason: "The same 2016-03-01 row as Fajr."),
-    ],
-    "Singapore-Singapore": [
-      "dhuhr": KnownDifference(
-        maximumMinutes: 2,
-        reason: "MUIS publishes Dhuhr about a minute after the transit and rounds every time "
-          + "up; the muis preset has no Dhuhr minute and rounds to the nearest minute. 192 of "
-          + "366 days differ by two minutes."),
-      "asr": KnownDifference(
-        maximumMinutes: 2, reason: "MUIS rounds up; the preset rounds to the nearest minute."),
-      "maghrib": KnownDifference(
-        maximumMinutes: 2,
-        reason: "MUIS rounds up and publishes Maghrib up to about 1.9 minutes after sunset; "
-          + "the preset rounds to the nearest minute."),
     ],
   ]
 

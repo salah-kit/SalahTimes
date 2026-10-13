@@ -1,9 +1,10 @@
 /// A published calculation method.
 ///
-/// Each method's ``parameters`` reproduce its authority's published definition: the Sun's angles
-/// or intervals, plus the precautionary minutes and rounding the authority publishes. Minutes that
-/// an authority's timetables add without documenting them aren't included. METHODS.md lists every
-/// value with its source and the known differences from official timetables.
+/// Each method's ``parameters`` reproduce its authority's times. When the authority documents
+/// its rules, the preset follows them: the Sun's angles or intervals, plus the precautionary
+/// minutes and rounding it documents. When it publishes only timetables, as in Singapore and the
+/// United Arab Emirates, the values are fitted to those timetables. METHODS.md gives every value
+/// with its source and the measured differences from official timetables.
 ///
 /// A method is a starting point. Start from one and customize the parameters, or build
 /// ``CalculationParameters`` from scratch for a custom method.
@@ -44,9 +45,10 @@ public enum CalculationMethod: String, Hashable, Codable, Sendable, CaseIterable
   /// Asr 4 and Maghrib 7 minutes later.
   case diyanet
 
-  /// The United Arab Emirates, as used in Dubai and Abu Dhabi: Fajr and Isha at 18.2°.
+  /// The United Arab Emirates, as used in Dubai and Abu Dhabi: Fajr and Isha at 18.2°, sunrise
+  /// 3 minutes earlier, and Dhuhr, Asr and Maghrib 3 minutes later.
   ///
-  /// The authority doesn't publish its method; the angles come from fitting its timetables.
+  /// The authority doesn't publish its method; every value is fitted to its official timetables.
   case dubai
 
   /// Kuwait's Ministry of Awqaf and Islamic Affairs: Fajr at 18°, Isha at 17.5°.
@@ -56,15 +58,19 @@ public enum CalculationMethod: String, Hashable, Codable, Sendable, CaseIterable
   /// Isha 90 minutes after Maghrib.
   case qatar
 
-  /// Majlis Ugama Islam Singapura (MUIS): Fajr at 20°, Isha at 18°.
+  /// Majlis Ugama Islam Singapura (MUIS): Fajr at 20°, Isha at 18°, Dhuhr a minute after the
+  /// Sun's transit, and times rounded up to the minute.
+  ///
+  /// MUIS doesn't publish its method; every value is fitted to its official timetable.
   case muis
 
   /// Jabatan Kemajuan Islam Malaysia (JAKIM): Fajr at 18° since 2019, Isha at 18°, and Dhuhr a
   /// minute after the Sun's transit.
   case jakim
 
-  /// Indonesia's Ministry of Religious Affairs (Kemenag): Fajr at 20°, Isha at 18°, times rounded
-  /// up to the minute, then 2 minutes of precaution (ihtiyat) added, 3 for Dhuhr.
+  /// Indonesia's Ministry of Religious Affairs (Kemenag): Fajr at 20°, Maghrib with the Sun 1°
+  /// below the horizon, Isha at 18°, times rounded up to the minute, then 2 minutes of precaution
+  /// (ihtiyat) added, 3 for Dhuhr.
   ///
   /// Kemenag drops sunrise's seconds and subtracts 2 minutes. With rounding up, the preset's
   /// −3 minutes for sunrise gives the same minute.
@@ -98,19 +104,23 @@ public enum CalculationMethod: String, Hashable, Codable, Sendable, CaseIterable
         fajr: .angle(18), isha: .angle(17),
         methodAdjustments: PrayerAdjustments(sunrise: -7, dhuhr: 5, asr: 4, maghrib: 7))
     case .dubai:
-      CalculationParameters(fajr: .angle(18.2), isha: .angle(18.2))
+      CalculationParameters(
+        fajr: .angle(18.2), isha: .angle(18.2),
+        methodAdjustments: PrayerAdjustments(sunrise: -3, dhuhr: 3, asr: 3, maghrib: 3))
     case .kuwait:
       CalculationParameters(fajr: .angle(18), isha: .angle(17.5))
     case .qatar:
       CalculationParameters(fajr: .angle(18), isha: .minutesAfterMaghrib(90))
     case .muis:
-      CalculationParameters(fajr: .angle(20), isha: .angle(18))
+      CalculationParameters(
+        fajr: .angle(20), isha: .angle(18), methodAdjustments: PrayerAdjustments(dhuhr: 1),
+        rounding: .up)
     case .jakim:
       CalculationParameters(
         fajr: .angle(18), isha: .angle(18), methodAdjustments: PrayerAdjustments(dhuhr: 1))
     case .kemenag:
       CalculationParameters(
-        fajr: .angle(20), isha: .angle(18),
+        fajr: .angle(20), isha: .angle(18), maghrib: .angle(1),
         methodAdjustments: PrayerAdjustments(
           fajr: 2, sunrise: -3, dhuhr: 3, asr: 2, maghrib: 2, isha: 2),
         rounding: .up)

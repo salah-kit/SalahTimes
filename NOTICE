@@ -36,7 +36,17 @@ where it came from, and its license.
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
    SOFTWARE.
 
-2. Howard Hinnant's date algorithms
+2. MUIS prayer timetable
+
+   Validation/official-timetables/data/muis-singapore-2026.csv holds MUIS's
+   official prayer timetable for 2026, used only to validate the muis preset.
+
+   Contains information from Muslim Prayer Timetable 2026 accessed on
+   13 October 2026 from data.gov.sg, which is made available under the terms of
+   the Singapore Open Data Licence version 1.0
+   (https://data.gov.sg/open-data-licence).
+
+3. Howard Hinnant's date algorithms
 
    GregorianDay converts between calendar dates and day counts with Howard
    Hinnant's days_from_civil and civil_from_days algorithms, described at

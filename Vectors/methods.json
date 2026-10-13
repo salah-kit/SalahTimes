@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "description": "SalahTimes' calculation-method presets, as the Codable JSON of CalculationParameters. Each entry is the authority's published astronomical definition plus its published precautionary minutes (methodAdjustments) and rounding. User adjustments are zero, the high-latitude rule is 'recommended' and the Ramadan Isha rule is off in every preset. METHODS.md gives the sources, retrieved 2026-10-13, and the known differences from official timetables. 'sources' maps each method to its primary source URLs.",
+  "description": "SalahTimes' calculation-method presets, as the Codable JSON of CalculationParameters. When an authority documents its rules, its entry follows them: the astronomical definition plus the precautionary minutes (methodAdjustments) and rounding it documents. When an authority publishes only timetables (MUIS, the UAE), the values are fitted to them. User adjustments are zero, the high-latitude rule is 'recommended' and the Ramadan Isha rule is off in every preset. METHODS.md gives the sources, retrieved 2026-10-13, and the measured differences from official timetables. 'sources' maps each method to its source URLs.",
   "methods": {
     "muslimWorldLeague": {
       "fajr": {
@@ -227,10 +227,10 @@
       "nightSpan": "sunsetToFajr",
       "methodAdjustments": {
         "fajr": 0,
-        "sunrise": 0,
-        "dhuhr": 0,
-        "asr": 0,
-        "maghrib": 0,
+        "sunrise": -3,
+        "dhuhr": 3,
+        "asr": 3,
+        "maghrib": 3,
         "isha": 0
       },
       "adjustments": {
@@ -318,7 +318,7 @@
       "methodAdjustments": {
         "fajr": 0,
         "sunrise": 0,
-        "dhuhr": 0,
+        "dhuhr": 1,
         "asr": 0,
         "maghrib": 0,
         "isha": 0
@@ -331,7 +331,7 @@
         "maghrib": 0,
         "isha": 0
       },
-      "rounding": "nearest",
+      "rounding": "up",
       "ramadanIsha": "off"
     },
     "jakim": {
@@ -371,7 +371,9 @@
       "isha": {
         "angle": 18
       },
-      "maghrib": "sunset",
+      "maghrib": {
+        "angle": 1
+      },
       "madhab": "shafi",
       "highLatitudeRule": "recommended",
       "nightSpan": "sunsetToFajr",
@@ -453,7 +455,8 @@
     ],
     "dubai": [
       "https://aladhan.com/calculation-methods",
-      "https://www.szgmc.gov.ae/en/worshippers/prayer-timingss"
+      "https://www.szgmc.gov.ae/en/worshippers/prayer-timingss",
+      "https://github.com/batoulapps/adhan-swift/tree/main/Tests/AdhanTests/Resources/Times"
     ],
     "kuwait": [
       "https://api.aladhan.com/v1/methods"
@@ -463,6 +466,7 @@
       "https://qatarch.com/brief-altakwem"
     ],
     "muis": [
+      "https://data.gov.sg/datasets/d_d441e7242e78efc566024dd5b0d9829c/view",
       "https://www.muis.gov.sg/-/media/Files/Corporate-Site/Prayer-Timetable-2025.ashx",
       "https://praytimes.org/docs/methods"
     ],
