@@ -270,6 +270,8 @@ There's no single direction at the Kaaba itself or at its antipode. The central 
 
 When `σ` is below 1e-9 radians or above π - 1e-9 radians, there's no result.
 
+Close to the antipode both arguments of the bearing's `atan2` are tiny, so rounding in `ΔL` shows: due north of the antipode the exact bearing is 0°, but because `sin ΔL` isn't exactly 0 when `ΔL` is 180°, an engine gets about 1e-6° at 3e-7° from the antipode, depending on how it forms `ΔL`. Engines agree there only to about 1e-5°.
+
 ## References
 
 - Jean Meeus, *Astronomical Algorithms*, 2nd edition, Willmann-Bell, 1998: chapters 7 (Julian Day), 12 (sidereal time), 15 (rising, transit and setting), 22 (nutation and obliquity) and 25 (solar coordinates).
