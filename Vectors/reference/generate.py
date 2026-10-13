@@ -76,7 +76,8 @@ PLACES = {
     "south-pole": ("the South Pole", -90.0, 0.0, "Etc/UTC"),
     "near-south-pole": ("89.9975°S, 0°E", -89.9975, 0.0, "Etc/UTC"),
     "lat-86-north": ("86°N, 0°E", 86.0, 0.0, "Etc/UTC"),
-    "lat-83-south-120w": ("83°S, 120°W", -83.0, -120.0, "Etc/UTC"),
+    "lat-86-north-120w": ("86°N, 120°W", 86.0, -120.0, "Etc/UTC"),
+    "lat-86-south-120e": ("86°S, 120°E", -86.0, 120.0, "Etc/UTC"),
     "kiritimati": ("Kiritimati", 1.87, -157.4, "Pacific/Kiritimati"),
     "apia": ("Apia", -13.8333, -171.7667, "Pacific/Apia"),
     "nukualofa": ("Nuku'alofa", -21.1394, -175.2049, "Pacific/Tongatapu"),
@@ -299,6 +300,11 @@ def time_vector(target, vector_id, description, place, day, parameters=None, met
     """
     name, latitude, longitude, place_tz = PLACES[place]
     zone = tz or place_tz
+    if 89 <= abs(latitude) < 89.995:
+        # Fragility rule 5: from 89°, the Sun needn't be highest at T and lowest at A, so the
+        # existence tests of section 6 can miss a rise and set within one half day.
+        raise FragileVector(f"{vector_id}: latitude {latitude} is in the excluded band "
+                            "89° <= |φ| < 89.995°")
     if method is not None:
         resolved = dict(METHODS[method])
         resolved.update(overrides or {})
@@ -572,22 +578,31 @@ def build_polar():
     # across the altitude.
     # Asr comes within minutes of the transit on the days before polar night, where the
     # declination carries it too.
+    # Each one must discriminate: the iteration's last iterate is more than 2 s from the
+    # crossing bisection returns, so an engine without step 3 fails it.
     disabled = dict(MWL, highLatitudeRule="disabled", rounding="none")
-    for place, day, event in (("near-south-pole", date(2026, 3, 22), "sunset"),
-                              ("near-south-pole", date(2026, 5, 7), "isha"),
-                              ("near-south-pole", date(2026, 8, 1), "fajr"),
-                              ("north-pole", date(2026, 3, 18), "sunrise"),
-                              ("lat-86-north", date(2026, 10, 2), "asr"),
-                              ("lat-83-south-120w", date(2026, 4, 6), "asr")):
+    for place, day, event, madhab in (("near-south-pole", date(2026, 3, 22), "sunset", "shafi"),
+                                      ("near-south-pole", date(2026, 5, 7), "isha", "shafi"),
+                                      ("near-south-pole", date(2026, 8, 1), "fajr", "shafi"),
+                                      ("north-pole", date(2026, 3, 18), "sunrise", "shafi"),
+                                      ("lat-86-north", date(2026, 10, 2), "asr", "shafi"),
+                                      ("lat-86-north-120w", date(2026, 10, 2), "asr", "hanafi"),
+                                      ("lat-86-south-120e", date(2026, 3, 30), "asr", "shafi")):
         def bisected(result, event=event):
             value = result.trace.get(event, result.unrounded[event])
             assert ref.occurs(value)
-            assert any(abs(value - b[0]) < 1e-6 for b in result.diag.bisected), event
+            matches = [b for b in result.diag.bisected if abs(value - b[0]) < 1e-6]
+            assert matches, f"{event} isn't bisected"
+            assert all(abs(b[3] - b[0]) > 2 for b in matches), (
+                f"{event}: the last iterate is within 2 s of the bisected crossing")
 
-        time_vector(f, f"polar-bisection-{event}-{place}-{slug(day)}",
-                    f"Muslim World League angles with no high-latitude bound at {{place}} on "
-                    f"{{date}}: {event} comes from bisection.", place, day,
-                    parameters=disabled, check=bisected)
+        madhab_text = "" if madhab == "shafi" else " and Hanafi Asr"
+        time_vector(f, f"polar-bisection-{event}{'-hanafi' if madhab == 'hanafi' else ''}"
+                       f"-{place}-{slug(day)}",
+                    f"Muslim World League angles{madhab_text} with no high-latitude bound at "
+                    f"{{place}} on {{date}}: {event} comes from bisection, and the hour-angle "
+                    "iteration's last iterate is more than 2 s from it.", place, day,
+                    parameters=dict(disabled, madhab=madhab), check=bisected)
     # Minute rounding leaves non-occurrence alone.
     time_vector(f, "polar-mwl-nearest-tromso-{date}",
                 "Muslim World League angles at {place} on {date}, rounded to the nearest minute.",

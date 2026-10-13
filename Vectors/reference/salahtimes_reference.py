@@ -320,7 +320,8 @@ class Diagnostics:
         self.min_altitude_margin = math.inf
         self.min_asr_margin = math.inf  # min of |z - 90| at every Asr computed
         self.unconverged = []  # descriptions of transit iterations that hit 20 steps
-        self.bisected = []  # (instant, altitude, side) of crossings found by bisection
+        # (instant, altitude, side, the iteration's last iterate) of crossings found by bisection
+        self.bisected = []
         self.path_fragile = []  # crossings where another engine could take the other path
 
     def note_c(self, c_transit, c_antitransit):
@@ -467,6 +468,8 @@ def crossing(T, altitude, side, latitude, longitude, diag):
                                      "more than once in the half day")
         return t
 
+    last_iterate = t
+
     # Step 3: bisect between T, where the Sun is at or above the altitude, and A, where it's at
     # or below it.
     p, q = T, A
@@ -477,7 +480,7 @@ def crossing(T, altitude, side, latitude, longitude, diag):
         else:
             q = m
     result = (p + q) / 2
-    diag.bisected.append((result, altitude, side))
+    diag.bisected.append((result, altitude, side, last_iterate))
     # Bisection is deterministic, but it finds a crossing that another engine's arithmetic
     # could place elsewhere if the Sun crosses the altitude more than once in the half day.
     crossings = crossings_in_half_day()
