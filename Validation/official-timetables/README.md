@@ -8,7 +8,7 @@ SalahTimes compared with timetables that the authorities behind its methods publ
 | `fetch.py` | Downloads the timetables (Python 3 standard library only) and writes one CSV per source |
 | `data/` | Timetables whose terms allow redistribution, committed |
 | `cache/` | Everything else, gitignored |
-| `results.md` | The latest comparison, written by the test |
+| `results.md` | The latest comparison, written by the test, including a place-specific fit for JAKIM's zone WLY01 |
 
 The comparison is `Tests/SalahTimesTests/OfficialTimetableTests.swift`. `docs/validation.md` interprets the results.
 
