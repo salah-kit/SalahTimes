@@ -1,0 +1,943 @@
+{
+  "schemaVersion": 1,
+  "kind": "calculationErrors",
+  "description": "Inputs that must fail, with the CalculationError case for each check in docs/algorithm.md section 2. Each vector breaks exactly one check.",
+  "vectors": [
+    {
+      "id": "error-latitude-above-90",
+      "description": "A latitude above 90.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 90.0001,
+          "longitude": 0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidCoordinates"
+      }
+    },
+    {
+      "id": "error-latitude-below-minus-90",
+      "description": "A latitude below -90.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": -91,
+          "longitude": 0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidCoordinates"
+      }
+    },
+    {
+      "id": "error-longitude-above-180",
+      "description": "A longitude above 180.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 0,
+          "longitude": 180.0001
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidCoordinates"
+      }
+    },
+    {
+      "id": "error-longitude-below-minus-180",
+      "description": "A longitude below -180.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 0,
+          "longitude": -181
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidCoordinates"
+      }
+    },
+    {
+      "id": "error-latitude-nan",
+      "description": "A latitude that isn't a number.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": "NaN",
+          "longitude": 0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidCoordinates"
+      }
+    },
+    {
+      "id": "error-longitude-infinite",
+      "description": "An infinite longitude.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 0,
+          "longitude": "-Infinity"
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidCoordinates"
+      }
+    },
+    {
+      "id": "error-year-999",
+      "description": "The year 999, before the supported range.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "0999-12-31",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "unsupportedDate"
+      }
+    },
+    {
+      "id": "error-year-3001",
+      "description": "The year 3001, after the supported range.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "3001-01-01",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "unsupportedDate"
+      }
+    },
+    {
+      "id": "error-fajr-angle-below-1",
+      "description": "A Fajr angle below 1.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 0.99
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-fajr-angle-above-30",
+      "description": "A Fajr angle above 30.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 30.5
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-fajr-angle-nan",
+      "description": "A Fajr angle that isn't a number.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": "NaN"
+          },
+          "isha": {
+            "angle": 17
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-isha-angle-below-1",
+      "description": "An Isha angle below 1.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 0
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-isha-angle-above-30",
+      "description": "An Isha angle above 30.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 31
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-isha-angle-infinite",
+      "description": "An infinite Isha angle.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": "+Infinity"
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-maghrib-angle-zero",
+      "description": "A Maghrib angle of 0 (the range is (0, 30]).",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": {
+            "angle": 0
+          },
+          "isha": {
+            "angle": 14
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-maghrib-angle-negative",
+      "description": "A negative Maghrib angle.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": {
+            "angle": -4
+          },
+          "isha": {
+            "angle": 14
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-maghrib-angle-above-30",
+      "description": "A Maghrib angle above 30.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": {
+            "angle": 30.5
+          },
+          "isha": {
+            "angle": 14
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-maghrib-angle-nan",
+      "description": "A Maghrib angle that isn't a number.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": {
+            "angle": "NaN"
+          },
+          "isha": {
+            "angle": 14
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-isha-interval-negative",
+      "description": "A negative Isha interval.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": -1
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-isha-interval-above-1440",
+      "description": "An Isha interval above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-ramadan-interval-zero",
+      "description": "A Ramadan interval of 0 (the range is [1, 1440]).",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "ramadanIsha": {
+            "interval": {
+              "minutes": 0,
+              "hijriDayOffset": 0
+            }
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-ramadan-interval-above-1440",
+      "description": "A Ramadan interval above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "ramadanIsha": {
+            "interval": {
+              "minutes": 1441,
+              "hijriDayOffset": 0
+            }
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-ramadan-offset-below-minus-30",
+      "description": "A Hijri day offset below -30.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "ramadanIsha": {
+            "interval": {
+              "minutes": 120,
+              "hijriDayOffset": -31
+            }
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-ramadan-offset-above-30",
+      "description": "A Hijri day offset above 30.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18.5
+          },
+          "isha": {
+            "minutesAfterMaghrib": 90
+          },
+          "ramadanIsha": {
+            "interval": {
+              "minutes": 120,
+              "hijriDayOffset": 31
+            }
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-adjustment-fajr-above-1440",
+      "description": "A user adjustment to fajr above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "adjustments": {
+            "fajr": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-method-adjustment-fajr-below-minus-1440",
+      "description": "A method adjustment to fajr below -1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "methodAdjustments": {
+            "fajr": -1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-adjustment-sunrise-above-1440",
+      "description": "A user adjustment to sunrise above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "adjustments": {
+            "sunrise": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-method-adjustment-sunrise-below-minus-1440",
+      "description": "A method adjustment to sunrise below -1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "methodAdjustments": {
+            "sunrise": -1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-adjustment-dhuhr-above-1440",
+      "description": "A user adjustment to dhuhr above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "adjustments": {
+            "dhuhr": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-method-adjustment-dhuhr-below-minus-1440",
+      "description": "A method adjustment to dhuhr below -1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "methodAdjustments": {
+            "dhuhr": -1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-adjustment-asr-above-1440",
+      "description": "A user adjustment to asr above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "adjustments": {
+            "asr": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-method-adjustment-asr-below-minus-1440",
+      "description": "A method adjustment to asr below -1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "methodAdjustments": {
+            "asr": -1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-adjustment-maghrib-above-1440",
+      "description": "A user adjustment to maghrib above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "adjustments": {
+            "maghrib": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-method-adjustment-maghrib-below-minus-1440",
+      "description": "A method adjustment to maghrib below -1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "methodAdjustments": {
+            "maghrib": -1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-adjustment-isha-above-1440",
+      "description": "A user adjustment to isha above 1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "adjustments": {
+            "isha": 1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    },
+    {
+      "id": "error-method-adjustment-isha-below-minus-1440",
+      "description": "A method adjustment to isha below -1440 minutes.",
+      "source": "docs/algorithm.md section 2; SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-03-20",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "methodAdjustments": {
+            "isha": -1441
+          }
+        }
+      },
+      "expected": {
+        "error": "invalidParameters"
+      }
+    }
+  ]
+}
