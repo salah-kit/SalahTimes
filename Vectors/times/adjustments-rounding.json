@@ -1669,6 +1669,52 @@
       "toleranceSeconds": 1
     },
     {
+      "id": "adjust-sum-beyond-limit-makkah-2026-04-10",
+      "description": "Method and user adjustments of 1000 minutes each at Makkah on 2026-04-10: each is within ±1440, so the input is valid, and Fajr and Isha move by 2000 minutes. Isha falls after local midnight, at 2026-04-12 05:09. Fajr falls before the day begins, at 2026-04-08 19:30.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-04-10",
+        "timeZone": "Asia/Riyadh",
+        "coordinates": {
+          "latitude": 21.4225,
+          "longitude": 39.8262
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 17
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "recommended",
+          "nightSpan": "sunsetToFajr",
+          "methodAdjustments": {
+            "fajr": -1000,
+            "isha": 1000
+          },
+          "adjustments": {
+            "fajr": -1000,
+            "isha": 1000
+          },
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-04-08T16:30:24Z",
+        "sunrise": "2026-04-10T03:05:58Z",
+        "dhuhr": "2026-04-10T09:22:02Z",
+        "asr": "2026-04-10T12:46:58Z",
+        "sunset": "2026-04-10T15:38:25Z",
+        "maghrib": "2026-04-10T15:38:25Z",
+        "isha": "2026-04-12T02:09:38Z",
+        "middleOfTheNight": "2026-04-10T20:43:55Z",
+        "lastThirdOfTheNight": "2026-04-10T22:25:45Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
       "id": "adjust-limits-makkah-2026-04-10",
       "description": "Adjustments at their limits, -1440 and +1440 minutes, at Makkah on 2026-04-10: they move Fajr and Isha by a whole day. Isha falls after local midnight, at 2026-04-11 19:49. Fajr falls before the day begins, at 2026-04-09 04:50.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",

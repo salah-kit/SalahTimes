@@ -84,7 +84,10 @@ PLACES = {
     "pontianak": ("Pontianak", -0.0263, 109.3425, "Asia/Pontianak"),
     "kashgar": ("Kashgar", 39.47, 75.99, "Asia/Shanghai"),
     "urumqi": ("Ürümqi", 43.8256, 87.6168, "Asia/Shanghai"),
-    "madrid": ("Madrid", 40.4168, -3.7038, "Europe/Madrid"),
+    "lat-55-north": ("55°N, 12°E", 55.0, 12.0, "Europe/Copenhagen"),
+    "lat-54.99-north": ("54.99°N, 12°E", 54.99, 12.0, "Europe/Copenhagen"),
+    "lat-55-south": ("55°S, 67°W", -55.0, -67.0, "America/Argentina/Ushuaia"),
+    "lat-54.99-south": ("54.99°S, 67°W", -54.99, -67.0, "America/Argentina/Ushuaia"),
 }
 
 EQUINOXES_AND_SOLSTICES = (date(2026, 3, 20), date(2026, 6, 21), date(2026, 9, 23),
@@ -370,22 +373,19 @@ DEFAULT_METHOD_PLACES = ("makkah", "london", "sydney")
 def build_methods():
     f = VectorFile("times/methods.json",
                    "Every method in Vectors/methods.json at its region, a place far from it and a "
-                   "southern-hemisphere place, on 2026's equinoxes and solstices. Each day appears "
-                   "with the preset exactly as published and with rounding turned off.")
-    skipped = []
+                   "southern-hemisphere place, on 2026's equinoxes and solstices, with rounding "
+                   "turned off. Each day also appears with the preset exactly as published; when "
+                   "minute rounding makes that day fragile, it moves to the next day that isn't.")
     for method in sorted(METHODS):
         for place in METHOD_PLACES.get(method, DEFAULT_METHOD_PLACES):
             for day in EQUINOXES_AND_SOLSTICES:
                 time_vector(f, f"method-{method}-{place}-{slug(day)}-unrounded",
                             f"The {method} preset at {{place}} on {{date}}, unrounded.",
                             place, day, method=method, overrides={"rounding": "none"})
-                try:
-                    time_vector(f, f"method-{method}-{place}-{slug(day)}",
-                                f"The {method} preset at {{place}} on {{date}}, as published.",
-                                place, day, method=method)
-                except FragileVector as error:
-                    skipped.append(str(error))
-    return f, skipped
+                time_vector(f, f"method-{method}-{place}-{{date}}",
+                            f"The {method} preset at {{place}} on {{date}}, as published.",
+                            place, day, method=method, move=True)
+    return f
 
 
 # ---------------------------------------------------------------------------------------------
@@ -733,6 +733,13 @@ def build_adjustments_rounding():
                 "Umm al-Qura's interval at {place} on {date} with Maghrib moved 8 minutes: Isha is "
                 "sunset plus 90 minutes, minus its own 4.", "makkah", date(2026, 4, 10),
                 parameters=params)
+    # Method and user adjustments are checked separately, so together they can pass 1440.
+    params = dict(MWL, methodAdjustments={"fajr": -1000, "isha": 1000},
+                  adjustments={"fajr": -1000, "isha": 1000}, rounding="none")
+    time_vector(f, "adjust-sum-beyond-limit-makkah-2026-04-10",
+                "Method and user adjustments of 1000 minutes each at {place} on {date}: each is "
+                "within ±1440, so the input is valid, and Fajr and Isha move by 2000 minutes.",
+                "makkah", date(2026, 4, 10), parameters=params)
     # Extreme adjustments at the limits.
     params = dict(MWL, adjustments={"fajr": -1440, "isha": 1440}, rounding="none")
     time_vector(f, "adjust-limits-makkah-2026-04-10",
@@ -855,8 +862,6 @@ def build_custom():
     for label, params in customs:
         for place in ("cairo", "london", "sydney"):
             for day in (date(2026, 1, 20), date(2026, 7, 20)):
-                if label == "maghrib-4-interval-60" and place == "london":
-                    continue  # covered at lower latitudes; see the README's ambiguity notes
                 time_vector(f, f"custom-{label}-{place}-{slug(day)}",
                             f"Custom parameters ({label}) at {{place}} on {{date}}.", place, day,
                             parameters=dict(params, rounding="none"))
@@ -874,6 +879,60 @@ def build_custom():
                                 f"The Moonsighting Committee's rules with the {shafaq} shafaq and "
                                 f"{madhab.capitalize()} Asr at {{place}} on {{date}}.", place,
                                 day, parameters=params)
+    # Isha by interval after an angle-based Maghrib that doesn't occur while sunset does: Isha
+    # takes Maghrib's reason (algorithm sections 8.4 and 9). At Tromsø in late July and early
+    # August the Sun sets but stays above -4.5°.
+    tehran_interval = {"fajr": {"angle": 17.7}, "maghrib": {"angle": 4.5},
+                       "isha": {"minutesAfterMaghrib": 90}, "rounding": "none"}
+    for day in (date(2026, 7, 30), date(2026, 8, 3)):
+        def unreachable_maghrib(result):
+            assert ref.occurs(result.events["sunset"])
+            assert result.events["maghrib"] == ref.NotOccur(ref.SUN_STAYS_ABOVE)
+            assert result.events["isha"] == ref.NotOccur(ref.SUN_STAYS_ABOVE)
+
+        time_vector(f, f"custom-maghrib-angle-unreached-interval-tromso-{slug(day)}",
+                    "Maghrib at 4.5° and Isha 90 minutes after it, with no high-latitude bound, "
+                    "at {place} on {date}: the Sun sets but never reaches -4.5°, so Maghrib "
+                    "doesn't occur, and Isha takes Maghrib's reason.", "tromso", day,
+                    parameters=dict(tehran_interval, highLatitudeRule="disabled"),
+                    check=unreachable_maghrib)
+        time_vector(f, f"custom-maghrib-angle-bounded-interval-tromso-{slug(day)}",
+                    "The same angles with the recommended rule at {place} on {date}: Maghrib is "
+                    "bounded by the night's first seventh, and Isha is 90 minutes after that.",
+                    "tromso", day, parameters=dict(tehran_interval))
+    # The committee's seventh-of-the-night bound starts at 55°, inclusive, in both hemispheres.
+    for place, day, seventh_decides in (
+        ("lat-55-north", date(2026, 6, 21), True),
+        ("lat-54.99-north", date(2026, 6, 21), False),
+        ("lat-55-south", date(2026, 12, 21), True),
+        ("lat-54.99-south", date(2026, 12, 21), False),
+        ("oslo", date(2026, 12, 21), False),
+    ):
+        for shafaq in ("general", "abyad"):
+            params = {"fajr": "moonsightingCommittee", "isha": {"moonsightingCommittee": shafaq},
+                      "rounding": "none"}
+
+            def decided_by(result, seventh_decides=seventh_decides, shafaq=shafaq, day=day,
+                           place=place):
+                latitude = PLACES[place][1]
+                trace = result.trace
+                sunrise = result.events["sunrise"]
+                sunset = result.events["sunset"]
+                seasonal_fajr = sunrise - 60 * ref.mc_seasonal_minutes("fajr", day, latitude)
+                seasonal_isha = sunset + 60 * ref.mc_seasonal_minutes(shafaq, day, latitude)
+                if seventh_decides:
+                    assert trace["fajr"] == sunrise - trace["nightBefore"] / 7
+                    assert trace["isha"] == sunset + trace["nightAfter"] / 7
+                else:
+                    assert trace["fajr"] == seasonal_fajr
+                    assert trace["isha"] == seasonal_isha
+
+            which = ("the night's seventh decides both Fajr and Isha" if seventh_decides
+                     else "the seasonal bounds decide both Fajr and Isha")
+            time_vector(f, f"custom-moonsighting-threshold-{shafaq}-{place}-{slug(day)}",
+                        f"The Moonsighting Committee's rules with the {shafaq} shafaq at {{place}} "
+                        f"on {{date}}: {which}.", place, day, parameters=params,
+                        check=decided_by)
     # The Moonsighting Committee in a leap year, after 29 February (day-of-year counting).
     for place in ("london", "cape-town"):
         params = {"fajr": "moonsightingCommittee", "isha": {"moonsightingCommittee": "general"},
@@ -923,6 +982,8 @@ QIBLA_PLACES = (
     ("adamstown", "Adamstown, Pitcairn, near the antipode", -25.066, -130.1015, None),
     ("antipode-north", "0.01° north of the antipode", -21.4125241, -140.1738182, None),
     ("antipode-east", "0.01° east of the antipode", -21.4225241, -140.1638182, None),
+    ("antipode-3e-7-north", "3e-7° (about 3 cm, 5.2e-9 rad) north of the antipode, beyond the "
+     "1e-9 rad threshold", -21.4225238, -140.1738182, None),
     ("north-pole", "the North Pole (longitude 0)", 90.0, 0.0, None),
     ("south-pole", "the South Pole (longitude 0)", -90.0, 0.0, None),
     ("date-line-east", "the date line, longitude 180", 0.0, 180.0, None),
@@ -932,6 +993,8 @@ QIBLA_PLACES = (
 QIBLA_NONE = (
     ("kaaba", "the Kaaba itself", 21.4225241, 39.8261818),
     ("antipode", "the Kaaba's antipode", -21.4225241, -140.1738182),
+    ("antipode-1e-11", "1e-11° from the Kaaba's antipode, within the 1e-9 rad threshold",
+     -21.42252409999, -140.1738182),
     ("latitude-above-90", "a latitude above 90", 90.5, 0.0),
     ("latitude-below-minus-90", "a latitude below -90", -91.0, 0.0),
     ("longitude-above-180", "a longitude above 180", 0.0, 180.5),
@@ -978,13 +1041,23 @@ def build_qibla():
         source = REFERENCE
         if key in QIBLA_PUBLISHED:
             source += "; " + QIBLA_PUBLISHED[key]
+        description = f"The Qibla from {name}."
+        tolerance = 1e-6
+        if key == "antipode-3e-7-north":
+            # Due north of the antipode the exact bearing is 0°. In floating point, sin ΔL isn't
+            # exactly 0 for ΔL = 180°, and with the place so close to the antipode that residue
+            # leaves about 1e-6° that depends on how an engine forms ΔL. The wider tolerance
+            # accepts both.
+            description += (" The exact bearing is 0°; the formula in floating point gives about "
+                            "1.2e-6°, so the tolerance is 1e-5°.")
+            tolerance = 1e-5
         f.vectors.append({
             "id": claim_id(f"qibla-{key}"),
-            "description": f"The Qibla from {name}.",
+            "description": description,
             "source": source,
             "input": {"coordinates": {"latitude": latitude, "longitude": longitude}},
             "expected": {"bearing": round(bearing, 9)},
-            "toleranceDegrees": 1e-6,
+            "toleranceDegrees": tolerance,
         })
     for key, name, latitude, longitude in QIBLA_NONE:
         assert ref.qibla(latitude, longitude) is None
@@ -1127,10 +1200,8 @@ def main():
         counts[vector_file.path] = vector_file.write()
     if os.path.exists(methods_path):
         METHODS.update(load_methods(methods_path))
-        vector_file, skipped = build_methods()
+        vector_file = build_methods()
         counts[vector_file.path] = vector_file.write()
-        for line in skipped:
-            print(f"skipped (fragile): {line}")
     else:
         print("Vectors/methods.json is missing: times/methods.json wasn't regenerated.")
     for path, count in counts.items():

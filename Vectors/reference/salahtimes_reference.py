@@ -183,6 +183,8 @@ def validate(latitude, longitude, day, p):
             raise CalculationError("invalidParameters", "ramadan interval")
         if not (-30 <= interval["hijriDayOffset"] <= 30):
             raise CalculationError("invalidParameters", "ramadan offset")
+    # Each set of adjustments is checked on its own; their sum isn't checked, so together they
+    # can move an event by up to 2880 minutes.
     for key in ("methodAdjustments", "adjustments"):
         for name, minutes in p[key].items():
             if not (-1440 <= minutes <= 1440):
@@ -505,21 +507,27 @@ def _night(start, end):
 
 
 def _fajr(params, latitude, longitude, solar, sunset_prev, diag, trace=None):
-    """Section 8.2. `solar` is the day's solar events; `sunset_prev` the previous sunset."""
+    """Section 8.2. `solar` is the day's solar events; `sunset_prev` the previous sunset.
+
+    A night is defined only when its sunset and sunrise both occur, so the seventh bound exists
+    only when sunrise does.
+    """
     night_before = _night(sunset_prev, solar.sunrise)
     rule = params["fajr"]
     if rule == "moonsightingCommittee":
         raw = crossing(solar.T, -18, -1, latitude, longitude, diag)
         if trace is not None:
             trace["fajrRaw"] = raw
-        if abs(latitude) > 55:
-            return _bound_morning(raw, 1 / 7, solar.sunrise, night_before)
-        if not occurs(solar.sunrise):
-            return raw
-        bound = solar.sunrise - 60 * mc_seasonal_minutes("fajr", solar.day, latitude)
-        if not occurs(raw) or raw < bound:
-            return bound
-        return raw
+        # Fajr is the latest of the raw time (if it occurs) and the bounds that exist: the
+        # seasonal bound when sunrise occurs, and from 55° (inclusive) the night's last seventh
+        # when the night before is defined. With none of them, the raw NOT stands.
+        candidates = [raw] if occurs(raw) else []
+        if occurs(solar.sunrise):
+            candidates.append(
+                solar.sunrise - 60 * mc_seasonal_minutes("fajr", solar.day, latitude))
+            if abs(latitude) >= 55 and night_before is not None:
+                candidates.append(solar.sunrise - night_before / 7)
+        return max(candidates) if candidates else raw
     angle = decode_number(rule["angle"])
     raw = crossing(solar.T, -angle, -1, latitude, longitude, diag)
     if trace is not None:
@@ -558,15 +566,17 @@ def _isha(params, latitude, longitude, solar, night_after, maghrib, diag, trace=
         raw = crossing(solar.T, -18, +1, latitude, longitude, diag)
         if trace is not None:
             trace["ishaRaw"] = raw
-        if abs(latitude) > 55:
-            return _bound_evening(raw, 1 / 7, solar.sunset, night_after)
-        if not occurs(solar.sunset):
-            return raw
+        # Isha is the earliest of the raw time (if it occurs) and the bounds that exist: the
+        # seasonal bound when sunset occurs, and from 55° (inclusive) the end of the night's first
+        # seventh when the night after is defined. With none of them, the raw NOT stands.
         shafaq = rule["moonsightingCommittee"]
-        bound = solar.sunset + 60 * mc_seasonal_minutes(shafaq, solar.day, latitude)
-        if not occurs(raw) or raw > bound:
-            return bound
-        return raw
+        candidates = [raw] if occurs(raw) else []
+        if occurs(solar.sunset):
+            candidates.append(
+                solar.sunset + 60 * mc_seasonal_minutes(shafaq, solar.day, latitude))
+            if abs(latitude) >= 55 and night_after is not None:
+                candidates.append(solar.sunset + night_after / 7)
+        return min(candidates) if candidates else raw
     angle = decode_number(rule["angle"])
     raw = crossing(solar.T, -angle, +1, latitude, longitude, diag)
     if trace is not None:
