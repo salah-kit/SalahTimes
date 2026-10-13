@@ -205,9 +205,31 @@ def delta_t(t):
     """ΔT in seconds, from Espenak and Meeus' polynomials at the instant's decimal year."""
     d = utc_datetime(t)
     y = d.year + (d.month - 0.5) / 12
-    if y < 1900 or y >= 2150:
+    if y < -500 or y >= 2150:
         u = (y - 1820) / 100
         return -20 + 32 * u * u
+    if y < 500:
+        u = y / 100
+        return (10583.6 - 1014.41 * u + 33.78311 * u**2 - 5.952053 * u**3 - 0.1798452 * u**4
+                + 0.022174192 * u**5 + 0.0090316521 * u**6)
+    if y < 1600:
+        u = (y - 1000) / 100
+        return (1574.2 - 556.01 * u + 71.23472 * u**2 + 0.319781 * u**3 - 0.8503463 * u**4
+                - 0.005050998 * u**5 + 0.0083572073 * u**6)
+    if y < 1700:
+        x = y - 1600
+        return 120 - 0.9808 * x - 0.01532 * x**2 + x**3 / 7129
+    if y < 1800:
+        x = y - 1700
+        return 8.83 + 0.1603 * x - 0.0059285 * x**2 + 0.00013336 * x**3 - x**4 / 1174000
+    if y < 1860:
+        x = y - 1800
+        return (13.72 - 0.332447 * x + 0.0068612 * x**2 + 0.0041116 * x**3 - 0.00037436 * x**4
+                + 0.0000121272 * x**5 - 0.0000001699 * x**6 + 0.000000000875 * x**7)
+    if y < 1900:
+        x = y - 1860
+        return (7.62 + 0.5737 * x - 0.251754 * x**2 + 0.01680668 * x**3 - 0.0004473624 * x**4
+                + x**5 / 233174)
     if y < 1920:
         x = y - 1900
         return -2.79 + 1.494119 * x - 0.0598939 * x**2 + 0.0061966 * x**3 - 0.000197 * x**4
@@ -289,12 +311,19 @@ class Diagnostics:
     """Collects the margins the generator uses to reject fragile vectors."""
 
     def __init__(self):
-        self.min_c_margin = math.inf  # min over every evaluated c of | |c| - 1 |
+        # min over every crossing of |c(T) - 1|, |c(T) + 1| and |c(A) + 1| (section 6)
+        self.min_c_margin = math.inf
         self.min_asr_margin = math.inf  # min of |z - 90| at every Asr computed
         self.unconverged = []  # descriptions of iterations that hit 20 steps
 
-    def note_c(self, c):
-        self.min_c_margin = min(self.min_c_margin, abs(abs(c) - 1))
+    def note_c(self, c_transit, c_antitransit):
+        """Records how close a crossing's existence tests came to deciding the other way.
+
+        |c(T) - 1| and |c(A) + 1| decide existence. |c(T) + 1| picks where the iteration starts;
+        it shouldn't change the result, but it's tracked too, to stay on the safe side.
+        """
+        self.min_c_margin = min(self.min_c_margin, abs(c_transit - 1), abs(c_transit + 1),
+                                abs(c_antitransit + 1))
 
 
 # ---------------------------------------------------------------------------------------------
@@ -317,13 +346,19 @@ def local_noon(day, zone):
 
 def transit(day, zone, longitude, diag):
     """Section 5, step 2: the transit nearest local noon."""
-    t = local_noon(day, zone)
+    return transit_near(local_noon(day, zone), longitude, diag, f"transit {day}")
+
+
+def transit_near(start, longitude, diag, label):
+    """The transit nearest `start`, by section 5's iteration. Section 5 also uses it for the
+    neighboring solar days, from T_D - 86400 and T_D + 86400."""
+    t = start
     for _ in range(20):
         step = -hour_angle(t, longitude) / 360 * 86400
         t += step
         if abs(step) < 0.001:
             return t
-    diag.unconverged.append(f"transit {day}")
+    diag.unconverged.append(label)
     return t
 
 
@@ -333,20 +368,33 @@ def transit(day, zone, longitude, diag):
 
 
 def crossing(T, altitude, side, latitude, longitude, diag):
-    """When the Sun reaches `altitude` before (side -1) or after (side +1) the transit T."""
-    t = T
+    """When the Sun reaches `altitude` before (side -1) or after (side +1) the transit T.
+
+    Existence is decided where the Sun is highest (the transit T) and lowest (the antitransit
+    A = T + side × 43200 s), then the iteration finds the instant.
+    """
     sin_phi = sind(latitude)
     cos_phi = cosd(latitude)
     sin_h = sind(altitude)
+
+    def c_of(delta):
+        return (sin_h - sin_phi * sind(delta)) / (cos_phi * cosd(delta))
+
+    A = T + side * 43200
+    c_transit = c_of(sun(T)[0])
+    c_antitransit = c_of(sun(A)[0])
+    diag.note_c(c_transit, c_antitransit)
+    if c_transit > 1:
+        return NotOccur(SUN_STAYS_BELOW)  # below the altitude even at the transit
+    if c_antitransit < -1:
+        return NotOccur(SUN_STAYS_ABOVE)  # above the altitude even at the antitransit
+
+    # The crossing exists. If the Sun is above the altitude all through the transit's day
+    # (c(T) < -1), it only reaches the altitude near the antitransit, so start there.
+    t = A if c_transit < -1 else T
     for _ in range(20):
         position = sun(t)
-        delta = position[0]
-        c = (sin_h - sin_phi * sind(delta)) / (cos_phi * cosd(delta))
-        diag.note_c(c)
-        if c > 1:
-            return NotOccur(SUN_STAYS_BELOW)
-        if c < -1:
-            return NotOccur(SUN_STAYS_ABOVE)
+        c = min(1.0, max(-1.0, c_of(position[0])))
         H0 = math.degrees(math.acos(c))
         step = normalize180(side * H0 - hour_angle(t, longitude, position)) / 360 * 86400
         t += step
@@ -459,11 +507,16 @@ def in_ramadan(day):
 
 
 class _SolarDay:
-    """The astronomical events of one civil day: its transit, sunrise and sunset."""
+    """The astronomical events of one solar day: its transit, sunrise and sunset.
 
-    def __init__(self, day, zone, latitude, longitude, diag):
+    `day` is the civil day it stands for (D, D-1 or D+1). That label gives the Moonsighting
+    Committee's day of the year (section 8.6) and, for D, the Ramadan rule's day. `T` is given
+    for the neighbors, which section 5 finds from T_D rather than from their own local noons.
+    """
+
+    def __init__(self, day, latitude, longitude, diag, T):
         self.day = day
-        self.T = transit(day, zone, longitude, diag)
+        self.T = T
         self.sunrise = crossing(self.T, HORIZON, -1, latitude, longitude, diag)
         self.sunset = crossing(self.T, HORIZON, +1, latitude, longitude, diag)
 
@@ -619,9 +672,13 @@ def prayer_times(latitude, longitude, day, tz_name, raw_params):
     trace = result.trace
 
     one = timedelta(days=1)
-    prev = _SolarDay(day - one, zone, latitude, longitude, diag)
-    today = _SolarDay(day, zone, latitude, longitude, diag)
-    nxt = _SolarDay(day + one, zone, latitude, longitude, diag)
+    T_D = transit(day, zone, longitude, diag)
+    # Section 5: the neighboring solar days are the transits nearest T_D -/+ 86400 s.
+    T_prev = transit_near(T_D - 86400, longitude, diag, f"transit before {day}")
+    T_next = transit_near(T_D + 86400, longitude, diag, f"transit after {day}")
+    prev = _SolarDay(day - one, latitude, longitude, diag, T_prev)
+    today = _SolarDay(day, latitude, longitude, diag, T_D)
+    nxt = _SolarDay(day + one, latitude, longitude, diag, T_next)
 
     night_after = _night(today.sunset, nxt.sunrise)
     trace["nightBefore"] = _night(prev.sunset, today.sunrise)

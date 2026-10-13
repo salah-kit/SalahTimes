@@ -5532,6 +5532,258 @@
       "toleranceSeconds": 1
     },
     {
+      "id": "high-latitude-season-edge-lat-60-north-2026-08-20",
+      "description": "Fajr and Isha at 18° with no bound at 60°N, 0°E on 2026-08-20: neither Isha nor the next Fajr: the Sun stays above -18° all night. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-08-20",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 60.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 18
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-08-20T04:26:09Z",
+        "dhuhr": "2026-08-20T12:03:24Z",
+        "asr": "2026-08-20T16:02:23Z",
+        "sunset": "2026-08-20T19:38:59Z",
+        "maghrib": "2026-08-20T19:38:59Z",
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "high-latitude-season-edge-lat-60-north-2026-08-21",
+      "description": "Fajr and Isha at 18° with no bound at 60°N, 0°E on 2026-08-21: Isha occurs, on the first night the Sun reaches -18°; Fajr, on the night before, doesn't. Doesn't occur: fajr (sunStaysAbove).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-08-21",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 60.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 18
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-08-21T04:28:33Z",
+        "dhuhr": "2026-08-21T12:03:10Z",
+        "asr": "2026-08-21T16:00:48Z",
+        "sunset": "2026-08-21T19:36:06Z",
+        "maghrib": "2026-08-21T19:36:06Z",
+        "isha": "2026-08-21T23:39:37Z",
+        "middleOfTheNight": "2026-08-21T22:01:41Z",
+        "lastThirdOfTheNight": "2026-08-21T22:50:13Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "high-latitude-season-edge-lat-60-north-2026-08-22",
+      "description": "Fajr and Isha at 18° with no bound at 60°N, 0°E on 2026-08-22: Fajr occurs, ending the night that 21 August's Isha began.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-08-22",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 60.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 18
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-08-22T00:27:16Z",
+        "sunrise": "2026-08-22T04:30:57Z",
+        "dhuhr": "2026-08-22T12:02:54Z",
+        "asr": "2026-08-22T15:59:11Z",
+        "sunset": "2026-08-22T19:33:12Z",
+        "maghrib": "2026-08-22T19:33:12Z",
+        "isha": "2026-08-22T23:21:09Z",
+        "middleOfTheNight": "2026-08-22T22:09:13Z",
+        "lastThirdOfTheNight": "2026-08-22T23:01:13Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "high-latitude-season-edge-lat-60-north-2026-04-20",
+      "description": "Fajr and Isha at 18° with no bound at 60°N, 0°E on 2026-04-20: Isha and Fajr occur: the last full night of the season.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-04-20",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 60.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 18
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-04-20T00:42:52Z",
+        "sunrise": "2026-04-20T04:29:01Z",
+        "dhuhr": "2026-04-20T11:58:55Z",
+        "asr": "2026-04-20T15:55:50Z",
+        "sunset": "2026-04-20T19:30:30Z",
+        "maghrib": "2026-04-20T19:30:30Z",
+        "isha": "2026-04-20T23:31:10Z",
+        "middleOfTheNight": "2026-04-20T21:58:04Z",
+        "lastThirdOfTheNight": "2026-04-20T22:47:15Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "high-latitude-season-edge-lat-60-north-2026-04-21",
+      "description": "Fajr and Isha at 18° with no bound at 60°N, 0°E on 2026-04-21: Fajr occurs, ending 20 April's night; Isha doesn't, the first night the Sun stays above -18°. Doesn't occur: isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-04-21",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 60.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 18
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-04-21T00:25:38Z",
+        "sunrise": "2026-04-21T04:26:08Z",
+        "dhuhr": "2026-04-21T11:58:43Z",
+        "asr": "2026-04-21T15:57:00Z",
+        "sunset": "2026-04-21T19:32:59Z",
+        "maghrib": "2026-04-21T19:32:59Z",
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
+      "id": "high-latitude-season-edge-lat-60-north-2026-04-22",
+      "description": "Fajr and Isha at 18° with no bound at 60°N, 0°E on 2026-04-22: neither occurs. Doesn't occur: fajr (sunStaysAbove), isha (sunStaysAbove), middleOfTheNight (sunStaysAbove), lastThirdOfTheNight (sunStaysAbove).",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-04-22",
+        "timeZone": "Etc/UTC",
+        "coordinates": {
+          "latitude": 60.0,
+          "longitude": 0.0
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "maghrib": "sunset",
+          "isha": {
+            "angle": 18
+          },
+          "madhab": "shafi",
+          "highLatitudeRule": "disabled",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "sunrise": "2026-04-22T04:23:16Z",
+        "dhuhr": "2026-04-22T11:58:31Z",
+        "asr": "2026-04-22T15:58:10Z",
+        "sunset": "2026-04-22T19:35:28Z",
+        "maghrib": "2026-04-22T19:35:28Z",
+        "isha": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "middleOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        },
+        "lastThirdOfTheNight": {
+          "doesNotOccur": "sunStaysAbove"
+        }
+      },
+      "toleranceSeconds": 1
+    },
+    {
       "id": "high-latitude-maghrib-angle-oslo-2026-06-21",
       "description": "Tehran's angles with the seventhOfTheNight rule at Oslo on 2026-06-21: Maghrib's 4.5° angle uses the same bound as Isha. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",

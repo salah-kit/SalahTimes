@@ -101,21 +101,25 @@ def main(main_js):
         with open(data, "w", encoding="utf-8") as handle:
             json.dump([job[4] for job in jobs], handle)
         output = json.loads(subprocess.check_output(["node", script, data]))
-    worst = {"sunrise": (0, ""), "sunset": (0, ""), "dhuhr": (0, "")}
-    compared = {"sunrise": 0, "sunset": 0, "dhuhr": 0}
+    # NOAA's code has no ΔT, so its Sun runs ΔT late. That's a fraction of a second today but
+    # minutes in the years 1000 and 3000, so modern and historical years are reported apart.
+    groups = ("1900-2100", "other years")
+    worst = {(g, e): (0, "") for g in groups for e in ("sunrise", "sunset", "dhuhr")}
+    compared = {key: 0 for key in worst}
     for (vector_id, event, key, instant, case), noaa in zip(jobs, output):
         if noaa[key] is None:
             continue
         midnight = calendar.timegm((case[2], case[3], case[4], 0, 0, 0))
         diff = instant - (midnight + noaa[key] * 60)
         diff = (diff + 43200) % 86400 - 43200
-        compared[event] += 1
-        if abs(diff) > abs(worst[event][0]):
-            worst[event] = (diff, vector_id)
-    for event in worst:
-        diff, vector_id = worst[event]
-        print(f"{event}: {compared[event]} compared, largest difference {diff:+.1f} s "
-              f"({vector_id})")
+        group = groups[0] if 1900 <= case[2] <= 2100 else groups[1]
+        compared[(group, event)] += 1
+        if abs(diff) > abs(worst[(group, event)][0]):
+            worst[(group, event)] = (diff, vector_id)
+    for (group, event), (diff, vector_id) in worst.items():
+        if compared[(group, event)]:
+            print(f"{group}, {event}: {compared[(group, event)]} compared, largest difference "
+                  f"{diff:+.1f} s ({vector_id})")
 
 
 if __name__ == "__main__":

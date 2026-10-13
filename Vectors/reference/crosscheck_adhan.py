@@ -2,8 +2,8 @@
 
 adhan-swift (MIT) ships official timetables it tests against, as local, minute-rounded times:
 Tests/Resources/Times/*.json. This script runs the reference for the same places, days and
-methods and reports every difference. It reads the method presets from ../methods.json when that
-file exists, and otherwise from the presets of CalculationMethod.swift copied below.
+methods and reports every difference. It reads the method presets from ../methods.json, and
+uses each preset's own rounding.
 
 Usage:
     python3 Vectors/reference/crosscheck_adhan.py /path/to/adhan-swift/Tests/Resources/Times
@@ -34,37 +34,11 @@ METHOD_NAMES = {
     "Tehran": "tehran",
 }
 
-# The values in Sources/SalahTimes/CalculationMethod.swift, used until Vectors/methods.json lands.
-FALLBACK_PRESETS = {
-    "diyanet": {
-        "fajr": {"angle": 18},
-        "isha": {"angle": 17},
-        "methodAdjustments": {"sunrise": -7, "dhuhr": 5, "asr": 4, "maghrib": 7},
-    },
-    "dubai": {
-        "fajr": {"angle": 18.2},
-        "isha": {"angle": 18.2},
-        "methodAdjustments": {"sunrise": -3, "dhuhr": 3, "asr": 3, "maghrib": 3},
-    },
-    "kuwait": {"fajr": {"angle": 18}, "isha": {"angle": 17.5}},
-    "qatar": {"fajr": {"angle": 18}, "isha": {"minutesAfterMaghrib": 90}},
-    "ummAlQura": {"fajr": {"angle": 18.5}, "isha": {"minutesAfterMaghrib": 90}},
-    "muis": {"fajr": {"angle": 20}, "isha": {"angle": 18}},
-    "tehran": {"fajr": {"angle": 17.7}, "isha": {"angle": 14}, "maghrib": {"angle": 4.5}},
-    "moonsightingCommittee": {
-        "fajr": "moonsightingCommittee",
-        "isha": {"moonsightingCommittee": "general"},
-        "methodAdjustments": {"dhuhr": 5, "maghrib": 3},
-    },
-}
-
 PRAYERS = ("fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha")
 
 
 def load_presets():
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "methods.json")
-    if not os.path.exists(path):
-        return FALLBACK_PRESETS, "CalculationMethod.swift (copied)"
     from generate import load_methods  # noqa: PLC0415
 
     return load_methods(path), "Vectors/methods.json"
