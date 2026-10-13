@@ -86,18 +86,21 @@ struct PropertyTests {
     parameters.rounding = .none
     var worst = 0.0
     var checked = 0
+    var dayPairs = 0
     for latitude in stride(from: -65.0, through: 65.0, by: 5) {
       let coordinates = Coordinates(latitude: latitude, longitude: 0)
       let series = try Self.series(coordinates, utc, parameters, days)
       let report = Self.continuityProblems(series, coordinates, parameters)
       checked += report.checked
+      dayPairs += series.count - 1
       worst = max(worst, report.worstChange)
       for problem in report.problems {
         Issue.record("\(method) at \(latitude)°: \(problem)")
       }
     }
     print(
-      "Continuity \(method): \(checked) day pairs checked, largest change minus 24 h "
+      "Continuity \(method): \(checked) event changes over \(dayPairs) day pairs checked, "
+        + "largest change minus 24 h "
         + "\(String(format: "%.1f", worst / 60)) min")
   }
 

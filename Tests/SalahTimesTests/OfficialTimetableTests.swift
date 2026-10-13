@@ -64,6 +64,9 @@ struct OfficialTimetableTests {
         continue
       }
       reports.append(try Self.compare(source, in: directory))
+      for (label, parameters) in try Self.fits(for: source) {
+        reports.append(try Self.compare(source, in: directory, fit: (label, parameters)))
+      }
     }
     Self.publish(reports, name: "cached")
   }
@@ -92,6 +95,7 @@ struct OfficialTimetableTests {
     var maximum = -Double.infinity
     var exactMatches = 0
     var withinOneMinute = 0
+    var largestPresetDifference = 0.0
 
     mutating func add(_ minutes: Double, presetDifference: Double) {
       count += 1
@@ -100,6 +104,7 @@ struct OfficialTimetableTests {
       maximum = max(maximum, minutes)
       if abs(presetDifference) < 0.001 { exactMatches += 1 }
       if abs(presetDifference) <= 1.001 { withinOneMinute += 1 }
+      largestPresetDifference = max(largestPresetDifference, abs(presetDifference))
     }
 
     var mean: Double { count == 0 ? 0 : sum / Double(count) }
@@ -107,6 +112,7 @@ struct OfficialTimetableTests {
 
   struct Report {
     let source: Source
+    let fit: String?
     let days: Int
     let statistics: [(String, Statistics)]
   }
@@ -135,10 +141,34 @@ struct OfficialTimetableTests {
     return parameters
   }
 
-  static func compare(_ source: Source, in directory: URL) throws -> Report {
+  /// Place-specific fits compared in addition to the preset: user adjustments and rounding
+  /// that reproduce one timetable more closely than the method's documented rules do. They
+  /// describe that timetable, not the method, so they stay out of the presets.
+  static func fits(for source: Source) throws -> [(String, CalculationParameters)] {
+    switch source.id {
+    case "jakim-wly01":
+      // On top of the preset's own Dhuhr +1 minute: Dhuhr +2 in all.
+      var parameters = try parameters(for: source)
+      parameters.rounding = .up
+      parameters.adjustments = PrayerAdjustments(
+        fajr: 1, sunrise: -1, dhuhr: 1, asr: 1, maghrib: 1, isha: 1)
+      return [
+        (
+          "WLY01 fit: rounding up, user adjustments Fajr +1, sunrise -1, Dhuhr +1, Asr +1, "
+            + "Maghrib +1, Isha +1", parameters
+        )
+      ]
+    default:
+      return []
+    }
+  }
+
+  static func compare(
+    _ source: Source, in directory: URL, fit: (String, CalculationParameters)? = nil
+  ) throws -> Report {
     let zone = try #require(TimeZone(identifier: source.timeZone))
     let coordinates = Coordinates(latitude: source.latitude, longitude: source.longitude)
-    let preset = try parameters(for: source)
+    let preset = try fit?.1 ?? parameters(for: source)
     var exact = preset
     exact.rounding = .none
     var calendar = Calendar(identifier: .gregorian)
@@ -183,14 +213,15 @@ struct OfficialTimetableTests {
             + "\(format(stats.minimum)) to \(format(stats.maximum)) min, beyond the "
             + "\(sanityMinutes)-minute sanity bound"))
     }
-    return Report(source: source, days: days, statistics: statistics)
+    return Report(source: source, fit: fit?.0, days: days, statistics: statistics)
   }
 
   static func publish(_ reports: [Report], name: String) {
     var markdown = ""
     for report in reports {
       let source = report.source
-      markdown += "### \(source.id): \(source.place)\n\n"
+      markdown += "### \(source.id): \(source.place)"
+      markdown += report.fit == nil ? "\n\n" : ", place-specific fit\n\n"
       markdown += "\(source.authority). \(report.days) days. Compared with `\(source.method)`, "
       markdown += "\(source.madhab) Asr"
       if let shafaq = source.shafaq { markdown += ", shafaq \(shafaq)" }
@@ -198,14 +229,17 @@ struct OfficialTimetableTests {
         markdown += ", Ramadan Isha \(minutes) minutes"
       }
       markdown += ", at \(source.latitude), \(source.longitude).\n\n"
-      markdown += "| Prayer | Mean | Min | Max | Preset exact | Preset within 1 min |\n"
-      markdown += "|---|---:|---:|---:|---:|---:|\n"
+      if let fit = report.fit {
+        markdown += "\(fit). The columns below use these parameters in place of the preset.\n\n"
+      }
+      markdown += "| Prayer | Mean | Min | Max | Preset exact | Preset within 1 min "
+      markdown += "| Preset largest difference |\n"
+      markdown += "|---|---:|---:|---:|---:|---:|---:|\n"
       for (prayer, stats) in report.statistics {
-        let exact = 100 * Double(stats.exactMatches) / Double(max(stats.count, 1))
-        let within = 100 * Double(stats.withinOneMinute) / Double(max(stats.count, 1))
         markdown += "| \(prayer) | \(format(stats.mean)) | \(format(stats.minimum)) | "
-        markdown += "\(format(stats.maximum)) | \(String(format: "%.0f", exact))% | "
-        markdown += "\(String(format: "%.0f", within))% |\n"
+        markdown += "\(format(stats.maximum)) | \(share(stats.exactMatches, of: stats.count)) | "
+        markdown += "\(share(stats.withinOneMinute, of: stats.count)) | "
+        markdown += "\(String(format: "%.0f", stats.largestPresetDifference)) min |\n"
       }
       markdown += "\n"
     }
@@ -224,14 +258,21 @@ struct OfficialTimetableTests {
     # Official timetables: results
 
     Official time minus SalahTimes' unrounded time, in minutes, for every day of 2026. A \
-    positive value means the authority publishes later. "Preset exact" and "Preset within 1 \
-    min" compare the method's preset as it ships (rounded) with the published minute.
+    positive value means the authority publishes later. "Preset exact", "Preset within 1 \
+    min" and "Preset largest difference" compare the method's preset as it ships (with its own \
+    adjustments and rounding) with the published minute, in days of the year. A \
+    place-specific fit replaces the preset in those columns and in the mean.
 
     Written by `OfficialTimetableTests.swift`; see README.md to reproduce. docs/validation.md \
     interprets the numbers.
 
 
     """
+
+  /// A count of days with its percentage, such as "347 (95%)".
+  static func share(_ count: Int, of total: Int) -> String {
+    "\(count) (\(String(format: "%.0f", 100 * Double(count) / Double(max(total, 1))))%)"
+  }
 
   static func format(_ value: Double) -> String {
     String(format: "%+.2f", value)
