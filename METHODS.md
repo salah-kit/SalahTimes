@@ -185,7 +185,7 @@ Notes:
 Majlis Ugama Islam Singapura publishes Singapore's official timetable but not its method, so every value is fitted to the timetable.
 
 Sources:
-- MUIS, *Muslim Prayer Timetable 2026*, on data.gov.sg (dataset `d_d441e7242e78efc566024dd5b0d9829c`, Singapore Open Data Licence 1.0), all 365 days, compared at 1.3521° N, 103.8198° E. With these values every prayer agrees within a minute on every day, except Asr on 361 days; 62% to 80% of the times match to the minute. Without the Dhuhr minute and the rounding, only 41% of Dhuhr times agree within a minute (SalahTimes' fit; primary data, `Validation/official-timetables/data/`).
+- MUIS, *Muslim Prayer Timetable 2026*, on data.gov.sg (dataset `d_d441e7242e78efc566024dd5b0d9829c`, Singapore Open Data Licence 1.0), all 365 days, compared at 1.3521° N, 103.8198° E. With these values every prayer agrees within a minute on every day, and Asr on 361 of the 365 days; 62% to 80% of the times match to the minute. Without the Dhuhr minute and the rounding, only 41% of Dhuhr times agree within a minute (SalahTimes' fit; primary data, `Validation/official-timetables/data/`).
 - MUIS, *Prayer Timetable 2025*: over the whole year, 20° fits Subuh (18° would be about 8 minutes late) and 18° fits Isyak, and every prayer sits about half a minute after the computed time, Zohor a minute more. https://www.muis.gov.sg/-/media/Files/Corporate-Site/Prayer-Timetable-2025.ashx (SalahTimes' fit; primary data)
 - adhan-swift's test data holds 366 days of MUIS times (`Tests/Data/adhan-swift/Singapore-Singapore.json`); every time agrees within a minute with these values.
 - PrayTimes.org: "Islamic Religious Council of Singapore: 20 / 18". http://praytimes.org/calculation (secondary)
@@ -211,7 +211,7 @@ Notes:
 - The preset rounds Zohor's 1 minute 4 seconds to 1 minute.
 - Before 2019 Malaysia used 20° for Subuh, and Kelantan 19°. States adopted 18° on different dates.
 - Secondary sources describe 1 to 2 minutes of ihtiyati added per prayer, tied to the zone design: a zone's east-west difference may not exceed 2 minutes, and times are computed for its westernmost point. We found no official per-prayer table or rounding rule, so the preset adds nothing else.
-- Measured against e-Solat's 2026 timetable for WLY01 (365 days, at Kuala Lumpur's centre), the official times run 1 to 3 minutes after the preset for Fajr, Dhuhr, Asr, Maghrib and Isha, and sunrise up to a minute before it. Only 24% to 35% of those prayers agree within a minute. Part of the offset is the zone's reference point, which differs from zone to zone, so no single set of minutes reproduces every zone. For WLY01, rounding up and adding 1 minute to Fajr, Asr, Maghrib and Isha and 2 to Dhuhr brings 95% to 100% of them within a minute.
+- Measured against e-Solat's 2026 timetable for WLY01 (365 days, at Kuala Lumpur's centre), the official times run 1 to 3 minutes after the preset for Fajr, Dhuhr, Asr, Maghrib and Isha, and sunrise up to a minute before it. Only 24% to 35% of those prayers agree within a minute. Part of the offset is the zone's reference point, which differs from zone to zone, so no single set of minutes reproduces every zone. `docs/validation.md` gives a fit that brings most of WLY01's times within a minute; it belongs to that zone, not to the method.
 - Imsak is set 10 minutes before Subuh. SalahTimes doesn't compute Imsak.
 
 ## Indonesia (Kemenag)
@@ -307,7 +307,7 @@ SalahTimes uses 21.4225241° N, 39.8261818° E (`docs/algorithm.md` §10).
 
 - The point lies inside the Kaaba's outline in OpenStreetMap, way 103914569 (الكعبة), whose centroid is 21.4225079° N, 39.8261890° E. https://www.openstreetmap.org/way/103914569
 - Wikidata gives 21.4225° N, 39.826167° E for the Kaaba (Q29466). https://www.wikidata.org/wiki/Q29466
-- The three points are within about 2 metres of each other. The Kaaba is about 11 by 13 metres, so the choice has no measurable effect on a Qibla bearing.
+- The three points are within about 3 metres of each other. The Kaaba is about 11 by 13 metres, so the choice has no measurable effect on a Qibla bearing.
 
 ## Country suggestions
 
@@ -364,8 +364,9 @@ adhan-swift (https://github.com/batoulapps/adhan-swift, MIT) is SalahTimes' pred
 | `turkey` → `diyanet` | same values | same values | Only the name changed. |
 | `singapore` → `muis` | same values | same values | Fitted independently to MUIS's 2026 timetable. |
 | `ummAlQura` | "add a +30 minute custom adjustment for Isha during Ramadan" | the opt-in `ramadanIsha` rule | The rule applies only in Ramadan, by the Umm al-Qura calendar. |
-| `moonsightingCommittee` | 1/7 rule when `latitude >= 55` | 1/7 rule when the absolute latitude is 55° or more | adhan-swift compares the signed latitude, so it never applies the rule in the southern hemisphere. The committee's generator applies it at −55° too. |
+| `moonsightingCommittee` | from `latitude >= 55`, the night's seventh replaces the seasonal bound | from 55° of absolute latitude, the night's seventh is added to the seasonal bound | The committee's booklet keeps the seasonal value and takes the later Fajr and the earlier Isha of the two, and its generator applies the seventh at −55° too. adhan-swift compares the signed latitude, so it never applies the rule in the southern hemisphere. |
+| `recommended` (the high-latitude rule) | the seventh of the night when `latitude > 48` | the seventh of the night beyond 48° of absolute latitude | adhan-swift compares the signed latitude, so it picks the middle of the night everywhere in the southern hemisphere, Ushuaia included. |
 | `tehran` | Maghrib at 4.5° only when it falls between sunset and Isha | Maghrib at 4.5°, bounded like Isha by the high-latitude rule | A behavior difference, not a parameter (`docs/algorithm.md` §8.3). |
 | `other` | all angles 0 | no preset | Custom methods build `CalculationParameters` directly. |
 
-The following are unchanged: every Fajr and Isha angle and interval except JAKIM's; Diyanet's temkin; Dubai's minutes, fitted independently to Awqaf's 2018 timetable; the Moonsighting Committee's coefficients and its Dhuhr +5 and Maghrib +3; and `recommended` as the default high-latitude rule, choosing the seventh of the night beyond 48°.
+The following are unchanged: every Fajr and Isha angle and interval except JAKIM's; Diyanet's temkin; Dubai's minutes, fitted independently to Awqaf's 2018 timetable; the Moonsighting Committee's coefficients and its Dhuhr +5 and Maghrib +3; and `recommended` as every preset's high-latitude rule.

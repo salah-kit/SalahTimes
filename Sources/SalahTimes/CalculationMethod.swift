@@ -51,7 +51,10 @@ public enum CalculationMethod: String, Hashable, Codable, Sendable, CaseIterable
   /// The authority doesn't publish its method; every value is fitted to its official timetables.
   case dubai
 
-  /// Kuwait's Ministry of Awqaf and Islamic Affairs: Fajr at 18°, Isha at 17.5°.
+  /// Kuwait, as secondary sources such as AlAdhan list it: Fajr at 18°, Isha at 17.5°.
+  ///
+  /// Kuwait's Ministry of Awqaf and Islamic Affairs doesn't publish its method in a form that
+  /// could be checked, so METHODS.md treats these values as unverified.
   case kuwait
 
   /// Qatar Calendar House, for Qatar's Ministry of Endowments and Islamic Affairs: Fajr at 18°,

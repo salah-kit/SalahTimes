@@ -30,8 +30,8 @@ public struct CalculationParameters: Hashable, Codable, Sendable {
   /// The shadow length for Asr. Defaults to ``Madhab/shafi``.
   public var madhab: Madhab
 
-  /// How Fajr and Isha are bounded where twilight lasts long. Defaults to
-  /// ``HighLatitudeRule/recommended``.
+  /// How Fajr, Isha and an angle-based Maghrib are bounded where twilight lasts long. Defaults
+  /// to ``HighLatitudeRule/recommended``.
   ///
   /// The Moonsighting Committee's rules apply their own bounds instead.
   public var highLatitudeRule: HighLatitudeRule
@@ -61,7 +61,8 @@ public struct CalculationParameters: Hashable, Codable, Sendable {
   ///   - isha: How Isha is determined.
   ///   - maghrib: How Maghrib is determined.
   ///   - madhab: The shadow length for Asr.
-  ///   - highLatitudeRule: How Fajr and Isha are bounded where twilight lasts long.
+  ///   - highLatitudeRule: How Fajr, Isha and an angle-based Maghrib are bounded where
+  ///     twilight lasts long.
   ///   - nightSpan: The night that the middle of the night and its last third divide.
   ///   - methodAdjustments: Minutes the method itself adds.
   ///   - adjustments: The user's own minutes.

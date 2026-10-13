@@ -1,6 +1,12 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
+
+// The default isolation of the example's code: nonisolated unless SALAHTIMES_EXAMPLE_ISOLATION
+// is `MainActor`, as an app target might set it. SalahTimes itself builds as it always does.
+let defaultIsolation: [SwiftSetting] =
+  Context.environment["SALAHTIMES_EXAMPLE_ISOLATION"] == "MainActor"
+  ? [.defaultIsolation(MainActor.self)] : []
 
 let package = Package(
   name: "PrayerTimesCLI",
@@ -13,6 +19,7 @@ let package = Package(
   targets: [
     .executableTarget(
       name: "PrayerTimesCLI",
-      dependencies: [.product(name: "SalahTimes", package: "SalahTimes")])
+      dependencies: [.product(name: "SalahTimes", package: "SalahTimes")],
+      swiftSettings: defaultIsolation)
   ]
 )

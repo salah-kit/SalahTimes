@@ -118,6 +118,11 @@ public enum MaghribRule: Hashable, Codable, Sendable {
 
   /// Maghrib begins when the Sun, setting, reaches this many degrees below the horizon, as in
   /// the Tehran method.
+  ///
+  /// Like an angle-based Isha, it's bounded by ``CalculationParameters/highLatitudeRule``: where
+  /// the Sun reaches the angle late or not at all, Maghrib is no later than sunset plus the
+  /// rule's portion of the night. With ``HighLatitudeRule/seventhOfTheNight``, Maghrib and Isha
+  /// can then be the same instant.
   case angle(Double)
 
   private enum CodingKeys: String, CodingKey {
@@ -174,12 +179,14 @@ public enum Madhab: String, Hashable, Codable, Sendable, CaseIterable {
   }
 }
 
-/// How Fajr and Isha are kept reasonable where twilight lasts long or all night.
+/// How Fajr, Isha and an angle-based Maghrib are kept reasonable where twilight lasts long or
+/// all night.
 ///
-/// Each rule bounds Fajr and Isha by a portion of the night, measured from sunset to sunrise:
-/// Fajr is no earlier than sunrise minus the portion, and Isha is no later than sunset plus the
-/// portion. A rule replaces a time only when the Sun's angle gives a time beyond that bound, or
-/// no time at all. Read the high-latitudes article for the details.
+/// Each rule bounds the times that come from the Sun's angle below the horizon by a portion of
+/// the night, measured from sunset to sunrise: Fajr is no earlier than sunrise minus the
+/// portion, and Isha, and Maghrib when it has an angle, no later than sunset plus the portion.
+/// A rule replaces a time only when the Sun's angle gives a time beyond that bound, or no time at
+/// all. Read the high-latitudes article for the details.
 public enum HighLatitudeRule: String, Hashable, Codable, Sendable, CaseIterable {
   /// The rule ``recommended(for:)`` picks for the location.
   case recommended
@@ -194,8 +201,8 @@ public enum HighLatitudeRule: String, Hashable, Codable, Sendable, CaseIterable 
   /// The portion is the twilight angle divided by 60, so 18° gives 18/60 of the night.
   case twilightAngle
 
-  /// No bound. Fajr and Isha come from the Sun's angle alone, and are reported as not occurring
-  /// when the Sun doesn't reach it.
+  /// No bound. Fajr, Isha and an angle-based Maghrib come from the Sun's angle alone, and are
+  /// reported as not occurring when the Sun doesn't reach it.
   case disabled
 
   /// The rule SalahTimes recommends at a location: ``seventhOfTheNight`` beyond 48° of latitude,

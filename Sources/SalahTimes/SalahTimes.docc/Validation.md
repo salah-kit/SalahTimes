@@ -5,7 +5,10 @@ How SalahTimes checks that its times are right.
 ## Overview
 
 A prayer time is only useful if people can trust it. SalahTimes checks its results in five
-ways. The tests run in CI on macOS and Linux. The repository's
+ways. The vectors, the parity checks, the self-consistency and property tests, and the
+comparison with Singapore's open timetable run in CI on macOS and Linux. The other official
+timetables can't be redistributed, so their comparison runs on a local download. The
+repository's
 [docs/validation.md](https://github.com/salah-kit/SalahTimes/blob/main/docs/validation.md)
 gives the current numbers: how many cases each check covers, and the largest differences
 found.
@@ -28,8 +31,9 @@ documents the schema.
 
 adhan-swift is the library that many Swift prayer apps use today. SalahTimes runs adhan-swift's
 MIT-licensed test data, its expected times for many cities and methods, and compares the
-results. Every shared method and location must agree within one minute, and every difference
-is explained. SalahTimes contains none of adhan-swift's code.
+results. Every prayer agrees within one minute, except four published times that are two
+minutes off, each for a reason the tests record, such as a timetable row that's late for both
+Fajr and sunrise. SalahTimes contains none of adhan-swift's code.
 
 ### Official timetables
 

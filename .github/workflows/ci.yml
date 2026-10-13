@@ -60,11 +60,15 @@ jobs:
       - name: Build the example with nonisolated default isolation
         run: swift build --package-path Examples/PrayerTimesCLI
 
-      - name: Build the example with MainActor default isolation
+      # The example's manifest applies MainActor default isolation to its own target only, as
+      # an app target would, and leaves SalahTimes as it is.
+      - name: Build and run the example with MainActor default isolation
+        env:
+          SALAHTIMES_EXAMPLE_ISOLATION: MainActor
         run: >-
-          swift build --package-path Examples/PrayerTimesCLI
+          swift run --package-path Examples/PrayerTimesCLI
           --build-path Examples/PrayerTimesCLI/.build-mainactor
-          -Xswiftc -default-isolation -Xswiftc MainActor
+          PrayerTimesCLI 39.4704 75.9898 Asia/Shanghai muslimWorldLeague 2026-06-21
 
       - name: Build the documentation, failing on any DocC warning
         run: >-
@@ -90,8 +94,10 @@ jobs:
       - name: Test
         run: swift test
 
-      - name: Build the example
-        run: swift build --package-path Examples/PrayerTimesCLI
+      - name: Build and run the example
+        run: >-
+          swift run --package-path Examples/PrayerTimesCLI
+          PrayerTimesCLI 41.0082 28.9784 Europe/Istanbul diyanet 2026-03-20
 
   lint:
     name: Lint

@@ -1,4 +1,4 @@
-// Prints one day's prayer times for a place.
+// Prints one day's prayer times for a place. From this directory:
 //
 //   swift run PrayerTimesCLI <latitude> <longitude> <time-zone> <method> [yyyy-mm-dd]
 //
@@ -8,6 +8,26 @@
 
 import Foundation
 import SalahTimes
+
+/// What an app stores for a place: where it is, its time zone and the calculation settings.
+///
+/// It's `nonisolated`, so it stays a plain value whatever the module's default isolation: an app
+/// can encode it, compare it and hand it to a background task, as a widget or a scheduler does.
+nonisolated struct PlaceSettings: Codable, Hashable, Sendable {
+  var coordinates: Coordinates
+  var timeZoneIdentifier: String
+  var method: CalculationMethod
+  var parameters: CalculationParameters
+
+  /// The day's times, computed on whatever thread calls it.
+  func times(on day: GregorianDay) throws -> PrayerTimes {
+    guard let timeZone = TimeZone(identifier: timeZoneIdentifier) else {
+      throw CalculationError.invalidParameters("Unknown time zone \(timeZoneIdentifier)")
+    }
+    return try PrayerTimes(
+      coordinates: coordinates, day: day, timeZone: timeZone, parameters: parameters)
+  }
+}
 
 func fail(_ message: String) -> Never {
   let methods = CalculationMethod.allCases.map(\.rawValue).joined(separator: ", ")
@@ -48,13 +68,23 @@ if arguments.count == 5 {
   day = GregorianDay(containing: Date(), in: timeZone)
 }
 
+// Store and restore the settings, as an app does between launches.
+let settings = PlaceSettings(
+  coordinates: Coordinates(latitude: latitude, longitude: longitude),
+  timeZoneIdentifier: timeZone.identifier, method: method, parameters: method.parameters)
+let restored: PlaceSettings
+do {
+  restored = try JSONDecoder().decode(
+    PlaceSettings.self, from: try JSONEncoder().encode(settings))
+} catch {
+  fail("Can't store the settings: \(error)")
+}
+guard restored == settings else { fail("The settings changed when stored and restored.") }
+
+// Compute away from the main actor, as a widget or a background task does.
 let times: PrayerTimes
 do {
-  times = try PrayerTimes(
-    coordinates: Coordinates(latitude: latitude, longitude: longitude),
-    day: day,
-    timeZone: timeZone,
-    parameters: method.parameters)
+  times = try await Task.detached { [restored, day] in try restored.times(on: day) }.value
 } catch {
   fail("Can't compute prayer times: \(error)")
 }
@@ -78,6 +108,6 @@ for event in PrayerTimes.Event.allCases {
   }
 }
 
-if let qibla = Qibla.direction(from: Coordinates(latitude: latitude, longitude: longitude)) {
+if let qibla = Qibla.direction(from: settings.coordinates) {
   print("Qibla \(String(format: "%.1f", qibla))° from true north")
 }

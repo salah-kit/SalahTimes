@@ -13,7 +13,8 @@ Around the summer solstice this starts at about 48.6° of latitude for an 18° a
 includes Paris, London, Berlin, Edmonton and all of Scandinavia.
 In the southern hemisphere it includes Ushuaia and the south of Chile and Argentina.
 
-A high-latitude rule bounds Fajr and Isha by a portion of the night, so they stay usable.
+A high-latitude rule bounds Fajr and Isha by a portion of the night, so they stay usable. It
+bounds Maghrib too when Maghrib is defined by an angle, as in the Tehran method.
 
 ### How the rules work
 
@@ -21,6 +22,11 @@ Each rule takes a portion of the night, measured from sunset to sunrise. Fajr is
 than sunrise minus that portion, and Isha is no later than sunset plus it. A rule replaces the
 angle's time only when that time is beyond the bound or doesn't exist. On an ordinary night
 the angle's time stands.
+
+A Maghrib defined by an angle, like the Tehran method's 4.5°, is bounded the same way as Isha.
+In summer far north, the 4.5° time can come later than the bound, so Maghrib moves earlier, to
+the bound. With ``HighLatitudeRule/seventhOfTheNight`` both Maghrib and Isha can then fall on
+the same bound, the same instant. ``HighLatitudeRule/disabled`` keeps Maghrib at the angle.
 
 | Rule | Portion of the night |
 |---|---|

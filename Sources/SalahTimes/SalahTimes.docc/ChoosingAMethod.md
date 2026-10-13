@@ -25,7 +25,7 @@ let mwl = CalculationMethod.muslimWorldLeague.parameters
 | ``CalculationMethod/egyptian`` | 19.5° | 17.5° | |
 | ``CalculationMethod/ummAlQura`` | 18.5° | 90 minutes after Maghrib | |
 | ``CalculationMethod/karachi`` | 18° | 18° | |
-| ``CalculationMethod/tehran`` | 17.7° | 14° | Maghrib at 4.5° |
+| ``CalculationMethod/tehran`` | 17.7° | 14° | Maghrib at 4.5°, bounded like Isha at high latitudes |
 | ``CalculationMethod/diyanet`` | 18° | 17° | Sunrise −7, Dhuhr +5, Asr +4, Maghrib +7 minutes |
 | ``CalculationMethod/dubai`` | 18.2° | 18.2° | Sunrise −3, Dhuhr, Asr and Maghrib +3 minutes, fitted to official timetables |
 | ``CalculationMethod/kuwait`` | 18° | 17.5° | |

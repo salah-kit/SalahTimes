@@ -48,11 +48,14 @@ xcodebuild build -scheme SalahTimes -destination 'generic/platform=iOS' -derived
 
 Use `watchOS`, `tvOS` or `visionOS` in place of `iOS` for the others.
 
-The example also builds with both default-isolation settings:
+The example also builds with both default-isolation settings. It needs Swift 6.2 or later, and
+`SALAHTIMES_EXAMPLE_ISOLATION=MainActor` makes its own code main-actor isolated by default, as
+an app target can be:
 
 ```sh
 swift build --package-path Examples/PrayerTimesCLI
-swift build --package-path Examples/PrayerTimesCLI -Xswiftc -default-isolation -Xswiftc MainActor
+SALAHTIMES_EXAMPLE_ISOLATION=MainActor swift build --package-path Examples/PrayerTimesCLI \
+  --build-path Examples/PrayerTimesCLI/.build-mainactor
 ```
 
 ## Documentation
