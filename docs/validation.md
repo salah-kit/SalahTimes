@@ -166,7 +166,7 @@ swift test -j 4 --filter AdhanParity
 swift test -j 4 --filter SelfConsistency
 swift test -j 4 --filter Properties
 
-# The wide scan behind "Beyond the order grid" and "Events before their day" (about a minute).
+# The wide scan behind "Beyond the order grid" and "Events before their day" (under a minute).
 SALAHTIMES_WIDE_SCAN=1 SALAHTIMES_WIDE_SCAN_RESULTS=$PWD/Validation/wide-scan.md \
   swift test -j 4 --filter WideScan
 
