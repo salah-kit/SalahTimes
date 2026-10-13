@@ -95,6 +95,8 @@ Transits are about 24 hours apart and every real time zone keeps local noon with
 
 The neighboring solar days come from `T_D`, not from the neighboring civil days: `T_{D-1}` is the transit nearest `T_D - 86400` and `T_{D+1}` the transit nearest `T_D + 86400`, by the same iteration. So they're always the adjacent solar days, even where `Z` skips or repeats a calendar day. Pacific/Apia skipped 2011-12-30: for that day the lookups of step 1 find 2011-12-31's transit, so a skipped day gets the next day's events, and the days around it keep their real nights.
 
+Where a rule needs a neighbor's date, it uses the civil date `D - 1` or `D + 1`. Only the Moonsighting Committee's day of the year for Fajr of `D+1` does (sections 8.5 and 8.6). So on Apia's skipped 2011-12-30, Fajr of `D+1` uses 2011-12-31's seasonal minutes with the solar day of 2012-01-01, a difference of a fraction of a minute.
+
 Daylight saving time moves `n` by an hour or two at most, which never changes the nearest transit, so the instants don't depend on whether `Z` observes DST.
 
 ## 6. Altitude crossings
@@ -106,7 +108,11 @@ Daylight saving time moves `n` by an hour or two at most, which never changes th
 with `δ(t)` the declination at instant `t`, and let `A = T + side × 43200` be the antitransit on that side, 12 hours away.
 
 1. The Sun is highest at the transit and lowest at the antitransit, so the event's existence is decided there. If `c(T) > 1`, the Sun stays below `h*` even at the transit: the result is `NOT(sunStaysBelow)`. If `c(A) < -1`, it stays above `h*` even at the antitransit: the result is `NOT(sunStaysAbove)`.
-2. Otherwise the crossing exists. Iterate from `t = A` if `c(T) < -1`, since the Sun then only reaches `h*` near the antitransit, and from `t = T` otherwise:
+2. Otherwise the crossing exists. Start from the first estimate
+
+       t = T + side × acos(max(-1, c(T))) / 360 × 86400 seconds
+
+   which is `A` when `c(T) ≤ -1`, since the Sun then only reaches `h*` near the antitransit. Then iterate:
 
        repeat at most 20 times:
            compute δ, α and θ at t
@@ -116,7 +122,9 @@ with `δ(t)` the declination at instant `t`, and let `A = T + side × 43200` be 
            stop when |step| < 0.001 s
        return t
 
-Testing at the antitransit, where the evening crossing after `T_D` and the morning crossing before `T_{D+1}` meet, makes both agree on whether the Sun reaches `h*` that night, even on the first or last night of a season, when the declination at the transits would say otherwise. The clamp in `H0` only matters while the iterate is far from the crossing.
+The evening crossing after `T_D` and the morning crossing before `T_{D+1}` are tested at antitransits less than half a minute apart (`T_D + 43200` and `T_{D+1} - 43200`; an apparent solar day isn't exactly 24 hours). So they agree on whether the Sun reaches `h*` that night, even on the first or last night of a season, when the declination at the transits would say otherwise. They can disagree only when the Sun's lowest altitude that night is within about 0.0002° of `h*`.
+
+Starting from the estimate keeps every step small. Starting from `T` instead, a crossing near the antitransit would need a first step of nearly 180° of hour angle, and the transit's residual hour angle, however small, could make `normalize180` send that step half a day the wrong way. The clamp in `H0` only matters while the iterate is far from the crossing.
 
 `cos φ` is never exactly zero in floating point, so the poles need no special case: there `c` is very large and the tests report the right reason. When `c(T)` is within about 1e-4 of 1, or `c(A)` within about 1e-4 of -1, the Sun only just reaches `h*`, and implementations can decide either way; the vectors avoid such days.
 

@@ -106,9 +106,15 @@ struct Observer {
     let sunAtAntitransit = Astronomy.sun(at: antitransit)
     if cosine(sunAtAntitransit) < -1 { return .doesNotOccur(.sunStaysAbove) }
 
-    // The Sun only reaches the altitude near the antitransit when it stays above it at the
-    // transit's declination.
-    var (t, sun) = atTransit < -1 ? (antitransit, sunAtAntitransit) : (transit, sunAtTransit)
+    // Start from the first estimate: the hour angle the transit's declination gives, which is the
+    // antitransit when the Sun stays above the altitude there. From the transit, a first step of
+    // nearly 180° could wrap around to the wrong side.
+    var t = antitransit
+    var sun = sunAtAntitransit
+    if atTransit > -1 {
+      t = transit + side * degrees(acos(atTransit)) / 360 * Astronomy.secondsPerDay
+      sun = Astronomy.sun(at: t)
+    }
     for _ in 0..<Self.maximumIterations {
       let h0 = degrees(acos(min(1, max(-1, cosine(sun)))))
       let step =

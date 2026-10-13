@@ -149,6 +149,33 @@ struct AstronomyTests {
     #expect(hanafi > asr)
   }
 
+  @Test("A crossing near the antitransit stays on its side of the transit")
+  func crossingNearTheAntitransit() throws {
+    // At 60° N the Sun's lowest altitude is about 18.4° below the horizon on 20 April (rising, so
+    // the morning crossing exists) and on 21 August (falling, so the evening one does). Scan
+    // altitudes just above it, where the crossing comes minutes from the antitransit. The transit
+    // is passed 10 seconds off, away from the crossing, so a first step of nearly 180° from it
+    // wraps around to the wrong side of the circle unless the iteration starts near the crossing.
+    let observer = Observer(latitude: 60, longitude: 0)
+    let utc = try #require(TimeZone(identifier: "UTC"))
+    var checked = 0
+    for (date, side) in [("2026-04-20", -1.0), ("2026-08-21", 1.0)] {
+      let day = try #require(GregorianDay(date))
+      let transit = observer.transit(of: day, in: utc) - side * 10
+      let lowest = 60 + Astronomy.sun(at: transit).declination - 90
+      for step in 0...200 {
+        let altitude = lowest + Double(step) * 1e-6
+        let event = observer.crossing(transit: transit, altitude: altitude, side: side)
+        let t = try #require(event.seconds, "\(date) at \(altitude)°")
+        checked += 1
+        #expect(side * (t - transit) > 0, "\(date) at \(altitude)°")
+        #expect(abs(t - (transit + side * 43_200)) < 3_600, "\(date) at \(altitude)°")
+        #expect(abs(observer.altitude(at: t) - altitude) < 1e-4, "\(date) at \(altitude)°")
+      }
+    }
+    #expect(checked == 402)
+  }
+
   @Test("Crossings report which way the Sun fails")
   func crossingNonOccurrence() throws {
     let observer = Observer(latitude: 78.22, longitude: 15.65)
