@@ -7786,6 +7786,43 @@
       "toleranceSeconds": 1
     },
     {
+      "id": "custom-defaults-omit-highLatitudeRule-zurich-2026-06-21",
+      "description": "Every key but highLatitudeRule given at Zurich on 2026-06-21: highLatitudeRule takes its default. Isha falls after local midnight, at 2026-06-22 00:09.",
+      "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",
+      "input": {
+        "date": "2026-06-21",
+        "timeZone": "Europe/Zurich",
+        "coordinates": {
+          "latitude": 47.3769,
+          "longitude": 8.5417
+        },
+        "parameters": {
+          "fajr": {
+            "angle": 18
+          },
+          "isha": {
+            "angle": 17
+          },
+          "maghrib": "sunset",
+          "madhab": "shafi",
+          "nightSpan": "sunsetToFajr",
+          "rounding": "none"
+        }
+      },
+      "expected": {
+        "fajr": "2026-06-21T00:25:17Z",
+        "sunrise": "2026-06-21T03:29:03Z",
+        "dhuhr": "2026-06-21T11:27:40Z",
+        "asr": "2026-06-21T15:41:56Z",
+        "sunset": "2026-06-21T19:26:16Z",
+        "maghrib": "2026-06-21T19:26:16Z",
+        "isha": "2026-06-21T22:09:04Z",
+        "middleOfTheNight": "2026-06-21T21:55:54Z",
+        "lastThirdOfTheNight": "2026-06-21T22:45:47Z"
+      },
+      "toleranceSeconds": 1
+    },
+    {
       "id": "custom-defaults-omit-nightSpan-london-2026-06-21",
       "description": "Every key but nightSpan given at London on 2026-06-21: nightSpan takes its default. Fajr's angle isn't reached (sunStaysAbove); the bound gives the time. Isha's angle isn't reached (sunStaysAbove); the bound gives the time.",
       "source": "SalahTimes reference implementation (Vectors/reference/salahtimes_reference.py)",

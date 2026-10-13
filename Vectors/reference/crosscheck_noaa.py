@@ -2,7 +2,8 @@
 
 NOAA's Solar Calculator (https://gml.noaa.gov/grad/solcalc/) runs in the browser from main.js.
 This script runs that file's calculation functions in Node.js for the coordinates and day of
-every prayer-time vector whose sunrise, sunset or Dhuhr has no adjustment, and reports the
+every unrounded prayer-time vector below 65° of latitude that gives its parameters in full (not
+by `method`), for its sunrise, sunset and Dhuhr when they have no adjustment, and reports the
 differences from the vectors' expected values. NOAA's code is an implementation of the same
 Meeus series written by someone else, so agreement checks the reference's arithmetic, its
 transit selection and its iteration, though not the choice of series.
@@ -101,8 +102,9 @@ def main(main_js):
         with open(data, "w", encoding="utf-8") as handle:
             json.dump([job[4] for job in jobs], handle)
         output = json.loads(subprocess.check_output(["node", script, data]))
-    # NOAA's code has no ΔT, so its Sun runs ΔT late. That's a fraction of a second today but
-    # minutes in the years 1000 and 3000, so modern and historical years are reported apart.
+    # NOAA's code has no ΔT, so its events are off by about ΔT / 365 seconds: a quarter of a
+    # second today, but about 5 s in the year 1000 and 14 s in 3000. So modern and historical
+    # years are reported apart.
     groups = ("1900-2100", "other years")
     worst = {(g, e): (0, "") for g in groups for e in ("sunrise", "sunset", "dhuhr")}
     compared = {key: 0 for key in worst}
