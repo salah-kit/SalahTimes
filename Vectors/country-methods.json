@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "description": "Sourced country suggestions: ISO 3166-1 alpha-2 code to a CalculationMethod raw value, with the source that supports it. A missing country has no sourced suggestion. A suggestion is a starting point, not a ruling; METHODS.md explains each entry and the entries that were dropped.",
+  "suggestions": {
+    "AE": {
+      "method": "dubai",
+      "source": "AlAdhan, Calculation Methods: the Dubai method (https://aladhan.com/calculation-methods); its angles fit the official Sheikh Zayed Grand Mosque Centre timetable for Abu Dhabi (https://www.szgmc.gov.ae/en/worshippers/prayer-timingss), both retrieved 2026-10-13. Secondary."
+    },
+    "AF": {
+      "method": "karachi",
+      "source": "PrayTimes.org, Calculation Methods, regions per method (https://praytimes.org/docs/methods, retrieved 2026-10-13)"
+    },
+    "BD": {
+      "method": "karachi",
+      "source": "PrayTimes.org, Calculation Methods, regions per method (https://praytimes.org/docs/methods, retrieved 2026-10-13)"
+    },
+    "BN": {
+      "method": "muis",
+      "source": "Brunei's Ministry of Religious Affairs timetable (https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx) fits Fajr at 20° and Isha at 18°, the MUIS angles; SalahTimes' own fit, retrieved 2026-10-13"
+    },
+    "CA": {
+      "method": "moonsightingCommittee",
+      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America use functions of latitude and seasons for Fajr and Isha as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13)"
+    },
+    "DZ": {
+      "method": "muslimWorldLeague",
+      "source": "Algeria's Ministry of Religious Affairs calendar for Algiers fits Fajr at 18° and Isha at 17°, the Muslim World League angles; SalahTimes' own fit, retrieved 2026-10-13 (https://marw.gov.dz/media/calendrier/1448/Alger.pdf). The ministry also puts Maghrib about 3 minutes after sunset."
+    },
+    "EG": {
+      "method": "egyptian",
+      "source": "Dar al-Ifta al-Misriyyah, fatwa 13816: Egypt's times use 19.5° for Fajr and 17.5° for Isha, issued by the Egyptian General Authority for Survey (https://www.dar-alifta.org/ar/fatwa/details/13816, retrieved 2026-10-13)"
+    },
+    "ID": {
+      "method": "kemenag",
+      "source": "Kemenag's Bimas Islam publishes Indonesia's official prayer schedule (https://bimasislam.kemenag.go.id/jadwalshalat, retrieved 2026-10-13)"
+    },
+    "IN": {
+      "method": "karachi",
+      "source": "PrayTimes.org, Calculation Methods, regions per method (https://praytimes.org/docs/methods, retrieved 2026-10-13)"
+    },
+    "IR": {
+      "method": "tehran",
+      "source": "The Institute of Geophysics, University of Tehran, computes Iran's official times: Fajr at 17.7°, Maghrib at 4.5° (Khabaronline, 22 August 2010, https://khabaronline.ir/news/86445, retrieved 2026-10-13)"
+    },
+    "JO": {
+      "method": "karachi",
+      "source": "Jordan's Ministry of Awqaf timetable for Amman (https://www.awqaf.gov.jo/ar/Pages/PrayerTime) fits Fajr and Isha at 18°, the Karachi angles; SalahTimes' own fit, retrieved 2026-10-13. The ministry also puts Maghrib about 5 minutes after sunset."
+    },
+    "KW": {
+      "method": "kuwait",
+      "source": "AlAdhan, methods list: 'Kuwait', Fajr 18°, Isha 17.5° (https://api.aladhan.com/v1/methods, retrieved 2026-10-13). Secondary; no official Kuwaiti source found."
+    },
+    "MY": {
+      "method": "jakim",
+      "source": "JAKIM's e-Solat publishes Malaysia's official zone timetables (https://www.e-solat.gov.my); the Federal Territories Mufti states the 18° Subuh adopted in 2019 (https://www.muftiwp.gov.my/en/artikel/al-kafi-li-al-fatawi/4271), retrieved 2026-10-13"
+    },
+    "PK": {
+      "method": "karachi",
+      "source": "PrayTimes.org, Calculation Methods, regions per method (https://praytimes.org/docs/methods, retrieved 2026-10-13)"
+    },
+    "QA": {
+      "method": "qatar",
+      "source": "Qatar Calendar House (Dar al-Taqweem al-Qatari), the state's approved reference (https://qatarch.com/brief-altakwem): its official Doha timetable fits Fajr at 18° and Isha 90 minutes after Maghrib (https://qatarch.com/public/uploads/orginal/emsakia/emsakya.pdf), retrieved 2026-10-13."
+    },
+    "SA": {
+      "method": "ummAlQura",
+      "source": "Umm al-Qura is Saudi Arabia's official calendar (KACST, https://ummulqura.org.sa); method parameters from PrayTimes.org, which lists it for the Arabian Peninsula (https://praytimes.org/docs/methods, retrieved 2026-10-13). Secondary."
+    },
+    "SG": {
+      "method": "muis",
+      "source": "MUIS publishes Singapore's official prayer timetable (https://www.muis.gov.sg/-/media/Files/Corporate-Site/Prayer-Timetable-2025.ashx, retrieved 2026-10-13)"
+    },
+    "TN": {
+      "method": "karachi",
+      "source": "Tunisia's Ministry of Religious Affairs timetable for Tunis (https://www.affaires-religieuses.tn/public/getData/1) fits Fajr and Isha at 18°, the Karachi angles; SalahTimes' own fit, retrieved 2026-10-13. The ministry also puts Maghrib about 2 minutes after sunset."
+    },
+    "TR": {
+      "method": "diyanet",
+      "source": "Diyanet İşleri Başkanlığı publishes Turkey's official times (https://namazvakitleri.diyanet.gov.tr) and its precautionary minutes (https://vakithesaplama.diyanet.gov.tr/temkin.php), retrieved 2026-10-13"
+    },
+    "US": {
+      "method": "moonsightingCommittee",
+      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America use functions of latitude and seasons for Fajr and Isha as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13)"
+    }
+  }
+}

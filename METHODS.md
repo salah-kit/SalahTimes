@@ -1,0 +1,366 @@
+# Calculation methods
+
+This page lists every calculation method that SalahTimes ships, what each one contains, and where the values come from. It also covers the high-latitude rules, the Moonsighting Committee's formula, the Ramadan Isha rule, the Kaaba's coordinates for the Qibla, and the country suggestions.
+
+All sources were retrieved on 2026-10-13 unless a section says otherwise.
+
+## What a preset contains
+
+A method is a preset of `CalculationParameters`. `Vectors/methods.json` holds the same values as the Swift presets, and a test keeps them identical. Each preset contains:
+
+- the authority's astronomical definition: the Sun's angle below the horizon for Fajr and Isha, or Isha as an interval after Maghrib, and for Tehran an angle for Maghrib;
+- the precautionary minutes the authority publishes, in `methodAdjustments`;
+- the rounding the authority publishes, or rounding to the nearest minute when it publishes none.
+
+Every preset also uses Shafi'i Asr (`madhab: shafi`), the `recommended` high-latitude rule, the night measured from sunset to Fajr (`nightSpan: sunsetToFajr`), no user adjustments, and the Ramadan Isha rule off.
+
+A preset leaves out minutes that an authority's timetables add without documenting them. Those are noted below for each method. The validation work compares official timetables with SalahTimes and reports the offsets it measures. Guessing them into a preset would hide them.
+
+Presets are starting points. Mosques and communities in one country often follow different methods, and an authority can change its method. Apps should let users pick another method and change any parameter, including Asr's madhab, the high-latitude rule and per-prayer minutes.
+
+To correct a value or a source, open an issue in [salah-kit/SalahTimes](https://github.com/salah-kit/SalahTimes/issues) with the `calculation-method` label. Include the authority's publication or an official timetable.
+
+## Summary
+
+| Method | Fajr | Maghrib | Isha | Method minutes | Rounding |
+|---|---|---|---|---|---|
+| `muslimWorldLeague` | 18° | sunset | 17° | none | nearest |
+| `isna` | 15° | sunset | 15° | none | nearest |
+| `egyptian` | 19.5° | sunset | 17.5° | none | nearest |
+| `ummAlQura` | 18.5° | sunset | 90 min after Maghrib | none | nearest |
+| `karachi` | 18° | sunset | 18° | none | nearest |
+| `tehran` | 17.7° | 4.5° | 14° | none | nearest |
+| `diyanet` | 18° | sunset | 17° | sunrise −7, Dhuhr +5, Asr +4, Maghrib +7 | nearest |
+| `dubai` | 18.2° | sunset | 18.2° | none | nearest |
+| `kuwait` | 18° | sunset | 17.5° | none | nearest |
+| `qatar` | 18° | sunset | 90 min after Maghrib | none | nearest |
+| `muis` | 20° | sunset | 18° | none | nearest |
+| `jakim` | 18° | sunset | 18° | Dhuhr +1 | nearest |
+| `kemenag` | 20° | sunset | 18° | Fajr +2, sunrise −3, Dhuhr +3, Asr +2, Maghrib +2, Isha +2 | up |
+| `moonsightingCommittee` | 18° with seasonal bound | sunset | 18° with seasonal bound (general shafaq) | Dhuhr +5, Maghrib +3 | nearest |
+
+Sunset and sunrise are the moments the Sun's upper limb touches the horizon, with 34′ of refraction (`docs/algorithm.md` §7). Dhuhr is the Sun's transit plus the method's Dhuhr minutes.
+
+## Muslim World League
+
+`muslimWorldLeague`: Fajr at 18°, Isha at 17°.
+
+The Muslim World League doesn't publish these angles itself as far as we found. They are the widely documented definition of its method.
+
+Sources:
+- Hamid Zarrabi-Zadeh, PrayTimes.org, *Prayer Times Calculation*, table of methods: "Muslim World League: 18 / 17". http://praytimes.org/calculation (secondary)
+- PrayTimes.org, *Calculation Methods*, which lists its use in "Europe, Far East, parts of US". https://praytimes.org/docs/methods (secondary)
+
+Notes:
+- The League's Islamic Fiqh Council has resolutions on high latitudes. See [High-latitude rules](#high-latitude-rules).
+
+## ISNA
+
+`isna`: Fajr and Isha at 15°.
+
+This is the definition that the Fiqh Council of North America (FCNA), the Islamic Society of North America's fiqh council, long used, and it's what most software calls "ISNA".
+
+On 25 September 2011 the FCNA adopted a different approach: "For North America use functions of latitude and seasons for Fajr and Isha' as determined by Moonsighting.com. For most areas in USA this will result Fajr around sun being 17.5° below horizon, and Isha around 15°." That is the Moonsighting Committee's method, so use `moonsightingCommittee` for the FCNA's current position. The `isna` preset stays because many timetables and apps still use 15°.
+
+Sources:
+- PrayTimes.org: "Islamic Society of North America (ISNA): 15 / 15". http://praytimes.org/calculation (secondary)
+- Statement of Dr. Zulfiqar Ali Shah, Executive Director of the Fiqh Council of North America, 29 July 2012, relayed by the International Astronomical Center: *ISNA Adopts New Angles for Fajer and Isha*. https://astronomycenter.net/articles/2012/07/30/81?l=en (secondary host for a primary statement)
+
+Notes:
+- The same site reported in December 2010 that ISNA then told it it used 18°: https://astronomycenter.net/articles/2010/12/26/33. ISNA's own site doesn't currently publish a method that we could find.
+
+## Egyptian General Authority of Survey
+
+`egyptian`: Fajr at 19.5°, Isha at 17.5°.
+
+The Egyptian General Authority for Survey (الهيئة المصرية العامة للمساحة) computes Egypt's official prayer times.
+
+Sources:
+- Dar al-Ifta al-Misriyyah, fatwa 13816, *فتوى دار الإفتاء المصرية في توقيت الفجر*. It says the Fajr time in force in Egypt is at a solar depression of 19.5°, that the Survey Authority is "the official Egyptian body that issues the astronomical calendars", and gives "17.5° for Isha, 19.5° for Fajr". https://www.dar-alifta.org/ar/fatwa/details/13816 (primary for Egypt's practice)
+- PrayTimes.org: "Egyptian General Authority of Survey: 19.5 / 17.5". http://praytimes.org/calculation (secondary)
+
+Notes:
+- Egypt's Mufti has defended 19.5° against studies that propose a smaller Fajr angle. The preset follows the official value.
+
+## Umm al-Qura
+
+`ummAlQura`: Fajr at 18.5°, Isha 90 minutes after Maghrib.
+
+This is the method of Saudi Arabia's Umm al-Qura calendar.
+
+Sources:
+- PrayTimes.org: "Umm al-Qura University, Makkah: 18.5 / 90 minutes after Maghrib, 120 minutes during Ramadan". http://praytimes.org/calculation (secondary)
+- PrayTimes.org's reference code: "fajr was 19 degrees before 1430 hijri". http://praytimes.org/code/v2/js/PrayTimes.js, and its methods page: "Fajr angle was 19 degrees in Umm al-Qura method before Muharram 1430 Hijri (December 2008)". https://praytimes.org/docs/methods (secondary)
+
+Notes:
+- The official site, https://ummulqura.org.sa (run by KACST), doesn't state the method in a form we could read. All values here are secondary.
+- We found no published precautionary minutes.
+- The 120-minute Ramadan interval is the basis of the opt-in `ramadanIsha` rule. See [The Ramadan Isha rule](#the-ramadan-isha-rule).
+
+## University of Islamic Sciences, Karachi
+
+`karachi`: Fajr and Isha at 18°.
+
+Sources:
+- PrayTimes.org: "University of Islamic Sciences, Karachi: 18 / 18", used in "Pakistan, Afghanistan, Bangladesh, India". http://praytimes.org/calculation and https://praytimes.org/docs/methods (secondary)
+
+Notes:
+- Most timetables in South Asia use Hanafi Asr. The preset keeps Shafi'i Asr like every other preset; apps should offer the madhab setting.
+
+## Institute of Geophysics, University of Tehran
+
+`tehran`: Fajr at 17.7°, Maghrib at 4.5°, Isha at 14°, and the night measured from sunset to Fajr.
+
+The Institute's calendar centre computes Iran's official times. Maghrib is later than sunset because the Ja'fari school waits for the eastern redness to pass, which the Institute models as the Sun 4.5° below the horizon.
+
+Sources:
+- Khabaronline, 22 August 2010, by a senior expert at the Institute's calendar centre: "The calendar centre of the University of Tehran's Institute of Geophysics, which is responsible for computing the country's prayer times, uses 17.7° below the horizon for the dawn call to prayer", and "Maghrib is when the sun reaches 4.5° of depression". https://khabaronline.ir/news/86445 (secondary report of the Institute's practice)
+- Bahesab, which publishes times by the University of Tehran's rules, defines the shar'i midnight as "the middle of the interval between today's sunset and tomorrow's dawn". https://www.bahesab.ir/time/sun (secondary)
+- PrayTimes.org: Tehran "17.7 / 14", Maghrib 4.5°, midnight "Jafari" (sunset to Fajr), with the note "Isha angle is not explicitly defined in Tehran method". http://praytimes.org/calculation and http://praytimes.org/code/v2/js/PrayTimes.js (secondary)
+
+Notes:
+- The Institute publishes no Isha angle that we could find. 14° is PrayTimes.org's value and is uncertain.
+
+## Turkey (Diyanet)
+
+`diyanet`: Fajr at 18°, Isha at 17°, with Diyanet's precautionary minutes (temkin): sunrise −7, Dhuhr +5, Asr +4, Maghrib +7, Fajr and Isha 0.
+
+Sources:
+- Diyanet İşleri Başkanlığı, *Temkin*: "7 minutes of temkin are applied at sunrise and sunset: 7 minutes before sunrise is the end of Fajr, and 7 minutes after sunset is the start of Maghrib"; "a temkin of 4 minutes for Asr"; Dhuhr begins "after 5 minutes have passed" from the Sun's culmination; "no temkin is applied to imsak and yatsı". It also says temkin was moderated by the High Board of Religious Affairs in 1982, applied from 1983. https://vakithesaplama.diyanet.gov.tr/temkin.php (primary)
+- Diyanet's own timetable for Ankara, https://namazvakitleri.diyanet.gov.tr/tr-TR/9206, checked on four dates across a year: imsak falls with the Sun at 17.8° to 17.95° below the horizon and yatsı at 17.0° to 17.3°, which fits 18° and 17° (SalahTimes' fit; primary data).
+
+Notes:
+- Diyanet's site doesn't state the 18° and 17° angles. The 1982 reform moved imsak from 19° to 18°, according to secondary sources (for example https://www.turktakvim.com).
+- Asr follows the majority view (Shafi'i shadow), as Diyanet's international platform states ("cumhurun görüşüne göre").
+- Since 2023, Diyanet's calendars for places abroad (https://awqatsalah.com) use Isha at 16°, following the International Prayer Times Congress held in Istanbul on 26–27 September 2021 with the European Council for Fatwa and Research. The `diyanet` preset is Turkey's domestic definition. For Diyanet's calendars abroad, set Isha to 16°.
+- Diyanet's high-latitude rules can't be reproduced by SalahTimes. From 44.5° of latitude its calendars abroad cap Isha at Maghrib plus a third of the shar'i night (sunset to true dawn), floor Fajr at sunrise minus (1/3 + 2/16) of that night, phase the switch in over 20 minutes, and keep day and night at least 5 hours long. An earlier rule, High Board decision 61 of 10 June 2009, used a third of the night above 45° and the 62° times above 62°: https://kurul.diyanet.gov.tr/Cevap-Ara/Karar/4093/45-enlemin-otesinde-namaz-vakitleri. SalahTimes applies its own `recommended` rule instead, so its times differ from Diyanet's above about 45°.
+- Diyanet doesn't publish its rounding.
+
+## United Arab Emirates (Dubai)
+
+`dubai`: Fajr and Isha at 18.2°.
+
+The UAE's General Authority of Islamic Affairs and Endowments (Awqaf) doesn't publish its method in a form we could find. The 18.2° angles come from fitting its timetables.
+
+Sources:
+- AlAdhan, *Calculation Methods*: the Dubai method is "not an official calculation but based on the research done by the Batoul Apps team", with 18.2° for Fajr and Isha. https://aladhan.com/calculation-methods (secondary)
+- The Sheikh Zayed Grand Mosque Centre's timetable for Abu Dhabi, https://www.szgmc.gov.ae/en/worshippers/prayer-timingss, and a Dubai Ramadan timetable published by Gulf News for 18 February 2026: Fajr and Isha both fit about 18.2° (SalahTimes' fit; official and press data).
+
+Notes:
+- The same timetables put sunrise 3 minutes before, and Dhuhr and Maghrib 3 minutes after, the computed times. Asr fits only 0 to 1 minute after. These minutes aren't published, so the preset leaves them out. Expect official UAE times to show Maghrib about 3 minutes after SalahTimes' `dubai`.
+- Isha stays angle-based in Ramadan in these timetables.
+- Other sources claim 19.5° with Isha 90 minutes after Maghrib (an older "Gulf region" method), or 18° or 18.5°. We found no official statement for any of them.
+
+## Kuwait
+
+`kuwait`: Fajr at 18°, Isha at 17.5°.
+
+Sources:
+- AlAdhan, methods list: "Kuwait", Fajr 18°, Isha 17.5°. https://api.aladhan.com/v1/methods (secondary)
+
+Notes:
+- The Ministry of Awqaf (https://awqaf.gov.kw) shows no method or timetable we could check. Another source, the Arabeyes ITL documentation, lists Kuwait under 18° for both. Treat this preset as unverified.
+
+## Qatar
+
+`qatar`: Fajr at 18°, Isha 90 minutes after Maghrib.
+
+Qatar Calendar House (Dar al-Taqweem al-Qatari) issues the state's approved calendar under Council of Ministers resolution 333-23/2008.
+
+Sources:
+- Qatar Calendar House, about page. https://qatarch.com/brief-altakwem (primary for the authority; it doesn't state the method)
+- Qatar Calendar House, Doha timetable for Ramadan 1447: Fajr falls with the Sun at 18.0° to 18.1° below the horizon, and Isha is exactly Maghrib plus 90 minutes, Ramadan included. https://qatarch.com/public/uploads/orginal/emsakia/emsakya.pdf (SalahTimes' fit; primary data)
+
+Notes:
+- The timetable's Maghrib is about 2 to 3 minutes after computed sunset, and Dhuhr about 1 to 2 minutes after transit. These minutes aren't published, so the preset leaves them out.
+- Qatar doesn't lengthen Isha in Ramadan. Leave `ramadanIsha` off for Qatar.
+
+## Singapore (MUIS)
+
+`muis`: Fajr at 20°, Isha at 18°.
+
+Majlis Ugama Islam Singapura publishes Singapore's official timetable but not its method.
+
+Sources:
+- PrayTimes.org: "Islamic Religious Council of Singapore: 20 / 18". http://praytimes.org/calculation (secondary)
+- MUIS, *Prayer Timetable 2025*. Over the whole year, 20° fits Subuh (18° would be about 8 minutes late) and 18° fits Isyak. https://www.muis.gov.sg/-/media/Files/Corporate-Site/Prayer-Timetable-2025.ashx (SalahTimes' fit; primary data)
+
+Notes:
+- In the 2025 timetable, every prayer sits about half a minute after the computed time on average, which suggests rounding up, and Zohor sits about one more minute later. MUIS publishes neither, so the preset rounds to the nearest minute and adds nothing. Expect official times to be up to a minute or two later.
+- We found no evidence that MUIS has changed its Subuh angle.
+
+## Malaysia (JAKIM)
+
+`jakim`: Fajr at 18°, Isha at 18°, Dhuhr 1 minute after transit.
+
+JAKIM's e-Solat (https://www.e-solat.gov.my) publishes Malaysia's official zone timetables, and the state mufti offices issue them.
+
+Sources:
+- Federal Territories Mufti, *Al-Kafi #1638*: Subuh in Malaysia now uses "the Sun's altitude at 18° below the horizon", replacing 20°, following the 116th Muzakarah of the National Fatwa Council on 20–21 November 2019. https://www.muftiwp.gov.my/en/artikel/al-kafi-li-al-fatawi/4271 (primary)
+- Kedah State Mufti: the 2° change equals about 8 minutes, applied in Kedah from 25 February 2020. https://ifatwa.kedah.gov.my (primary)
+- Federal Territories Mufti, *Bayan al-Falak*: Isyak at the disappearance of the red twilight, "108°" from the zenith (18° below the horizon); Maghrib and Syuruk at 90° 50′. https://www.muftiwp.gov.my (primary)
+- Selangor State Mufti, article 66 (9 August 2024): solar noon is "1 minute 4 seconds before" the Sun has passed the meridian, so Zohor is transit plus 1 minute 4 seconds. https://www.muftiselangor.gov.my/2024/08/09/66/ (primary)
+- e-Solat's 2026 timetable for zone WLY01 (Kuala Lumpur) fits 18° for Subuh; 20° would be about 8 minutes early (SalahTimes' fit; primary data).
+
+Notes:
+- The preset rounds Zohor's 1 minute 4 seconds to 1 minute.
+- Before 2019 Malaysia used 20° for Subuh, and Kelantan 19°. States adopted 18° on different dates.
+- Secondary sources describe 1 to 2 minutes of ihtiyati added per prayer, tied to the zone design: a zone's east-west difference may not exceed 2 minutes, and times are computed for its westernmost point. We found no official per-prayer table or rounding rule, so the preset adds nothing else. In the WLY01 data, Zohor sits about one more minute later than other prayers and Syuruk about 2.6 minutes earlier.
+- Imsak is set 10 minutes before Subuh. SalahTimes doesn't compute Imsak.
+
+## Indonesia (Kemenag)
+
+`kemenag`: Fajr at 20°, Isha at 18°, times rounded up to the minute, then Fajr +2, sunrise −3 (see below), Dhuhr +3, Asr +2, Maghrib +2, Isha +2.
+
+Kemenag's Bimas Islam publishes Indonesia's official schedule (https://bimasislam.kemenag.go.id/jadwalshalat).
+
+Sources:
+- Kemenag's Director General of Bimas Islam, Kamaruddin Amin, 21 December 2020: the −20° Subuh criterion "used in making the prayer schedules" is correct in fiqh and science (reported by CNN Indonesia). https://www.cnnindonesia.com/nasional/20201221182418-20-584880 (secondary report of a primary statement)
+- Tgk. Ismail, *Dinamika Jadwal Waktu Salat di Indonesia*, Bildung, 2022, ISBN 978-623-6379-82-0, quoting Kemenag's criteria for its digital schedule: Maghrib at 90° plus a height correction, "Isya −18°, and Subuh −20°, while the ihtiyat value is 2 minutes after the seconds are rounded up"; and Kemenag's *Ephemeris Hisab Rukyat* yearbooks, which used 1 minute for every prayer in 1997–2016 and Zuhur +3 with the others +2 from 2017, as agreed at the 2014 Badan Hisab Rukyat meeting. https://repository.uinsuna.ac.id/id/eprint/43/ (secondary, quoting primary documents)
+- Kemenag's official schedule for Kota Jakarta, 2025, all 365 days: Subuh and Isya sit 2 to 3 minutes after the 20° and 18° times, which fits rounding up then adding 2; Zuhur fits rounding up then adding 3; Terbit sits 2 to 3 minutes before sunrise (SalahTimes' fit; primary data).
+
+Notes:
+- Sunrise (Terbit): secondary sources describe dropping the seconds and subtracting 2 minutes. SalahTimes rounds every time the same way, so the preset subtracts 3 minutes and rounds up, which gives the same minute except when sunrise falls exactly on a whole minute.
+- Kemenag's own documents disagree on Zuhur: some give +2 like the other prayers, the 2017–2020 Ephemeris gives +3. The 2025 official data fits +3.
+- The Ephemeris puts sunset at a fixed 1° below the horizon, slightly lower than SalahTimes' 50′, and the digital schedule adds a height correction. Official Maghrib can be up to a minute later than the preset's.
+- Imsak is Subuh minus 10 minutes. SalahTimes doesn't compute Imsak.
+- Muhammadiyah moved to 18° for Subuh in December 2020. That is its own schedule, not Kemenag's.
+
+## Moonsighting Committee Worldwide
+
+`moonsightingCommittee`: Fajr and Isha at 18°, bounded by the committee's seasonal values, with the general shafaq for Isha; Dhuhr +5 and Maghrib +3.
+
+The method is Khalid Shaukat's for the Moonsighting Committee Worldwide. The Fiqh Council of North America adopted it in 2011 (see [ISNA](#isna)).
+
+Sources:
+- Moonsighting.com, *How we calculate* (updated 1 March 2024). https://www.moonsighting.com/how-we.html (primary)
+- Moonsighting.com, *FAQ on prayer times*. https://www.moonsighting.com/faq_pt.html (primary)
+- Syed Khalid Shaukat, *Fajr and Isha*, September 2015, 27 pages. The moonsighting.com links to it no longer resolve; a copy is at https://raw.githubusercontent.com/kskhan77/prayer-times-moonsighting/HEAD/booklet-fajr-isha.pdf (primary text, secondary host)
+- The committee's timetable generator, https://www.moonsighting.com/pray.php, compared with the formula below for London, Chicago, Sydney, Karachi, Quito, Aberdeen, Oslo and latitudes from 54° to 70°, north and south, in 2024 and 2026. It agrees within a minute (secondary check).
+
+### The formula
+
+The booklet (§11) gives the seasonal values in minutes. `LT` is the latitude and `DYY` the number of days since the winter solstice.
+
+| Value | A | B | C | D |
+|---|---|---|---|---|
+| Fajr | 75 + 28.65 × \|LT\| / 55 | 75 + 19.44 × \|LT\| / 55 | 75 + 32.74 × \|LT\| / 55 | 75 + 48.10 × \|LT\| / 55 |
+| Isha, general shafaq | 75 + 25.60 × \|LT\| / 55 | 75 + 2.050 × \|LT\| / 55 | 75 − 9.21 × \|LT\| / 55 | 75 + 6.14 × \|LT\| / 55 |
+| Isha, shafaq ahmer | 62 + 17.40 × \|LT\| / 55 | 62 − 7.16 × \|LT\| / 55 | 62 + 5.12 × \|LT\| / 55 | 62 + 19.44 × \|LT\| / 55 |
+| Isha, shafaq abyad | 75 + 25.60 × \|LT\| / 55 | 75 + 7.16 × \|LT\| / 55 | 75 + 36.84 × \|LT\| / 55 | 75 + 81.84 × \|LT\| / 55 |
+
+    if DYY < 91:  A + (B - A) / 91 × DYY
+    elif DYY < 137: B + (C - B) / 46 × (DYY - 91)
+    elif DYY < 183: C + (D - C) / 46 × (DYY - 137)
+    elif DYY < 229: D + (C - D) / 46 × (DYY - 183)
+    elif DYY < 275: C + (B - C) / 46 × (DYY - 229)
+    else:          B + (A - B) / 91 × (DYY - 275)
+
+"Fajr is sunrise − MIN and Isha is sunset + MIN", where sunset is the astronomical sunset, not the 3-minute later Maghrib.
+
+- **The bases.** "75 … is the base time in minutes before sunrise for Fajr, and after sunset for Shafaq Abyad, and Shafaq General, which is time for disappearance of Shafaq Abyad observed at 18 degrees at equator. For Shafaq Ahmer that number is 62." The divisor 55 isn't explained; the booklet says only that "these formulae are good up to the 55° latitude". The latitude isn't capped at 55.
+- **The day count.** "For Northern Hemisphere start from December 21 (DYY=0 for December 21, and counting forward, DYY=11 for January 1 and so on). For Southern Hemisphere start from June 21." In code: north, `DYY = dayOfYear + 10`, less the year's length once it reaches it; south, `DYY = dayOfYear − 172` (173 in a leap year), plus the year's length if negative. The source doesn't spell out leap years. The generator's output fits this count, and a day either way roughly doubles the error.
+- **18° against the seasonal value.** "From equator to 55°, the 18° depression angle calculations are compared with the values given by the functions of latitude and seasons and most favorable values are used, which means; For Fajr, the later of the two and for Isha the earlier of the two." When the Sun doesn't reach 18°, the seasonal value is used, as the booklet's tables and the generator show.
+- **From 55°.** "At latitudes between 55° and 60°, the rule of Sab'u Lail (1/7th of the night) is used… two things are calculated for Fajr; one is Tabayyan… and the other is last 1/7th of the night. Fajr time is later of the two. Similarly … Isha time is earlier of the two." So from 55°, the seventh of the night (sunset to sunrise) is an additional bound, and the seasonal value still applies. The generator applies it at exactly 55.0° and −55.0°, and not at 54.99°.
+- **Above 60°.** The booklet adds: "If day length is more than 18 hours or less than 6 hours, then we slide down to 60° and calculate Fajr & Isha using the rule of Sab'u Lail", and the FAQ describes a different "aqrab al-bilad" variant. The committee's own generator applies neither. SalahTimes doesn't implement this rule.
+- **Dhuhr and Maghrib.** "5 minutes should be added in Noon time for Zuhr", and "For Sunni's, actual sunset is 3 minutes after theoretical sunset". These are the preset's +5 and +3.
+- **Shafaq.** Ahmer is the red glow and abyad the whiteness after it. General is "a combination of Shafaq Abyad and Shafaq Ahmer for high latitudes": abyad when nights are long (winter), ahmer when days are long (summer), with a transition in spring and autumn. The how-we page says the reverse in one sentence; the booklet and the coefficients show that sentence is a typo.
+
+Notes:
+- The generator's default (method 0) is "Hanafi (Shafaq General)", with Hanafi Asr. The preset keeps Shafi'i Asr like every other preset.
+- The booklet's latitude tables on pages 21–23 contradict its own formula and shouldn't be used as test data. Its city tables fit once their "Sunset" column is read as Maghrib (sunset + 3).
+
+## High-latitude rules
+
+Where twilight lasts long or all night, Fajr and Isha computed from an angle come very early or late, or not at all. SalahTimes bounds them by a portion of the night from sunset to sunrise (`docs/algorithm.md` §8.1). Every preset uses `recommended`.
+
+- **Middle of the night** (`middleOfTheNight`): "the period from sunset to sunrise is divided into two halves. The first half is considered to be the 'night' and the other half as 'day break'. Fajr and Isha in this method are assumed to be at mid-night during the abnormal periods."
+- **Seventh of the night** (`seventhOfTheNight`): "the period between sunset and sunrise is divided into seven parts. Isha begins after the first one-seventh part, and Fajr is at the beginning of the seventh part." The Moonsighting Committee uses the same rule from 55° (see above).
+- **Twilight angle** (`twilightAngle`): "Let α be the twilight angle for Isha, and let t = α/60. The period between sunset and sunrise is divided into t parts. Isha begins after the first part." Fajr is computed the same way.
+
+Source for all three: Hamid Zarrabi-Zadeh, PrayTimes.org, *Prayer Times Calculation*, "Higher Latitudes". http://praytimes.org/calculation (secondary)
+
+**Why the seventh beyond 48°.** `recommended` picks `seventhOfTheNight` beyond 48° of latitude, north or south, and `middleOfTheNight` elsewhere.
+- The Sun stays less than 18° below the horizon all night at the summer solstice beyond about 90° − 23.44° − 18° = 48.56°, so an 18° Fajr or Isha stops existing for part of the year there.
+- The Muslim World League's Islamic Fiqh Council drew its line at the same latitude. Its ninth session (Makkah, Rajab 1406 AH, 1986) resolved: "As for countries between latitudes 48 and 66 degrees north and south, the times of Isha and Fajr are determined by proportional estimation from their counterparts in the night of the nearest place where the signs of Isha and Fajr are distinguishable, and the Council proposes latitude 45 degrees". A later clarification restricts this to times when the sign doesn't appear at all. Quoted in Dar al-Ifta al-Misriyyah, fatwa 2259 (6 June 2012): https://www.dar-alifta.org/ar/fatwa/details/13433 (secondary host for the resolution's text).
+- The International Astronomical Center's work with the League on European timetables uses the zone between 48.6° and 66.6°. https://astronomycenter.net/latitude.html (secondary)
+- The seventh of the night is a practical stand-in for these rulings, not the Council's own method. The Council's proportional estimation from 45° and the IAC's "local relative estimation" aren't implemented. A middle-of-the-night bound below 48° rarely changes a time, because twilight there ends well before the middle of the night.
+
+## The Ramadan Isha rule
+
+Umm al-Qura's timetables put Isha 120 minutes after Maghrib during Ramadan instead of 90. PrayTimes.org documents it: "90 minutes after Maghrib, 120 minutes during Ramadan" (http://praytimes.org/calculation, secondary). We found no official statement of the rule.
+
+SalahTimes offers it as `ramadanIsha = .interval(minutes: 120, hijriDayOffset: 0)`, off in every preset. It changes only a positive `minutesAfterMaghrib` interval, on days in month 9 of the Umm al-Qura calendar (`docs/algorithm.md` §8.7). It's off by default because:
+- Qatar, which also uses a 90-minute interval, keeps 90 minutes in Ramadan in its official 1447 timetable;
+- the start of Ramadan announced by sighting can differ from the calendar by a day, which `hijriDayOffset` handles;
+- mosques outside Saudi Arabia that follow Umm al-Qura differ in whether they lengthen Isha.
+
+## Qibla: the Kaaba's coordinates
+
+SalahTimes uses 21.4225241° N, 39.8261818° E (`docs/algorithm.md` §10).
+
+- The point lies inside the Kaaba's outline in OpenStreetMap, way 103914569 (الكعبة), whose centroid is 21.4225079° N, 39.8261890° E. https://www.openstreetmap.org/way/103914569
+- Wikidata gives 21.4225° N, 39.826167° E for the Kaaba (Q29466). https://www.wikidata.org/wiki/Q29466
+- The three points are within about 2 metres of each other. The Kaaba is about 11 by 13 metres, so the choice has no measurable effect on a Qibla bearing.
+
+## Country suggestions
+
+`CalculationMethod.suggested(forCountryCode:)` returns a method for a country only when a source supports it. A suggestion is a starting point for a default, not a ruling. Countries without one return `nil`; the app decides, ideally by asking the user. `Vectors/country-methods.json` holds the same table with the sources.
+
+A suggestion is kept when the country's official religious authority states its method, when a reputable source documents prevailing practice, or when the authority's own published timetable matches the preset's angles. The last case is SalahTimes' own fit of official data and is marked as such.
+
+| Code | Country | Method | Source |
+|---|---|---|---|
+| AE | United Arab Emirates | `dubai` | AlAdhan's Dubai method; its angles fit the official Abu Dhabi timetable (see [Dubai](#united-arab-emirates-dubai)). Secondary. |
+| AF | Afghanistan | `karachi` | PrayTimes.org regions (https://praytimes.org/docs/methods). Secondary. |
+| BD | Bangladesh | `karachi` | PrayTimes.org regions. Secondary. |
+| BN | Brunei | `muis` | Ministry of Religious Affairs timetable (https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx) fits 20° and 18°. SalahTimes' fit. |
+| CA | Canada | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)). |
+| DZ | Algeria | `muslimWorldLeague` | Ministry of Religious Affairs calendar for Algiers (https://marw.gov.dz/media/calendrier/1448/Alger.pdf) fits 18° and 17°. SalahTimes' fit. |
+| EG | Egypt | `egyptian` | Dar al-Ifta, fatwa 13816. Primary. |
+| ID | Indonesia | `kemenag` | Kemenag publishes the national schedule. Primary. |
+| IN | India | `karachi` | PrayTimes.org regions. Secondary; India has no national authority. |
+| IR | Iran | `tehran` | The Institute of Geophysics computes Iran's official times (Khabaronline). |
+| JO | Jordan | `karachi` | Ministry of Awqaf timetable for Amman (https://www.awqaf.gov.jo/ar/Pages/PrayerTime) fits 18° and 18°. SalahTimes' fit. |
+| KW | Kuwait | `kuwait` | AlAdhan's methods list. Secondary; unverified. |
+| MY | Malaysia | `jakim` | JAKIM's e-Solat publishes the national zone timetables. Primary. |
+| PK | Pakistan | `karachi` | PrayTimes.org regions. Secondary. |
+| QA | Qatar | `qatar` | Qatar Calendar House timetable fits 18° and 90 minutes. Primary data, SalahTimes' fit. |
+| SA | Saudi Arabia | `ummAlQura` | The Umm al-Qura calendar is Saudi Arabia's official calendar; PrayTimes.org lists the method for the Arabian Peninsula. Secondary. |
+| SG | Singapore | `muis` | MUIS publishes the national timetable. Primary. |
+| TN | Tunisia | `karachi` | Ministry of Religious Affairs data for Tunis (https://www.affaires-religieuses.tn/public/getData/1) fits 18° and 18°. SalahTimes' fit. |
+| TR | Turkey | `diyanet` | Diyanet publishes Turkey's official times. Primary. |
+| US | United States | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)). |
+
+Known differences in these countries:
+- Jordan's timetable puts Maghrib about 5 minutes after sunset, Tunisia's about 2 and Algeria's about 3. The suggested presets don't include these minutes.
+- Brunei's Ministry adds 3 minutes for Belait district and 1 for Tutong.
+
+Entries in the Guidance app's table that were dropped, and why:
+- **Morocco (MA).** The Ministry of Habous timetable for Rabat (https://www.habous.gov.ma/prieres/horaire_hijri_2.php?ville=1) fits Fajr at 19° and Isha at 17°, with Maghrib about 4 minutes after sunset. No preset matches; `egyptian` would put Fajr about 3 minutes early.
+- **Algeria (DZ)** moved from `egyptian` to `muslimWorldLeague`, which its timetable fits.
+- **Sudan, South Sudan, Libya, Lebanon, Syria, Israel, Palestine, Iraq (SD, SS, LY, LB, SY, IL, PS, IQ)** were `egyptian`. Only aggregator sites support any method for them, and they disagree. PrayTimes.org lists the Egyptian method for "Africa, Syria, Lebanon, Malaysia", which is too broad to rely on; Malaysia, for one, has its own method.
+- **Malaysia (MY)** was `egyptian`; it's now `jakim`. **Turkey (TR)** was `egyptian`; it's now `diyanet`.
+- **Bahrain, Oman, Yemen (BH, OM, YE)** were `qatar`. Bahrain's official Islamiyat app gives an angle-based Isha near 18°, not 90 minutes; for Oman and Yemen no official source was found and secondary sources disagree.
+- **United Kingdom (GB, and the non-ISO "UK")** was `moonsightingCommittee`. Britain has no national authority, and mosques use different timetables: some based on the Hizbul Ulama observations, some on 18°, some on the committee's method (for example, the East London Mosque explains its own basis at https://www.eastlondonmosque.org.uk/prayer-times-and-calendar-explained).
+- **The default** (`muslimWorldLeague` for everything else) isn't carried over. A missing suggestion returns `nil`.
+
+## Differences from adhan-swift's presets
+
+adhan-swift (https://github.com/batoulapps/adhan-swift, MIT) is SalahTimes' predecessor in the Guidance app. SalahTimes doesn't copy its code. These are the parameters that differ from its `CalculationMethod.params` and METHODS.md, and why.
+
+| Method | adhan-swift | SalahTimes | Reason |
+|---|---|---|---|
+| `muslimWorldLeague`, `egyptian`, `karachi` | Dhuhr +1 | no minutes | None of these authorities publishes a Dhuhr minute. |
+| `northAmerica` → `isna` | Dhuhr +1 | no minutes | As above. The name follows the authority. |
+| `singapore` → `muis` | Dhuhr +1, rounding up | no minutes, nearest | MUIS publishes neither. Its 2025 timetable suggests both, and METHODS.md notes them. |
+| `dubai` | sunrise −3, Dhuhr +3, Asr +3, Maghrib +3 | no minutes | The authority publishes no minutes. Official timetables fit sunrise −3, Dhuhr +3 and Maghrib +3, but Asr only +0 to +1. |
+| (Malaysia) `singapore` → `jakim` | 20° / 18° | 18° / 18°, Dhuhr +1 | Malaysia moved Subuh to 18° in 2019; Zohor is transit plus 1 minute 4 seconds. |
+| (Indonesia) `singapore` → `kemenag` | 20° / 18°, Dhuhr +1, rounding up | 20° / 18°, Fajr +2, sunrise −3, Dhuhr +3, Asr +2, Maghrib +2, Isha +2, rounding up | Kemenag's documented ihtiyat. |
+| `turkey` → `diyanet` | same values | same values | Only the name changed. |
+| `ummAlQura` | "add a +30 minute custom adjustment for Isha during Ramadan" | the opt-in `ramadanIsha` rule | The rule applies only in Ramadan, by the Umm al-Qura calendar. |
+| `moonsightingCommittee` | 1/7 rule when `latitude >= 55` | 1/7 rule when the absolute latitude is 55° or more | adhan-swift compares the signed latitude, so it never applies the rule in the southern hemisphere. The committee's generator applies it at −55° too. |
+| `tehran` | Maghrib at 4.5° only when it falls between sunset and Isha | Maghrib at 4.5°, bounded like Isha by the high-latitude rule | A behavior difference, not a parameter (`docs/algorithm.md` §8.3). |
+| `other` | all angles 0 | no preset | Custom methods build `CalculationParameters` directly. |
+
+The following are unchanged: every Fajr, Isha and Maghrib angle and interval except JAKIM's; Diyanet's temkin; the Moonsighting Committee's coefficients and its Dhuhr +5 and Maghrib +3; and `recommended` as the default high-latitude rule, choosing the seventh of the night beyond 48°.

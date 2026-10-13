@@ -16,17 +16,29 @@ extension CalculationMethod {
   }
 
   /// Every suggestion, keyed by upper-case ISO 3166-1 alpha-2 country code.
+  ///
+  /// Each entry has a source in METHODS.md and `Vectors/country-methods.json`. A country is left
+  /// out when no source supports a suggestion for it.
   public static let suggestionsByCountryCode: [String: CalculationMethod] = [
     "AE": .dubai,
-    "SA": .ummAlQura,
-    "KW": .kuwait,
-    "QA": .qatar,
+    "AF": .karachi,
+    "BD": .karachi,
+    "BN": .muis,
+    "CA": .moonsightingCommittee,
+    "DZ": .muslimWorldLeague,
     "EG": .egyptian,
-    "PK": .karachi,
-    "IR": .tehran,
-    "TR": .diyanet,
-    "SG": .muis,
-    "MY": .jakim,
     "ID": .kemenag,
+    "IN": .karachi,
+    "IR": .tehran,
+    "JO": .karachi,
+    "KW": .kuwait,
+    "MY": .jakim,
+    "PK": .karachi,
+    "QA": .qatar,
+    "SA": .ummAlQura,
+    "SG": .muis,
+    "TN": .karachi,
+    "TR": .diyanet,
+    "US": .moonsightingCommittee,
   ]
 }
