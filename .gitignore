@@ -9,3 +9,6 @@ xcuserdata/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
 Local.xcconfig
+
+# Official timetables that can not be redistributed (Validation/official-timetables/fetch.py)
+/Validation/official-timetables/cache/
