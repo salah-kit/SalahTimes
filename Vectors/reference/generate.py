@@ -75,6 +75,8 @@ PLACES = {
     "north-pole": ("the North Pole", 90.0, 0.0, "Etc/UTC"),
     "south-pole": ("the South Pole", -90.0, 0.0, "Etc/UTC"),
     "near-south-pole": ("89.9975°S, 0°E", -89.9975, 0.0, "Etc/UTC"),
+    "lat-86-north": ("86°N, 0°E", 86.0, 0.0, "Etc/UTC"),
+    "lat-83-south-120w": ("83°S, 120°W", -83.0, -120.0, "Etc/UTC"),
     "kiritimati": ("Kiritimati", 1.87, -157.4, "Pacific/Kiritimati"),
     "apia": ("Apia", -13.8333, -171.7667, "Pacific/Apia"),
     "nukualofa": ("Nuku'alofa", -21.1394, -175.2049, "Pacific/Tongatapu"),
@@ -568,11 +570,15 @@ def build_polar():
     # Crossings that the hour-angle iteration can't settle, so bisection finds them (algorithm
     # section 6, step 3): near a pole the declination, not the hour angle, carries the Sun
     # across the altitude.
+    # Asr comes within minutes of the transit on the days before polar night, where the
+    # declination carries it too.
     disabled = dict(MWL, highLatitudeRule="disabled", rounding="none")
     for place, day, event in (("near-south-pole", date(2026, 3, 22), "sunset"),
                               ("near-south-pole", date(2026, 5, 7), "isha"),
                               ("near-south-pole", date(2026, 8, 1), "fajr"),
-                              ("north-pole", date(2026, 3, 18), "sunrise")):
+                              ("north-pole", date(2026, 3, 18), "sunrise"),
+                              ("lat-86-north", date(2026, 10, 2), "asr"),
+                              ("lat-83-south-120w", date(2026, 4, 6), "asr")):
         def bisected(result, event=event):
             value = result.trace.get(event, result.unrounded[event])
             assert ref.occurs(value)
@@ -1098,8 +1104,10 @@ def build_custom():
 
 def build_ranges():
     f = VectorFile("times/ranges.json",
-                   "The supported range: years across every ΔT polynomial from the year 1000 to "
-                   "3000 (algorithm section 3), and the boundary values that section 2 accepts.")
+                   "The supported range: its first and last days, 1000-01-01 and 3000-12-31, "
+                   "proleptic Gregorian dates before 1582, years in several of section 3's ΔT "
+                   "polynomials, and the boundary values that section 2 accepts. At the 1 s "
+                   "tolerance, only the years 1000, 1300 and 3000 here are sensitive to ΔT.")
     params = dict(MWL, rounding="none")
     years = (
         (date(1000, 1, 1), "makkah-fixed", "the first supported day; ΔT from the 500-1600 "
