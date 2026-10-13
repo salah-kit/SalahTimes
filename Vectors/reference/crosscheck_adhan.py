@@ -93,7 +93,7 @@ def main(directory):
         params = dict(presets[key])
         params["madhab"] = info["madhab"].lower()
         params["highLatitudeRule"] = "middleOfTheNight"
-        params["rounding"] = "nearest"
+        params.setdefault("rounding", "nearest")  # the preset's own rounding wins
         zone = ZoneInfo(info["timezone"])
         variance = data.get("variance", 0)
         counts = {"compared": 0, "within1": 0, "max": 0}
