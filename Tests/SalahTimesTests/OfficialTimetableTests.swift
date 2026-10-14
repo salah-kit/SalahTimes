@@ -62,6 +62,10 @@ struct OfficialTimetableTests {
     for source in try Self.loadSources() where !source.committed {
       let file = directory.appendingPathComponent(source.file)
       guard FileManager.default.fileExists(atPath: file.path) else {
+        if source.optional == true {
+          print("\(source.id): optional public-page export not imported; see validation README")
+          continue
+        }
         Issue.record("\(source.id): \(file.path) is missing; run fetch.py")
         continue
       }
@@ -88,6 +92,7 @@ struct OfficialTimetableTests {
     let ramadanIshaMinutes: Int?
     let file: String
     let committed: Bool
+    let optional: Bool?
   }
 
   struct Statistics {
@@ -148,6 +153,10 @@ struct OfficialTimetableTests {
   /// describe that timetable, not the method, so they stay out of the presets.
   static func fits(for source: Source) throws -> [(String, CalculationParameters)] {
     switch source.id {
+    case "awqaf-dubai", "awqaf-abudhabi":
+      var parameters = try parameters(for: source)
+      parameters.adjustments = PrayerAdjustments(asr: -2)
+      return [("2026 city-centre fit: user adjustment Asr -2 minutes", parameters)]
     case "jakim-wly01":
       // On top of the preset's own Dhuhr +1 minute: Dhuhr +2 in all.
       var parameters = try parameters(for: source)

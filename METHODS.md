@@ -2,7 +2,8 @@
 
 This page lists every calculation method that SalahTimes ships, what each one contains, and where the values come from. It also covers the high-latitude rules, the Moonsighting Committee's formula, the Ramadan Isha rule, the Kaaba's coordinates for the Qibla, and the country suggestions.
 
-All sources were retrieved on 2026-10-13 unless a section says otherwise.
+All sources were retrieved on 2026-10-13 unless a section says otherwise. A 2026-10-14
+comparison adds complete official UAE timetables; the dated results are in `docs/validation.md`.
 
 ## What a preset contains
 
@@ -149,7 +150,15 @@ Sources:
 - The Sheikh Zayed Grand Mosque Centre's timetable for Abu Dhabi, https://www.szgmc.gov.ae/en/worshippers/prayer-timingss, and a Dubai Ramadan timetable published by Gulf News for 18 February 2026: on these three days Fajr and Isha fit 18.2° within half a minute, sunrise is 3 minutes early, and Dhuhr and Maghrib 3 minutes late (SalahTimes' fit; official and press data).
 
 Notes:
-- The same three 2026 days put Asr only 0.1 to 1.2 minutes after the computed time, not 3. Three days from two sources, one of which doesn't name its emirate, are too few to set against the 2018 table, which fits Asr +3 on every day; a full-year 2026 table would settle it.
+- The complete official 2026 Dubai and Abu Dhabi timetables, retrieved on 2026-10-14 from
+  Awqaf's public prayer-page service, confirm that the 2018 Asr calibration differs from the
+  newer calendars. With the preset as shipped, official Asr is 1–3 minutes earlier in Dubai
+  and 2–3 minutes earlier in Abu Dhabi. The other five prayers agree within a minute on every
+  day. At the city-centre coordinates used in validation, `parameters.adjustments.asr = -2`
+  puts Asr within a minute on all 365 days in both cities. This is a dated, place-specific
+  override; the authority does not disclose its reference coordinates or method minutes.
+  The preset retains its published 2018 calibration so existing consumers' times stay stable.
+  Use an official published timetable when exact authority minutes are required.
 - These are the values of adhan-swift's Dubai method. SalahTimes fits them independently from the official table.
 - Isha stays angle-based in Ramadan in these timetables.
 - Other sources claim 19.5° with Isha 90 minutes after Maghrib (an older "Gulf region" method), or 18° or 18.5°. We found no official statement for any of them.

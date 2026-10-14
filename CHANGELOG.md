@@ -6,8 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Import and compare complete official UAE public-page calendar exports without storing an
+  API key or redistributing the source data.
+- Add a Swift Package Index manifest linking to the published documentation.
+
 ### Fixed
 
+- Document the independent JPL solar-event comparison and the 2026 UAE Asr difference,
+  including a tested local adjustment. Existing method presets remain unchanged.
 - Document the public date comparison and prayer-time decoder, and explain the CLI example's
   naming exception to the ecosystem standard.
 

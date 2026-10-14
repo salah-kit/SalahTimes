@@ -209,6 +209,56 @@
         "year": 2026,
         "method": 2
       }
+    },
+    {
+      "id": "awqaf-dubai",
+      "authority": "UAE General Authority of Islamic Affairs, Endowments and Zakat (Awqaf)",
+      "place": "Dubai",
+      "latitude": 25.2048,
+      "longitude": 55.2708,
+      "coordinatesNote": "Official Times response identifies the city but withholds the reference coordinates. These are usual city-centre coordinates; measured offsets can include the authority reference point.",
+      "timeZone": "Asia/Dubai",
+      "method": "dubai",
+      "madhab": "shafi",
+      "file": "awqaf-dubai-2026.csv",
+      "committed": false,
+      "optional": true,
+      "license": "The official public prayer page states no redistribution licence for these annual responses. Original responses and CSVs stay in the private gitignored cache.",
+      "retrievedOn": "2026-10-14",
+      "urls": [
+        "https://www.awqaf.gov.ae/prayer-times",
+        "https://internationalprayertime.awqaf.gov.ae/api/v1/prayertimes"
+      ],
+      "fetch": {
+        "kind": "awqaf-export",
+        "year": 2026,
+        "officialId": 69
+      }
+    },
+    {
+      "id": "awqaf-abudhabi",
+      "authority": "UAE General Authority of Islamic Affairs, Endowments and Zakat (Awqaf)",
+      "place": "Abu Dhabi",
+      "latitude": 24.4539,
+      "longitude": 54.3773,
+      "coordinatesNote": "Official Times response identifies the city but withholds the reference coordinates. These are usual city-centre coordinates; measured offsets can include the authority reference point.",
+      "timeZone": "Asia/Dubai",
+      "method": "dubai",
+      "madhab": "shafi",
+      "file": "awqaf-abudhabi-2026.csv",
+      "committed": false,
+      "optional": true,
+      "license": "The official public prayer page states no redistribution licence for these annual responses. Original responses and CSVs stay in the private gitignored cache.",
+      "retrievedOn": "2026-10-14",
+      "urls": [
+        "https://www.awqaf.gov.ae/prayer-times",
+        "https://internationalprayertime.awqaf.gov.ae/api/v1/prayertimes"
+      ],
+      "fetch": {
+        "kind": "awqaf-export",
+        "year": 2026,
+        "officialId": 36
+      }
     }
   ]
 }

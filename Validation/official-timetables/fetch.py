@@ -260,6 +260,9 @@ def main():
     client = Client()
     failures = 0
     for source in selected:
+        if source["fetch"]["kind"] == "awqaf-export":
+            print(f"{source['id']}: optional public-page export; use import-awqaf.py (README.md)")
+            continue
         directory = os.path.join(HERE, "data") if source["committed"] else args.cache
         os.makedirs(directory, exist_ok=True)
         path = os.path.join(directory, source["file"])

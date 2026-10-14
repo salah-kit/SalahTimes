@@ -24,7 +24,41 @@ The validation itself found no engine bugs; review did. Before commit `8a32a5e`,
 
 The model reproduces Meeus's worked examples: the apparent declination of example 25.a (−7.78507° on 1992-10-13) within 0.002°, and the equation of time of example 28.b (13 min 42.6 s) within 6 seconds.
 
-Both models use the same series for the Sun's longitude (Meeus chapter 25), so this check is independent in the hour angle, the time scale and the root finding, not in the solar theory. No committed test compares with an independent ephemeris. The USNO API refused connections when this report was prepared, so a comparison with it is still to do. A one-off comparison of 50 site-days with JPL Horizons, made during review and not part of the tests, found sunrise and sunset within 5.3 seconds and the transit within 2.2 seconds, away from the polar transitions. Near those transitions the differences grew to 30–82 seconds, where the Sun climbs only about 0.2″ a second and a tiny altitude difference moves the crossing by many seconds.
+Both models use the same series for the Sun's longitude (Meeus chapter 25), so this check is
+independent in the hour angle, the time scale and the root finding, not in the solar theory.
+The independent JPL comparison below now covers that boundary. It is a dated research
+comparison, separate from the committed NOAA unit tests. USNO still refused a connection on
+2026-10-14; JPL Horizons was accessible. The earlier one-off review comparison also found
+larger errors near polar transitions, 30–82 seconds, where very shallow solar motion amplifies
+an altitude difference. Those transition cases are outside the newer grid.
+
+### Independent JPL Horizons comparison (2026-10-14)
+
+[JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html) returned DE441 solar
+ephemerides for 48 site-days: 12 cities in both hemispheres and at the date line, on the
+March equinox, June solstice, September equinox and December solstice of 2026. The northern
+limit was Reykjavík (64.15°), the southern limit Ushuaia (54.80° S). All 144 unrounded
+sunrise, transit and sunset events were compared. The inputs, every measured difference and
+the exact first-query parameters are in
+[`Validation/ephemeris/jpl-2026-10-14.json`](../Validation/ephemeris/jpl-2026-10-14.json).
+
+| Event | Comparisons | Largest absolute difference |
+|---|---:|---:|
+| Sunrise | 48 | 3.31 seconds |
+| Transit | 48 | 1.53 seconds |
+| Sunset | 48 | 5.19 seconds |
+
+SalahTimes used `rounding: .none`, no method/user minutes and no high-latitude bounds.
+Horizons used an Earth topocentric geodetic site at zero elevation, airless apparent solar
+altitude and local apparent hour angle. Sunrise/sunset solve the same fixed −50′ centre
+altitude that SalahTimes specifies, rather than adding a second refraction correction;
+transit solves hour angle zero. Its
+[quantity definitions](https://ssd.jpl.nasa.gov/horizons/manual.html) describe these observables.
+Five samples bracket each event. A second JPL query at the interpolated crossing and ±1
+second verifies the result; its largest correction was 0.012 seconds. JPL's predicted Earth
+orientation after 2026-10-13 applies to the December samples. This supports ordinary solar
+event accuracy on the stated grid; it does not validate twilight policy, elevation,
+near-pole/near-transition reliability, or exact published mosque minutes.
 
 ## adhan-swift parity
 
@@ -64,7 +98,33 @@ adhan-swift's own tests allow two minutes (their `variance` key) for these two f
 | Kemenag, Kota Jakarta | bimasislam.kemenag.go.id/jadwalshalat | Central Jakarta; not shown |
 | moonsighting.com, London | praytable.php, methods 0 (Hanafi, shafaq general) and 2 (Shafi'i, shafaq ahmer) | Exact: the coordinates requested |
 
-Only MUIS's data may be redistributed (Singapore Open Data Licence 1.0). It's committed with attribution, and its comparison runs in every test run. The others stay in a gitignored cache, and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. UAE, Qatar and Kuwait were tried without success; the README records what was tried.
+Only MUIS's data may be redistributed (Singapore Open Data Licence 1.0). It's committed with
+attribution, and its comparison runs in every test run. The others stay in a gitignored cache,
+and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. The 2026-10-14
+UAE addendum below supersedes the earlier failed acquisition. Qatar and Kuwait remain source
+availability/provenance limitations, as recorded in the validation README.
+
+### Official UAE addendum (2026-10-14)
+
+Awqaf's [public prayer page](https://www.awqaf.gov.ae/prayer-times) supplies complete 2026
+Dubai and Abu Dhabi calendars through its official date-range service. The metadata marks
+them as **Official Times** and identifies Dubai as official city 69 and Abu Dhabi as 36.
+It withholds reference coordinates. The comparison uses usual city-centre coordinates:
+25.2048, 55.2708 and 24.4539, 54.3773, in `Asia/Dubai`. The JSON importer checks city/country
+identity, official provenance, every date of the year, unique days and ordered 24-hour times.
+Original responses and CSVs are not redistributed. Sources and the optional import procedure
+are in `Validation/official-timetables/README.md`.
+
+Every prayer other than Asr is within a minute on all 365 days in both cities. Official Asr
+minus the preset's unrounded Asr averages −2.17 minutes in Dubai (range −2.91 to −1.27)
+and −2.56 in Abu Dhabi (−3.11 to −1.94). The rounded preset differs by up to three minutes;
+only 11 Dubai Asr values and no Abu Dhabi Asr values are within a minute. This confirms that
+the preset's 2018 Asr fit is not an exact reproduction of the 2026 calendars.
+
+With the public `parameters.adjustments.asr = -2` override, all six prayers are within a
+minute on every day in both cities. Asr matches exactly on 275 Dubai days (75%) and 169 Abu
+Dhabi days (46%). The same test compares both configurations; the preset itself stays stable.
+The override describes these two city-centre comparisons, not a published national rule.
 
 **Results.** These are the official time minus SalahTimes' unrounded time, in minutes. "Exact" and "≤ 1 min" compare the preset as it ships, with its own minute adjustments and rounding, against the published minute; their ranges run over the six prayers. Full tables: `Validation/official-timetables/results.md`.
 
@@ -149,7 +209,9 @@ Tromsø and London, where bounds and the Moonsighting Committee's rules apply, a
 - **Within about a degree of a pole,** the model's premise that the Sun is highest at the transit and lowest at the antitransit fails, and crossings can go unreported (algorithm.md §6). The Sun can rise and set again within one half day while SalahTimes reports `sunStaysBelow` (89.9° N, 100° E, 18 March 2026), or dip below the Asr altitude for minutes while it reports `sunStaysAbove` (89° N, 0° E, 16 April 2026), and once a year the first rise or last fall can fall in neither half of any solar day. Treat events within a degree of a pole as unreliable.
 - **Elevation is ignored.** SalahTimes uses a −0.8333° horizon everywhere, as RFC 0001 decides. Authorities that correct sunrise and sunset for elevation differ by up to a minute or two at elevated places; none of the compared cities is high enough to show it.
 - **adhan-swift's data was adjusted** by its authors to fit their library, so parity with it is a comparison with adhan-swift as much as with the original timetables.
-- **The solar cross-check shares the Sun's longitude series** with the engine (Meeus chapter 25, which NOAA also uses). It checks the hour angle, time scale and root finding independently, but not the solar theory. A comparison with JPL Horizons or USNO is still to do.
+- **The NOAA solar cross-check shares the Sun's longitude series** with the engine. The dated
+  JPL DE441 comparison above independently checks solar theory on 48 site-days. Polar
+  transitions, elevation and the near-pole limitations remain outside that evidence.
 - **Linux.** The tests use only Foundation APIs available on Linux, but this validation ran on macOS only. Linux runs in CI.
 
 ## Reproducing
@@ -173,12 +235,12 @@ SALAHTIMES_WIDE_SCAN=1 SALAHTIMES_WIDE_SCAN_RESULTS=$PWD/Validation/wide-scan.md
 # Benchmark in release.
 swift test -c release -Xswiftc -enable-testing -j 4 --filter Benchmark
 
-# Official timetables: fetch (about 25 requests), compare and write results.md, including
-# the WLY01 fit.
+# Official timetables: fetch the automated sources, optionally import the Awqaf exports as
+# documented in Validation/official-timetables/README.md, then compare. Use a new output
+# path because the serialized tests append to it. This also reports the WLY01/UAE fits.
 python3 Validation/official-timetables/fetch.py
-rm -f Validation/official-timetables/results.md
 SALAHTIMES_OFFICIAL_TIMETABLES=$PWD/Validation/official-timetables/cache \
-SALAHTIMES_OFFICIAL_RESULTS=$PWD/Validation/official-timetables/results.md \
+SALAHTIMES_OFFICIAL_RESULTS=$PWD/Validation/official-timetables/results-$(date +%Y%m%d-%H%M%S).md \
   swift test -j 4 --filter OfficialTimetable
 ```
 

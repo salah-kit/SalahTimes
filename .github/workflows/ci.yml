@@ -37,6 +37,11 @@ jobs:
       - name: Test
         run: swift test
 
+      - name: Test the official timetable importer
+        run: >-
+          python3 -I -m unittest discover -s Validation/official-timetables
+          -p 'test_*.py' -v
+
       - name: Build for iOS
         run: >-
           xcodebuild build -scheme SalahTimes -destination 'generic/platform=iOS'
