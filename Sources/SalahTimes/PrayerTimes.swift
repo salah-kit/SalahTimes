@@ -103,6 +103,9 @@ public struct PrayerTimes: Hashable, Codable, Sendable {
     timeZone == .autoupdatingCurrent ? .current : timeZone
   }
 
+  /// Decodes the owning day, time zone and each event's occurrence or non-occurrence.
+  ///
+  /// - Parameter decoder: The decoder containing the encoded prayer times.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.init(

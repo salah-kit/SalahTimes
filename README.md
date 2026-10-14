@@ -65,6 +65,9 @@ for event in PrayerTimes.Event.allCases {
 
 Compute for a day in the location's time zone, not the device's. [Examples/PrayerTimesCLI](Examples/PrayerTimesCLI) is a complete command-line program.
 
+The example executable is named `PrayerTimesCLI` to describe its job. It is an intentional
+exception to the ecosystem's `Salah` module prefix; the reusable package module is `SalahTimes`.
+
 ## Documentation
 
 The documentation is at [salah-kit.github.io/SalahTimes](https://salah-kit.github.io/SalahTimes/documentation/salahtimes). It includes articles on getting started, choosing a method, high latitudes and validation.

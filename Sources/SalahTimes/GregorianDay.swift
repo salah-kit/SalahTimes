@@ -111,6 +111,7 @@ public struct GregorianDay: Hashable, Comparable, Codable, Sendable, CustomStrin
     return "\(yearText)-\(monthText)-\(dayText)"
   }
 
+  /// Whether the left date precedes the right date in Gregorian calendar order.
   public static func < (lhs: GregorianDay, rhs: GregorianDay) -> Bool {
     (lhs.year, lhs.month, lhs.day) < (rhs.year, rhs.month, rhs.day)
   }

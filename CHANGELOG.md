@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Document the public date comparison and prayer-time decoder, and explain the CLI example's
+  naming exception to the ecosystem standard.
+
 ## [0.1.0] - 2026-10-13
 
 The first release: prayer-time calculation written from published astronomy and each method's
