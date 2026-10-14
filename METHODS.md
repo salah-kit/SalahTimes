@@ -184,7 +184,19 @@ Sources:
 - Qatar Calendar House, Doha timetable for Ramadan 1447: Fajr falls with the Sun at 18.0° to 18.1° below the horizon, and Isha is exactly Maghrib plus 90 minutes, Ramadan included. https://qatarch.com/public/uploads/orginal/emsakia/emsakya.pdf (SalahTimes' fit; primary data)
 
 Notes:
-- The timetable's Maghrib is about 2 to 3 minutes after computed sunset, and Dhuhr about 1 to 2 minutes after transit. Qatar publishes only timetables, so its preset would be fitted like MUIS's and the UAE's, but one Ramadan month is too short a sample to fit minutes and rounding: the preset leaves them out until a full-year table is checked. adhan-swift's Doha test data can't settle it, because its authors adjusted those times by up to 2 minutes.
+- A complete **2025** Qatar Calendar House year is now available from its published daily-card
+  PDFs, retrieved on 2026-10-14 from the [official releases archive](https://qatarch.com/dar-releases).
+  An automated OCR extraction covers all 365 dates and six prayers per date. Every Isha is
+  exactly 90 minutes after Maghrib, including Ramadan; this independently supports retaining
+  `ramadanIsha: .off` for the Qatar preset. At central Doha coordinates (25.2854, 51.5310),
+  official minus unrounded preset times average −1.02 minutes for Fajr, 0.00 for sunrise,
+  +0.48 for Dhuhr, +0.51 for Asr and +2.07 for Maghrib/Isha. The largest rounded difference is
+  three minutes. The authority's reference coordinates and rounding/precautionary rules are
+  still unpublished, and the extraction has automated consistency checks rather than visual
+  review of every card. The preset therefore keeps its documented 18°/90-minute starting
+  point with no fitted minutes. Use the published timetable for exact official minutes.
+  Full 2026 daily-card coverage remains a publisher-availability limitation, separate from
+  the completed 2025 comparison.
 - Qatar doesn't lengthen Isha in Ramadan. Leave `ramadanIsha` off for Qatar.
 
 ## Singapore (MUIS)

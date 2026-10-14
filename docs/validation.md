@@ -100,31 +100,9 @@ adhan-swift's own tests allow two minutes (their `variance` key) for these two f
 
 Only MUIS's data may be redistributed (Singapore Open Data Licence 1.0). It's committed with
 attribution, and its comparison runs in every test run. The others stay in a gitignored cache,
-and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. The 2026-10-14
-UAE addendum below supersedes the earlier failed acquisition. Qatar and Kuwait remain source
-availability/provenance limitations, as recorded in the validation README.
-
-### Official UAE addendum (2026-10-14)
-
-Awqaf's [public prayer page](https://www.awqaf.gov.ae/prayer-times) supplies complete 2026
-Dubai and Abu Dhabi calendars through its official date-range service. The metadata marks
-them as **Official Times** and identifies Dubai as official city 69 and Abu Dhabi as 36.
-It withholds reference coordinates. The comparison uses usual city-centre coordinates:
-25.2048, 55.2708 and 24.4539, 54.3773, in `Asia/Dubai`. The JSON importer checks city/country
-identity, official provenance, every date of the year, unique days and ordered 24-hour times.
-Original responses and CSVs are not redistributed. Sources and the optional import procedure
-are in `Validation/official-timetables/README.md`.
-
-Every prayer other than Asr is within a minute on all 365 days in both cities. Official Asr
-minus the preset's unrounded Asr averages −2.17 minutes in Dubai (range −2.91 to −1.27)
-and −2.56 in Abu Dhabi (−3.11 to −1.94). The rounded preset differs by up to three minutes;
-only 11 Dubai Asr values and no Abu Dhabi Asr values are within a minute. This confirms that
-the preset's 2018 Asr fit is not an exact reproduction of the 2026 calendars.
-
-With the public `parameters.adjustments.asr = -2` override, all six prayers are within a
-minute on every day in both cities. Asr matches exactly on 275 Dubai days (75%) and 169 Abu
-Dhabi days (46%). The same test compares both configurations; the preset itself stays stable.
-The override describes these two city-centre comparisons, not a published national rule.
+and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. The 2026-10-14 UAE addendum supersedes the earlier failed acquisition. Qatar Calendar House's
+accessible 2025 daily-card PDFs also permit a complete dated comparison, described below.
+Kuwait's current original timetable remains a provenance limitation.
 
 **Results.** These are the official time minus SalahTimes' unrounded time, in minutes. "Exact" and "≤ 1 min" compare the preset as it ships, with its own minute adjustments and rounding, against the published minute; their ranges run over the six prayers. Full tables: `Validation/official-timetables/results.md`.
 
@@ -150,6 +128,49 @@ The table gives the mean offset for each prayer, measured from SalahTimes' time 
 - **MUIS** publishes only timetables, so the `muis` preset is fitted to them: Fajr 20°, Isha 18°, one Dhuhr minute and `rounding: .up`. Every prayer then averages +0.5 to +0.6 minutes before rounding, as upward rounding gives, and the preset matches the published minute exactly on 62–80% of days, within a minute on every day for every prayer but Asr (361 of 365 days). Before the fit (no Dhuhr minute, nearest rounding) only 41% of Dhuhrs were within a minute.
 - **Kemenag** documents its rules, and the `kemenag` preset follows them: Fajr 20°, Isha 18°, Maghrib with the Sun 1° below the horizon, ihtiyat (precautionary minutes) of Fajr +2, sunrise −3, Dhuhr +3, Asr +2, Maghrib +2 and Isha +2, and rounding up. Every prayer is within a minute on all 365 days. Fajr, Dhuhr, Maghrib and Isha match exactly on 95–97% of days and Asr on 85%. Sunrise matches exactly on only 25%: its mean is −0.23 minutes, so Kemenag's sunrise sits about a quarter minute earlier than the preset's before rounding, and rounding up then gives the later minute on most days.
 - **JAKIM** documents its method, and the `jakim` preset follows it: Fajr 18° (Malaysia moved Subuh from 20° in 2019; Selangor announced it on 28 November 2019 and the other states followed: https://www.bharian.com.my/amp/rencana/komentar/2020/05/691723/bhplus), Isha 18°, and Dhuhr one minute after the transit (the Selangor Mufti's transit plus 1 min 4 s). Zone WLY01's published times still run about 1.8 to 2.0 minutes later than the preset before rounding, with sunrise 0.8 minutes earlier, so the preset is within a minute on only 24–35% of days for Fajr, Dhuhr, Asr, Maghrib and Isha (sunrise: every day). This is an explained difference. Part of it is JAKIM's precautionary minutes and rounding. Part is the zone's reference point, which JAKIM doesn't publish: the offsets for Fajr, Asr, Maghrib and Isha drift over about 2.5 minutes through the year (Fajr +0.72 to +3.28), more than rounding explains, which a reference point away from central Kuala Lumpur would cause. A WLY01-specific fit closes most of it. On top of the preset (which already has Dhuhr +1 and nearest rounding), it sets `rounding: .up` and user adjustments (`adjustments`) of Fajr +1, sunrise −1, Dhuhr +1, Asr +1, Maghrib +1 and Isha +1, so Dhuhr ends up 2 minutes after the transit. The cached comparison runs this fit next to the preset and writes it to `results.md` ("jakim-wly01 … place-specific fit"): Dhuhr and sunrise are within a minute on all 365 days, and Fajr, Asr, Maghrib and Isha on 347, 353, 352 and 347 days (95–97%), never more than 2 minutes off. Exact matches: Fajr 192, sunrise 258, Dhuhr 266, Asr 247, Maghrib 194, Isha 180 days (49–73%). The fit belongs to that zone, not to the method, so it isn't in the preset.
+
+### Official UAE addendum (2026-10-14)
+
+Awqaf's [public prayer page](https://www.awqaf.gov.ae/prayer-times) supplies complete 2026
+Dubai and Abu Dhabi calendars through its official date-range service. The metadata marks
+them as **Official Times** and identifies Dubai as official city 69 and Abu Dhabi as 36.
+It withholds reference coordinates. The comparison uses usual city-centre coordinates:
+25.2048, 55.2708 and 24.4539, 54.3773, in `Asia/Dubai`. The JSON importer checks city/country
+identity, official provenance, every date of the year, unique days and ordered 24-hour times.
+Original responses and CSVs are not redistributed. Sources and the optional import procedure
+are in `Validation/official-timetables/README.md`.
+
+Every prayer other than Asr is within a minute on all 365 days in both cities. Official Asr
+minus the preset's unrounded Asr averages −2.17 minutes in Dubai (range −2.91 to −1.27)
+and −2.56 in Abu Dhabi (−3.11 to −1.94). The rounded preset differs by up to three minutes;
+only 11 Dubai Asr values and no Abu Dhabi Asr values are within a minute. This confirms that
+the preset's 2018 Asr fit is not an exact reproduction of the 2026 calendars.
+
+With the public `parameters.adjustments.asr = -2` override, all six prayers are within a
+minute on every day in both cities. Asr matches exactly on 275 Dubai days (75%) and 169 Abu
+Dhabi days (46%). The same test compares both configurations; the preset itself stays stable.
+The override describes these two city-centre comparisons, not a published national rule.
+
+### Qatar Calendar House 2025 addendum (2026-10-14)
+
+The [Calendar House releases archive](https://qatarch.com/dar-releases) supplied 13 monthly
+Hijri-calendar PDFs covering the complete Gregorian year 2025. The originals are image-based,
+so an automated OCR extraction reads their printed Gregorian dates and six prayer clocks.
+The extraction checks 365 unique owning dates, exactly six ordered clocks per date, and a
+90-minute Maghrib-to-Isha interval on every day. It excludes cards outside 2025. Original
+PDFs, their download receipts and OCR observations are retained privately; no source-data
+redistribution terms were found. This is a numerical comparison with automated source
+consistency checks, not a claim that every printed card received human visual review.
+
+Using `qatar`, Shafi'i Asr, central Doha (25.2854, 51.5310), `Asia/Qatar`, and no Ramadan
+override, the mean official-minus-unrounded offsets are −1.02 minutes for Fajr, 0.00 for
+sunrise, +0.48 for Dhuhr, +0.51 for Asr and +2.07 for Maghrib and Isha. Rounded differences
+are at most three minutes. Isha remains exactly Maghrib plus 90 minutes on all 365 published
+rows. Turning on a 120-minute Ramadan override instead produces an Isha difference of up to
+28 minutes against this table. The authority does not publish its reference coordinates or
+a complete rounding/precautionary-minute rule, so no universal fit is added to the preset.
+Current 2026 full-year coverage and the authority's unpublished method details remain
+external-source limitations; the 2025 acquisition and comparison are complete.
 
 ## Self-consistency
 

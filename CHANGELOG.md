@@ -8,6 +8,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Document the complete 2025 Qatar Calendar House comparison, its OCR provenance and
+  the retained 90-minute Isha policy, without adding a fitted preset adjustment.
+
 - Import and compare complete official UAE public-page calendar exports without storing an
   API key or redistributing the source data.
 - Add a Swift Package Index manifest linking to the published documentation.

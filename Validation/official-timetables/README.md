@@ -90,7 +90,13 @@ Only the Umm al-Qura service and moonsighting.com compute for coordinates you gi
 
 - **UAE (awqaf.gov.ae)**: the earlier obfuscated-page limitation is superseded by the
   2026-10-14 official public-page exports and optional importer above.
-- **Qatar (islam.gov.qa)**: the site's API sits behind a service gateway that needs a client id, secret and token. Not pursued.
+- **Qatar:** the `islam.gov.qa` service gateway requires registered credentials. The alternative
+  [Qatar Calendar House releases archive](https://qatarch.com/dar-releases) is public and its
+  image-based daily-card PDFs supplied a complete 2025 year on 2026-10-14. The dated OCR
+  comparison is described in `docs/validation.md`; it is separate from `fetch.py`'s 2026
+  machine-readable sources. Current complete 2026 coverage and an exact published reference
+  coordinate/rounding specification were not obtained. No preset fit is inferred from missing
+  specifications.
 - **Kuwait (islam.gov.kw)**: the host doesn't resolve.
 - **Diyanet's own calculation site (vakithesaplama.diyanet.gov.tr)** needs an account for its tables, and its API (awqatsalah.diyanet.gov.tr) needs registration. The public namazvakitleri pages were used instead.
 - **Egypt**: no official machine-readable timetable found; not attempted further.
