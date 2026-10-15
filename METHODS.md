@@ -363,7 +363,7 @@ Known differences in these countries:
 - Jordan's timetable puts Maghrib about 5 minutes after sunset, Tunisia's about 2 and Algeria's about 3. The suggested presets don't include these minutes.
 - Brunei's Ministry adds 3 minutes for Belait district and 1 for Tutong.
 
-Entries that were dropped from the country table of Guidance for Mac, the app Salah succeeds, and why:
+Entries that were dropped from the country table of a 2026 rebuild of Batoul Apps' Guidance for Mac (https://github.com/batoulapps/GuidanceMac/pull/8), and why:
 - **Morocco (MA).** The Ministry of Habous timetable for Rabat (https://www.habous.gov.ma/prieres/horaire_hijri_2.php?ville=1) fits Fajr at 19° and Isha at 17°, with Maghrib about 4 minutes after sunset. No preset matches; `egyptian` would put Fajr about 3 minutes early.
 - **Algeria (DZ)** moved from `egyptian` to `muslimWorldLeague`, which its timetable fits.
 - **Sudan, South Sudan, Libya, Lebanon, Syria, Israel, Palestine, Iraq (SD, SS, LY, LB, SY, IL, PS, IQ)** were `egyptian`. Only aggregator sites support any method for them, and they disagree. PrayTimes.org lists the Egyptian method for "Africa, Syria, Lebanon, Malaysia", which is too broad to rely on; Malaysia, for one, has its own method.
@@ -374,7 +374,7 @@ Entries that were dropped from the country table of Guidance for Mac, the app Sa
 
 ## Differences from adhan-swift's presets
 
-adhan-swift (https://github.com/batoulapps/adhan-swift, MIT) is the Swift library that Guidance for Mac, the app Salah succeeds, calculated with. SalahTimes doesn't copy its code. These are the parameters that differ from its `CalculationMethod.params` and METHODS.md, and why.
+adhan-swift (https://github.com/batoulapps/adhan-swift, MIT) is the Swift library Batoul Apps' Guidance for Mac calculates with. SalahTimes doesn't copy its code. These are the parameters that differ from its `CalculationMethod.params` and METHODS.md, and why.
 
 | Method | adhan-swift | SalahTimes | Reason |
 |---|---|---|---|
