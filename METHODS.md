@@ -242,7 +242,7 @@ Notes:
 Kemenag's Bimas Islam publishes Indonesia's official schedule (https://bimasislam.kemenag.go.id/jadwalshalat).
 
 Sources:
-- Kemenag's Director General of Bimas Islam, Kamaruddin Amin, 21 December 2020: the −20° Subuh criterion "used in making the prayer schedules" is correct in fiqh and science (reported by CNN Indonesia). https://www.cnnindonesia.com/nasional/20201221182418-20-584880 (secondary report of a primary statement)
+- Kemenag's Director General of Bimas Islam, Kamaruddin Amin, 21 December 2020: the −20° Subuh criterion "used in making the prayer schedules" is correct in fiqh and science (reported by CNN Indonesia). https://www.cnnindonesia.com/nasional/20201221182418-20-584880/kemenag-waktu-subuh-20-derajat-benar-secara-fikih-dan-sains (secondary report of a primary statement)
 - Tgk. Ismail, *Dinamika Jadwal Waktu Salat di Indonesia*, Bildung, 2022, ISBN 978-623-6379-82-0, quoting Kemenag's criteria for its digital schedule: Maghrib at 90° plus a height correction, "Isya −18°, and Subuh −20°, while the ihtiyat value is 2 minutes after the seconds are rounded up"; and Kemenag's *Ephemeris Hisab Rukyat* yearbooks, which used 1 minute for every prayer in 1997–2016 and Zuhur +3 with the others +2 from 2017, as agreed at the 2014 Badan Hisab Rukyat meeting. https://repository.uinsuna.ac.id/id/eprint/43/ (secondary, quoting primary documents)
 - Kemenag's official schedule for Kota Jakarta, 2025, all 365 days: Subuh and Isya sit 2 to 3 minutes after the 20° and 18° times, which fits rounding up then adding 2; Zuhur fits rounding up then adding 3; Terbit sits 2 to 3 minutes before sunrise (SalahTimes' fit; primary data).
 

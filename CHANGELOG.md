@@ -24,6 +24,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Link CNN Indonesia's report of Kemenag's Subuh criterion at its current address, in
+  METHODS.md and `Vectors/methods.json`; the old address returned 404.
 - Document the independent JPL solar-event comparison and the 2026 UAE Asr difference,
   including a tested local adjustment. Existing method presets remain unchanged.
 - Document the public date comparison and prayer-time decoder, and explain the CLI example's
