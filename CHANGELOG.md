@@ -14,6 +14,13 @@ All notable changes to this project are documented here. The format follows
 - Import and compare complete official UAE public-page calendar exports without storing an
   API key or redistributing the source data.
 - Add a Swift Package Index manifest linking to the published documentation.
+- Document the release process in CONTRIBUTING, and point contributors to the open
+  `help wanted` comparisons.
+
+### Changed
+
+- RFC 0001 cites SalahKit's public RFCs, and records how they answered its questions for
+  SalahCalculation.
 
 ### Fixed
 

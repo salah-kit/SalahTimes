@@ -84,7 +84,7 @@ SalahTimes is before 1.0. It follows [Semantic Versioning](https://semver.org), 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The org-wide code of conduct and security policy live in [salah-kit/.github](https://github.com/salah-kit/.github).
+See [CONTRIBUTING.md](CONTRIBUTING.md). The org-wide code of conduct and security policy live in [salah-kit/.github](https://github.com/salah-kit/.github). Comparisons that need someone with a timetable or a language are open issues labelled [`help wanted`](https://github.com/salah-kit/SalahTimes/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22).
 
 ## License
 

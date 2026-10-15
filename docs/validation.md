@@ -28,9 +28,9 @@ Both models use the same series for the Sun's longitude (Meeus chapter 25), so t
 independent in the hour angle, the time scale and the root finding, not in the solar theory.
 The independent JPL comparison below now covers that boundary. It is a dated research
 comparison, separate from the committed NOAA unit tests. USNO still refused a connection on
-2026-10-14; JPL Horizons was accessible. The earlier one-off review comparison also found
-larger errors near polar transitions, 30–82 seconds, where very shallow solar motion amplifies
-an altitude difference. Those transition cases are outside the newer grid.
+2026-10-14; JPL Horizons was accessible. An earlier one-off comparison also found larger
+errors near polar transitions, 30–82 seconds, where very shallow solar motion amplifies an
+altitude difference. Those transition cases are outside the newer grid.
 
 ### Independent JPL Horizons comparison (2026-10-14)
 
@@ -100,9 +100,10 @@ adhan-swift's own tests allow two minutes (their `variance` key) for these two f
 
 Only MUIS's data may be redistributed (Singapore Open Data Licence 1.0). It's committed with
 attribution, and its comparison runs in every test run. The others stay in a gitignored cache,
-and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. The 2026-10-14 UAE addendum supersedes the earlier failed acquisition. Qatar Calendar House's
+and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. The UAE's official 2026 calendars, added on 2026-10-14, are compared below. Qatar Calendar House's
 accessible 2025 daily-card PDFs also permit a complete dated comparison, described below.
-Kuwait's current original timetable remains a provenance limitation.
+Kuwait's current original timetable remains a provenance limitation. Comparisons with other
+authorities' timetables are welcome: see [issue #5](https://github.com/salah-kit/SalahTimes/issues/5).
 
 **Results.** These are the official time minus SalahTimes' unrounded time, in minutes. "Exact" and "≤ 1 min" compare the preset as it ships, with its own minute adjustments and rounding, against the published minute; their ranges run over the six prayers. Full tables: `Validation/official-timetables/results.md`.
 
@@ -157,10 +158,10 @@ The [Calendar House releases archive](https://qatarch.com/dar-releases) supplied
 Hijri-calendar PDFs covering the complete Gregorian year 2025. The originals are image-based,
 so an automated OCR extraction reads their printed Gregorian dates and six prayer clocks.
 The extraction checks 365 unique owning dates, exactly six ordered clocks per date, and a
-90-minute Maghrib-to-Isha interval on every day. It excludes cards outside 2025. Original
-PDFs, their download receipts and OCR observations are retained privately; no source-data
-redistribution terms were found. This is a numerical comparison with automated source
-consistency checks, not a claim that every printed card received human visual review.
+90-minute Maghrib-to-Isha interval on every day. It excludes cards outside 2025. The PDFs and
+the extracted times aren't redistributed here, because no redistribution terms were found.
+This is a numerical comparison with automated source consistency checks, not a claim that
+every printed card received human visual review.
 
 Using `qatar`, Shafi'i Asr, central Doha (25.2854, 51.5310), `Asia/Qatar`, and no Ramadan
 override, the mean official-minus-unrounded offsets are −1.02 minutes for Fajr, 0.00 for
