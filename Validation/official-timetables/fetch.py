@@ -20,6 +20,7 @@ Be polite: the script waits between requests and makes about 25 in total.
 
 import argparse
 import csv
+import datetime
 import html
 import http.cookiejar
 import json
@@ -30,6 +31,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import zlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 USER_AGENT = (
@@ -60,7 +62,7 @@ class Client:
             urllib.request.HTTPCookieProcessor(self.jar),
             urllib.request.HTTPSHandler(context=tls_context()))
 
-    def request(self, url, data=None, headers=None):
+    def request(self, url, data=None, headers=None, binary=False):
         time.sleep(PAUSE_SECONDS)
         body = urllib.parse.urlencode(data).encode() if data is not None else None
         request = urllib.request.Request(url, data=body, headers={"User-Agent": USER_AGENT})
@@ -71,7 +73,7 @@ class Client:
             if response.headers.get("Content-Encoding") == "gzip":
                 import gzip
                 raw = gzip.decompress(raw)
-            return raw.decode("utf-8", errors="replace")
+            return raw if binary else raw.decode("utf-8", errors="replace")
 
 
 def tls_context():
@@ -110,8 +112,10 @@ def fetch_diyanet(client, source):
     The live page's 30-day table is used to check that the archived values are still current.
     """
     spec = source["fetch"]
+    # A page's only archived copy from the year can be under another address of the same page.
     archived = client.request(
-        f"https://web.archive.org/web/{spec['snapshot']}id_/{spec['page']}")
+        f"https://web.archive.org/web/{spec['snapshot']}id_/"
+        f"{spec.get('archivedPage', spec['page'])}")
     rows = parse_diyanet_table(archived, "table-caption-yearly")
     rows = [row for row in rows if row[0].startswith(str(spec["year"]))]
     live = client.request(spec["page"])
@@ -233,6 +237,179 @@ def fetch_moonsighting(client, source):
     return rows
 
 
+ESA_MONTHLY = "https://www.esa.gov.eg/monthlymwaket.aspx"
+TATWEEL = "ـ"
+
+
+def fetch_esa(client, source):
+    """The Egyptian General Authority for Survey's monthly table, an ASP.NET form.
+
+    The page serves only the current year. Choosing the city and then each month posts the form
+    back with its hidden state. Times are 12-hour, marked ص (a.m.) or م (p.m.), and include
+    Egypt's summer time, so they're local wall-clock times.
+    """
+    spec = source["fetch"]
+    page = client.request(ESA_MONTHLY)
+    options = re.findall(r'<option[^>]*value="([^"]+)"', select_html(page, "DropDownList1"))
+    cities = [value for value in map(html.unescape, options)
+              if value.replace(TATWEEL, "") == spec["city"]]
+    if len(cities) != 1:
+        raise ValueError(f"no single city {spec['city']!r} on the page")
+    page = client.request(ESA_MONTHLY, data=esa_form(page, "DropDownList1", cities[0], 0))
+    rows = []
+    for month in range(1, 13):
+        page = client.request(ESA_MONTHLY, data=esa_form(page, "DropDownList2", cities[0], month))
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", page, re.S):
+            cells = [" ".join(strip_tags(cell)) for cell in
+                     re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
+            if len(cells) == 9 and re.fullmatch(rf"{spec['year']}-{month:02d}-\d\d", cells[1]):
+                rows.append([cells[1]] + [esa_clock(cell) for cell in cells[3:9]])
+    require_whole_year(rows, spec["year"])
+    return rows
+
+
+def select_html(page, name):
+    start = page.find(f'name="ctl00$placeholder1${name}"')
+    if start < 0:
+        raise ValueError(f"no {name} on the page")
+    return page[start:page.find("</select>", start)]
+
+
+def esa_form(page, changed, city, month):
+    """The page's hidden ASP.NET fields, posted back as if `changed` had just been chosen."""
+    form = {html.unescape(name): html.unescape(value) for name, value in re.findall(
+        r'<input type="hidden" name="([^"]+)" id="[^"]*" value="([^"]*)"', page)}
+    form.update({
+        "__EVENTTARGET": f"ctl00$placeholder1${changed}", "__EVENTARGUMENT": "",
+        "ctl00$placeholder1$DropDownList1": city, "ctl00$placeholder1$DropDownList2": str(month),
+    })
+    return form
+
+
+def esa_clock(text):
+    """Converts '5:6 م' (p.m.) or '12:53 م' to 24-hour '17:06' or '12:53'."""
+    match = re.fullmatch(r"(\d{1,2}):(\d{1,2}) ([صم])", text.strip())
+    if not match:
+        raise ValueError(f"not a time: {text!r}")
+    hour, minute = int(match.group(1)) % 12, int(match.group(2))
+    return f"{hour + (12 if match.group(3) == 'م' else 0):02d}:{minute:02d}"
+
+
+BANURI_MONTHS = ["جنوری", "فروری", "مارچ", "اپریل", "مئی", "جون", "جولائی", "اگست", "ستمبر",
+                 "اکتوبر", "نومبر", "دسمبر"]
+
+
+def fetch_banuri(client, source):
+    """Jamia Uloom-ul-Islamia Allama Banuri Town's prayer-time page, one month per request.
+
+    The request names no year and the page doesn't say which year it computes; February has 28
+    days. Its columns are Fajr, sunrise, zawal (the start of Dhuhr), Asr, sunset (Maghrib) and
+    Isha.
+    """
+    spec = source["fetch"]
+    rows = []
+    for month, name in enumerate(BANURI_MONTHS, start=1):
+        query = urllib.parse.urlencode({
+            "country": spec["country"], "city": spec["city"], "month": f"{month}-{name}",
+            "method": spec["method"], "time_method": spec["asrMethod"],
+        }, quote_via=urllib.parse.quote)
+        page = client.request("https://www.banuri.edu.pk/namaz-times?" + query)
+        # Today's row carries a style attribute.
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", page, re.S):
+            cells = [" ".join(strip_tags(cell)) for cell in
+                     re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
+            if len(cells) != 7:
+                continue
+            day, month_name = cells[0].split()
+            if month_name != name:
+                raise ValueError(f"month {month}: a row for {cells[0]!r}")
+            rows.append([f"{spec['year']:04d}-{month:02d}-{int(day):02d}"]
+                        + [hhmm(cell) for cell in cells[1:7]])
+    require_whole_year(rows, spec["year"])
+    return rows
+
+
+def require_whole_year(rows, year):
+    days = (datetime.date(year + 1, 1, 1) - datetime.date(year, 1, 1)).days
+    if len({row[0] for row in rows}) != days or len(rows) != days:
+        raise ValueError(f"{len(rows)} rows for the {days} days of {year}")
+
+
+PDF_TEXT =re.compile(rb"\((?P<text>(?:\\.|[^\\)])*)\)\s*Tj|<(?P<glyphs>[0-9A-Fa-f]*)>\s*Tj")
+CLOCK = re.compile(r"\d{1,2}:\d{2}")
+
+
+def fetch_ut_calendar(client, source):
+    """The University of Tehran's Institute of Geophysics publishes, for each provincial
+    capital, one PDF timetable per Persian year, from 1 Farvardin.
+
+    Its columns are Fajr, sunrise, Dhuhr, sunset, Maghrib and midnight. It publishes no Asr and
+    no Isha, so those CSV columns stay empty. The day numbers and times are plain text in the
+    PDF's compressed content streams; the month and weekday names are in a Persian font and
+    aren't decoded, so each PDF's first Gregorian day comes from sources.json.
+    """
+    spec = source["fetch"]
+    rows = []
+    for document in spec["documents"]:
+        days = parse_ut_calendar(client.request(document["url"], binary=True))
+        first = datetime.date.fromisoformat(document["firstDay"])
+        for offset, (fajr, sunrise, dhuhr, _sunset, maghrib, _midnight) in enumerate(days):
+            date = first + datetime.timedelta(days=offset)
+            if date.year == spec["year"]:
+                rows.append([date.isoformat(), fajr, sunrise, dhuhr, "", maghrib, ""])
+    require_whole_year(rows, spec["year"])
+    return rows
+
+
+def parse_ut_calendar(pdf):
+    """Each day's six clocks, in order, from one of the Institute's yearly PDFs.
+
+    A page's text can be split over several content streams, mid-row, so the text runs of all
+    streams are read as one sequence. A row is the day of the month, the weekday's glyphs and
+    six clocks. The months must have the Persian calendar's lengths and the weekdays must
+    repeat every seven rows, or the layout has changed.
+    """
+    tokens = []
+    for match in re.finditer(rb"stream\r?\n", pdf):
+        end = pdf.find(b"endstream", match.end())
+        try:
+            content = zlib.decompressobj().decompress(pdf[match.end():end])
+        except zlib.error:
+            continue  # Not a Flate stream, so not page text.
+        for token in PDF_TEXT.finditer(content):
+            if token.group("text") is not None:
+                tokens.append(("text", token.group("text").decode("latin-1").strip()))
+            else:
+                tokens.append(("glyphs", token.group("glyphs").decode("ascii").lower()))
+    months, weekdays = [], []
+    index = 0
+    while index < len(tokens):
+        kind, text = tokens[index]
+        cursor, weekday = index + 1, []
+        while cursor < len(tokens) and (tokens[cursor][0] == "glyphs" or not tokens[cursor][1]):
+            if tokens[cursor][0] == "glyphs":
+                weekday.append(tokens[cursor][1])
+            cursor += 1
+        clocks = [text for _, text in tokens[cursor:cursor + 6]]
+        if (kind == "text" and text.isdigit() and weekday and len(clocks) == 6
+                and all(CLOCK.fullmatch(clock) for clock in clocks)):
+            if int(text) == 1:
+                months.append([])
+            if not months or int(text) != len(months[-1]) + 1:
+                raise ValueError(f"day {text} out of sequence")
+            months[-1].append([hhmm(clock) for clock in clocks])
+            weekdays.append(" ".join(weekday))
+            index = cursor + 6
+        else:
+            index += 1
+    lengths = [len(month) for month in months]
+    if lengths[:11] != [31] * 6 + [30] * 5 or len(lengths) != 12 or lengths[11] not in (29, 30):
+        raise ValueError(f"month lengths {lengths} aren't a Persian year's")
+    if any(weekdays[day] != weekdays[day - 7] for day in range(7, len(weekdays))):
+        raise ValueError("the weekdays don't repeat every seven days")
+    return [day for month in months for day in month]
+
+
 FETCHERS = {
     "diyanet": fetch_diyanet,
     "jakim": fetch_jakim,
@@ -240,6 +417,9 @@ FETCHERS = {
     "ummalqura": fetch_ummalqura,
     "kemenag": fetch_kemenag,
     "moonsighting": fetch_moonsighting,
+    "ut-calendar": fetch_ut_calendar,
+    "esa": fetch_esa,
+    "banuri": fetch_banuri,
 }
 
 

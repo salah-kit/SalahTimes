@@ -50,12 +50,63 @@
       }
     },
     {
+      "id": "diyanet-izmir",
+      "authority": "Presidency of Religious Affairs of Turkey (Diyanet)",
+      "place": "Izmir",
+      "latitude": 38.4192,
+      "longitude": 27.1287,
+      "coordinatesNote": "Diyanet doesn't publish the reference point. These are the usual coordinates of central Izmir (Konak). Turkey's westernmost compared province.",
+      "timeZone": "Europe/Istanbul",
+      "method": "diyanet",
+      "madhab": "shafi",
+      "file": "diyanet-izmir-2026.csv",
+      "committed": false,
+      "license": "Diyanet's site states no licence for reuse; all rights reserved by default. Not redistributed.",
+      "urls": [
+        "https://namazvakitleri.diyanet.gov.tr/tr-TR/9560/izmir-namaz-vakitleri",
+        "https://web.archive.org/web/20260127124537id_/https://namazvakitleri.diyanet.gov.tr/tr-TR/9560/izmir-namaz-vakitleri"
+      ],
+      "fetch": {
+        "kind": "diyanet",
+        "page": "https://namazvakitleri.diyanet.gov.tr/tr-TR/9560/izmir-namaz-vakitleri",
+        "snapshot": "20260127124537",
+        "year": 2026
+      }
+    },
+    {
+      "id": "diyanet-van",
+      "authority": "Presidency of Religious Affairs of Turkey (Diyanet)",
+      "place": "Van",
+      "latitude": 38.4942,
+      "longitude": 43.3803,
+      "coordinatesNote": "Diyanet doesn't publish the reference point. These are the usual coordinates of central Van. Turkey's easternmost compared province.",
+      "timeZone": "Europe/Istanbul",
+      "method": "diyanet",
+      "madhab": "shafi",
+      "file": "diyanet-van-2026.csv",
+      "committed": false,
+      "license": "Diyanet's site states no licence for reuse; all rights reserved by default. Not redistributed.",
+      "urls": [
+        "https://namazvakitleri.diyanet.gov.tr/tr-TR/9930/van-namaz-vakitleri",
+        "https://web.archive.org/web/20260421213524id_/https://namazvakitleri.diyanet.gov.tr/tr-TR/9930/van-icin-"
+      ],
+      "fetch": {
+        "kind": "diyanet",
+        "page": "https://namazvakitleri.diyanet.gov.tr/tr-TR/9930/van-namaz-vakitleri",
+        "archivedPage": "https://namazvakitleri.diyanet.gov.tr/tr-TR/9930/van-icin-",
+        "snapshot": "20260421213524",
+        "year": 2026
+      }
+    },
+    {
       "id": "jakim-wly01",
       "authority": "Jabatan Kemajuan Islam Malaysia (JAKIM), e-Solat",
       "place": "Zone WLY01 (Kuala Lumpur, Putrajaya)",
-      "latitude": 3.1390,
-      "longitude": 101.6869,
-      "coordinatesNote": "JAKIM publishes one timetable per zone without its reference point. These are the usual coordinates of central Kuala Lumpur.",
+      "latitude": 3.733333,
+      "longitude": 101.383333,
+      "sunriseLatitude": 3.19,
+      "sunriseLongitude": 101.758333,
+      "coordinatesNote": "The zone's published reference stations: Kg. Gedangsa (3° 44' N, 101° 23' E) for the prayers and Cheras (3° 11' 24\" N, 101° 45' 30\" E) for sunrise, from JUPEM's Almanak Falak Syarie 2021 as quoted by the Federal Territories Mufti, Bayan al-Falak Siri ke-17 (https://www.muftiwp.gov.my/en/artikel/bayan-al-falak/5381-bayan-al-falak-siri-ke-17-kaedah-penentuan-waktu-solat). The prayers equal those of Selangor's zone SGR01 on every day of 2026.",
       "timeZone": "Asia/Kuala_Lumpur",
       "method": "jakim",
       "madhab": "shafi",
@@ -68,6 +119,69 @@
       "fetch": {
         "kind": "jakim",
         "zone": "WLY01"
+      }
+    },
+    {
+      "id": "jakim-png01",
+      "authority": "Jabatan Kemajuan Islam Malaysia (JAKIM), e-Solat",
+      "place": "Zone PNG01 (all of Pulau Pinang)",
+      "latitude": 5.4141,
+      "longitude": 100.3288,
+      "coordinatesNote": "JAKIM publishes one timetable per zone without its reference point. These are the usual coordinates of George Town.",
+      "timeZone": "Asia/Kuala_Lumpur",
+      "method": "jakim",
+      "madhab": "shafi",
+      "file": "jakim-png01-2026.csv",
+      "committed": false,
+      "license": "e-solat.gov.my states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone=PNG01"
+      ],
+      "fetch": {
+        "kind": "jakim",
+        "zone": "PNG01"
+      }
+    },
+    {
+      "id": "jakim-jhr02",
+      "authority": "Jabatan Kemajuan Islam Malaysia (JAKIM), e-Solat",
+      "place": "Zone JHR02 (Johor Bahru, Kota Tinggi, Mersing, Kulai)",
+      "latitude": 1.4927,
+      "longitude": 103.7414,
+      "coordinatesNote": "JAKIM publishes one timetable per zone without its reference point. These are the usual coordinates of central Johor Bahru, near the zone's western edge.",
+      "timeZone": "Asia/Kuala_Lumpur",
+      "method": "jakim",
+      "madhab": "shafi",
+      "file": "jakim-jhr02-2026.csv",
+      "committed": false,
+      "license": "e-solat.gov.my states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone=JHR02"
+      ],
+      "fetch": {
+        "kind": "jakim",
+        "zone": "JHR02"
+      }
+    },
+    {
+      "id": "jakim-sbh07",
+      "authority": "Jabatan Kemajuan Islam Malaysia (JAKIM), e-Solat",
+      "place": "Zone SBH07 (Kota Kinabalu, Ranau, Kota Belud, Tuaran, Penampang, Papar, Putatan, West Coast Division)",
+      "latitude": 5.9804,
+      "longitude": 116.0735,
+      "coordinatesNote": "JAKIM publishes one timetable per zone without its reference point. These are the usual coordinates of central Kota Kinabalu.",
+      "timeZone": "Asia/Kuala_Lumpur",
+      "method": "jakim",
+      "madhab": "shafi",
+      "file": "jakim-sbh07-2026.csv",
+      "committed": false,
+      "license": "e-solat.gov.my states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year&zone=SBH07"
+      ],
+      "fetch": {
+        "kind": "jakim",
+        "zone": "SBH07"
       }
     },
     {
@@ -160,6 +274,157 @@
         "kind": "kemenag",
         "province": "DKI JAKARTA",
         "city": "KOTA JAKARTA",
+        "year": 2026
+      }
+    },
+    {
+      "id": "kemenag-surabaya",
+      "authority": "Indonesia's Ministry of Religious Affairs (Kemenag), Bimas Islam",
+      "place": "Kota Surabaya (Jawa Timur)",
+      "latitude": -7.2575,
+      "longitude": 112.7521,
+      "coordinatesNote": "Kemenag doesn't show the reference point on the page. These are the usual coordinates of central Surabaya.",
+      "timeZone": "Asia/Jakarta",
+      "method": "kemenag",
+      "madhab": "shafi",
+      "file": "kemenag-surabaya-2026.csv",
+      "committed": false,
+      "license": "bimasislam.kemenag.go.id states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://bimasislam.kemenag.go.id/jadwalshalat"
+      ],
+      "fetch": {
+        "kind": "kemenag",
+        "province": "JAWA TIMUR",
+        "city": "KOTA SURABAYA",
+        "year": 2026
+      }
+    },
+    {
+      "id": "kemenag-medan",
+      "authority": "Indonesia's Ministry of Religious Affairs (Kemenag), Bimas Islam",
+      "place": "Kota Medan (Sumatera Utara)",
+      "latitude": 3.5952,
+      "longitude": 98.6722,
+      "coordinatesNote": "Kemenag doesn't show the reference point on the page. These are the usual coordinates of central Medan, north of the equator.",
+      "timeZone": "Asia/Jakarta",
+      "method": "kemenag",
+      "madhab": "shafi",
+      "file": "kemenag-medan-2026.csv",
+      "committed": false,
+      "license": "bimasislam.kemenag.go.id states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://bimasislam.kemenag.go.id/jadwalshalat"
+      ],
+      "fetch": {
+        "kind": "kemenag",
+        "province": "SUMATERA UTARA",
+        "city": "KOTA MEDAN",
+        "year": 2026
+      }
+    },
+    {
+      "id": "kemenag-makassar",
+      "authority": "Indonesia's Ministry of Religious Affairs (Kemenag), Bimas Islam",
+      "place": "Kota Makassar (Sulawesi Selatan)",
+      "latitude": -5.1477,
+      "longitude": 119.4327,
+      "coordinatesNote": "Kemenag doesn't show the reference point on the page. These are the usual coordinates of central Makassar, in Central Indonesian Time.",
+      "timeZone": "Asia/Makassar",
+      "method": "kemenag",
+      "madhab": "shafi",
+      "file": "kemenag-makassar-2026.csv",
+      "committed": false,
+      "license": "bimasislam.kemenag.go.id states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://bimasislam.kemenag.go.id/jadwalshalat"
+      ],
+      "fetch": {
+        "kind": "kemenag",
+        "province": "SULAWESI SELATAN",
+        "city": "KOTA MAKASSAR",
+        "year": 2026
+      }
+    },
+    {
+      "id": "ut-tehran",
+      "authority": "Calendar Centre, Institute of Geophysics, University of Tehran",
+      "place": "Tehran",
+      "latitude": 35.70,
+      "longitude": 51.42,
+      "coordinatesNote": "The coordinates each PDF states for Tehran (35/70 N, 51/42 E), so exact to the published precision.",
+      "timeZone": "Asia/Tehran",
+      "method": "tehran",
+      "madhab": "shafi",
+      "file": "ut-tehran-2026.csv",
+      "committed": false,
+      "license": "calendar.ut.ac.ir states no licence; its footer reserves all rights to the University of Tehran. Not redistributed.",
+      "urls": [
+        "https://calendar.ut.ac.ir/%D8%A7%D9%88%D9%82%D8%A7%D8%AA-%D8%B4%D8%B1%D8%B9%D9%8A-%D9%85%D8%B1%D8%A7%DA%A9%D8%B2-%D8%A7%D8%B3%D8%AA%D8%A7%D9%86%D9%87%D8%A7",
+        "https://calendar.ut.ac.ir/documents/2139738/46899016/Tehran1404.pdf/7e6f68c1-40fb-00a1-e45c-52a6a06b7b55",
+        "https://calendar.ut.ac.ir/documents/2139738/7098005/Tehran1405.pdf/326ce4fc-cf06-a78d-9d40-e45af83612a4"
+      ],
+      "fetch": {
+        "kind": "ut-calendar",
+        "year": 2026,
+        "documents": [
+          {
+            "url": "https://calendar.ut.ac.ir/documents/2139738/46899016/Tehran1404.pdf/7e6f68c1-40fb-00a1-e45c-52a6a06b7b55",
+            "firstDay": "2025-03-21"
+          },
+          {
+            "url": "https://calendar.ut.ac.ir/documents/2139738/7098005/Tehran1405.pdf/326ce4fc-cf06-a78d-9d40-e45af83612a4",
+            "firstDay": "2026-03-21"
+          }
+        ]
+      }
+    },
+    {
+      "id": "esa-cairo",
+      "authority": "Egyptian General Authority for Survey (ESA)",
+      "place": "Cairo",
+      "latitude": 30.0444,
+      "longitude": 31.2357,
+      "coordinatesNote": "ESA doesn't publish the reference point of a city's times. These are the usual coordinates of central Cairo (Tahrir Square).",
+      "timeZone": "Africa/Cairo",
+      "method": "egyptian",
+      "madhab": "shafi",
+      "file": "esa-cairo-2026.csv",
+      "committed": false,
+      "license": "esa.gov.eg forbids copying, publishing or downloading its content except for private, non-commercial use (https://www.esa.gov.eg/copyrights.aspx). fetch.py's private cache is that use. Not redistributed.",
+      "urls": [
+        "https://www.esa.gov.eg/praytimes.aspx",
+        "https://www.esa.gov.eg/monthlymwaket.aspx"
+      ],
+      "fetch": {
+        "kind": "esa",
+        "city": "القاهرة",
+        "year": 2026
+      }
+    },
+    {
+      "id": "banuri-karachi",
+      "authority": "Jamia Uloom-ul-Islamia Allama Banuri Town (University of Islamic Sciences), Karachi",
+      "place": "Karachi",
+      "latitude": 24.8607,
+      "longitude": 67.0011,
+      "coordinatesNote": "The Jamia's page doesn't state its coordinates for Karachi. These are the usual coordinates of the city centre.",
+      "timeZone": "Asia/Karachi",
+      "method": "karachi",
+      "madhab": "hanafi",
+      "file": "banuri-karachi-2026.csv",
+      "committed": false,
+      "license": "banuri.edu.pk states no licence for reuse. Not redistributed.",
+      "urls": [
+        "https://www.banuri.edu.pk/namaz-times",
+        "https://www.banuri.edu.pk/namaz-times?country=110-Pakistan&city=7487-Karachi%20-%20&month=1-%D8%AC%D9%86%D9%88%D8%B1%DB%8C&method=1&time_method=1"
+      ],
+      "fetch": {
+        "kind": "banuri",
+        "country": "110-Pakistan",
+        "city": "7487-Karachi - ",
+        "method": 1,
+        "asrMethod": 1,
         "year": 2026
       }
     },

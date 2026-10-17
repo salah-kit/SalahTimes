@@ -6,8 +6,9 @@ import Testing
 ///
 /// `Validation/official-timetables/sources.json` lists each timetable: the authority, the
 /// reference coordinates, the time zone and the SalahTimes method to compare with. The data
-/// is a CSV of local times per day. Timetables whose terms allow redistribution are committed
-/// under `Validation/official-timetables/data/` and always compared. The others are fetched by
+/// is a CSV of local times per day; an empty column is a time the authority doesn't publish.
+/// Timetables whose terms allow redistribution are committed under
+/// `Validation/official-timetables/data/` and always compared. The others are fetched by
 /// `Validation/official-timetables/fetch.py` into its gitignored `cache/` directory and compared
 /// only when `SALAHTIMES_OFFICIAL_TIMETABLES` names that directory:
 ///
@@ -85,6 +86,9 @@ struct OfficialTimetableTests {
     let place: String
     let latitude: Double
     let longitude: Double
+    /// Where the authority computes sunrise, when that isn't where it computes the prayers.
+    let sunriseLatitude: Double?
+    let sunriseLongitude: Double?
     let timeZone: String
     let method: String
     let madhab: String
@@ -158,17 +162,12 @@ struct OfficialTimetableTests {
       parameters.adjustments = PrayerAdjustments(asr: -2)
       return [("2026 city-centre fit: user adjustment Asr -2 minutes", parameters)]
     case "jakim-wly01":
-      // On top of the preset's own Dhuhr +1 minute: Dhuhr +2 in all.
+      // At the zone's reference stations. Rounding up, with sunrise a minute earlier: the
+      // timetable rounds sunrise down.
       var parameters = try parameters(for: source)
       parameters.rounding = .up
-      parameters.adjustments = PrayerAdjustments(
-        fajr: 1, sunrise: -1, dhuhr: 1, asr: 1, maghrib: 1, isha: 1)
-      return [
-        (
-          "WLY01 fit: rounding up, user adjustments Fajr +1, sunrise -1, Dhuhr +1, Asr +1, "
-            + "Maghrib +1, Isha +1", parameters
-        )
-      ]
+      parameters.adjustments = PrayerAdjustments(sunrise: -1)
+      return [("WLY01 fit: rounding up, user adjustment sunrise -1", parameters)]
     default:
       return []
     }
@@ -179,6 +178,9 @@ struct OfficialTimetableTests {
   ) throws -> Report {
     let zone = try #require(TimeZone(identifier: source.timeZone))
     let coordinates = Coordinates(latitude: source.latitude, longitude: source.longitude)
+    let sunriseCoordinates = Coordinates(
+      latitude: source.sunriseLatitude ?? source.latitude,
+      longitude: source.sunriseLongitude ?? source.longitude)
     let preset = try fit?.1 ?? parameters(for: source)
     var exact = preset
     exact.rounding = .none
@@ -192,23 +194,30 @@ struct OfficialTimetableTests {
     var statistics = prayers.map { ($0.0, Statistics()) }
     var days = 0
     for line in lines.dropFirst() where !line.isEmpty {
-      let fields = line.split(separator: ",").map(String.init)
+      let fields = line.split(separator: ",", omittingEmptySubsequences: false).map(String.init)
       try #require(fields.count == 7, "\(source.id): \(line)")
       let day = try #require(GregorianDay(fields[0]), "\(source.id): \(line)")
       let rounded = try PrayerTimes(
         coordinates: coordinates, day: day, timeZone: zone, parameters: preset)
       let unrounded = try PrayerTimes(
         coordinates: coordinates, day: day, timeZone: zone, parameters: exact)
+      let roundedSunrise = try PrayerTimes(
+        coordinates: sunriseCoordinates, day: day, timeZone: zone, parameters: preset)
+      let unroundedSunrise = try PrayerTimes(
+        coordinates: sunriseCoordinates, day: day, timeZone: zone, parameters: exact)
       days += 1
       for (index, (name, event)) in prayers.enumerated() {
+        // An empty field is a time the authority doesn't publish, such as Tehran's Asr.
+        if fields[index + 1].isEmpty { continue }
         let clock = fields[index + 1].split(separator: ":").compactMap { Int($0) }
         try #require(clock.count == 2, "\(source.id) \(day) \(name)")
         let official = try #require(
           calendar.date(
             from: DateComponents(
               year: day.year, month: day.month, day: day.day, hour: clock[0], minute: clock[1])))
-        let computed = try #require(unrounded[event].date, "\(source.id) \(day) \(name)")
-        let shipped = try #require(rounded[event].date)
+        let times = event == .sunrise ? (unroundedSunrise, roundedSunrise) : (unrounded, rounded)
+        let computed = try #require(times.0[event].date, "\(source.id) \(day) \(name)")
+        let shipped = try #require(times.1[event].date)
         let minutes = official.timeIntervalSince(computed) / 60
         statistics[index].1.add(
           minutes, presetDifference: official.timeIntervalSince(shipped) / 60)
@@ -216,6 +225,12 @@ struct OfficialTimetableTests {
     }
     // One issue per prayer, not per day.
     for (name, stats) in statistics {
+      #expect(
+        stats.count == 0 || stats.count == days,
+        Comment(
+          rawValue: "\(source.id) \(name): published on \(stats.count) of \(days) days; a "
+            + "column is either published every day or empty every day"))
+      if stats.count == 0 { continue }
       let worst = max(abs(stats.minimum), abs(stats.maximum))
       #expect(
         worst <= sanityMinutes,
@@ -239,7 +254,11 @@ struct OfficialTimetableTests {
       if let minutes = source.ramadanIshaMinutes {
         markdown += ", Ramadan Isha \(minutes) minutes"
       }
-      markdown += ", at \(source.latitude), \(source.longitude).\n\n"
+      markdown += ", at \(source.latitude), \(source.longitude)"
+      if let latitude = source.sunriseLatitude, let longitude = source.sunriseLongitude {
+        markdown += " (sunrise at \(latitude), \(longitude))"
+      }
+      markdown += ".\n\n"
       if let fit = report.fit {
         markdown += "\(fit). The columns below use these parameters in place of the preset.\n\n"
       }
@@ -247,6 +266,10 @@ struct OfficialTimetableTests {
       markdown += "| Preset largest difference |\n"
       markdown += "|---|---:|---:|---:|---:|---:|---:|\n"
       for (prayer, stats) in report.statistics {
+        if stats.count == 0 {
+          markdown += "| \(prayer) | not published | | | | | |\n"
+          continue
+        }
         markdown += "| \(prayer) | \(format(stats.mean)) | \(format(stats.minimum)) | "
         markdown += "\(format(stats.maximum)) | \(share(stats.exactMatches, of: stats.count)) | "
         markdown += "\(share(stats.withinOneMinute, of: stats.count)) | "

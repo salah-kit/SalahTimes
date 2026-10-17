@@ -16,7 +16,7 @@ Every value is either documented or measured from official timetables. None is g
 
 Every preset also uses Shafi'i Asr (`madhab: shafi`), the `recommended` high-latitude rule, the night measured from sunset to Fajr (`nightSpan: sunsetToFajr`), no user adjustments, and the Ramadan Isha rule off.
 
-`docs/validation.md` compares the presets with a year of official timetables from Diyanet, JAKIM, MUIS, Umm al-Qura, Kemenag, the Moonsighting Committee and the UAE's Awqaf, and with Qatar Calendar House's 2025 calendar.
+`docs/validation.md` compares the presets with a year of official timetables from Diyanet, JAKIM, MUIS, Umm al-Qura, Kemenag, the Moonsighting Committee, the UAE's Awqaf, the University of Tehran's Institute of Geophysics, Egypt's General Authority for Survey and Jamia Uloom-ul-Islamia Banuri Town, and with Qatar Calendar House's 2025 calendar.
 
 Presets are starting points. Mosques and communities in one country often follow different methods, and an authority can change its method. Apps should let users pick another method and change any parameter, including Asr's madhab, the high-latitude rule and per-prayer minutes.
 
@@ -80,6 +80,7 @@ The Egyptian General Authority for Survey (الهيئة المصرية العا�
 Sources:
 - Dar al-Ifta al-Misriyyah, fatwa 13816, *فتوى دار الإفتاء المصرية في توقيت الفجر*. It says the Fajr time in force in Egypt is at a solar depression of 19.5°, that the Survey Authority is "the official Egyptian body that issues the astronomical calendars", and gives "17.5° for Isha, 19.5° for Fajr". https://www.dar-alifta.org/ar/fatwa/details/13816 (primary for Egypt's practice)
 - PrayTimes.org: "Egyptian General Authority of Survey: 19.5 / 17.5". http://praytimes.org/calculation (secondary)
+- The Survey Authority's own 2026 timetable for Cairo, https://www.esa.gov.eg/monthlymwaket.aspx, retrieved on 2026-10-18, all 365 days, compared at central Cairo: with 19.5° and 17.5°, no added minutes and rounding to the nearest minute, every prayer is within a minute on every day and matches to the minute on 77–91% of days (SalahTimes' fit; primary data, `docs/validation.md`).
 
 Notes:
 - Egypt's Mufti has defended 19.5° against studies that propose a smaller Fajr angle. The preset follows the official value.
@@ -105,6 +106,7 @@ Notes:
 
 Sources:
 - PrayTimes.org: "University of Islamic Sciences, Karachi: 18 / 18", used in "Pakistan, Afghanistan, Bangladesh, India". http://praytimes.org/calculation and https://praytimes.org/docs/methods (secondary)
+- Jamia Uloom-ul-Islamia Allama Banuri Town (جامعہ علوم اسلامیہ, literally "University of Islamic Sciences"), Karachi, whose prayer-time page offers its own method next to ISNA's, the Muslim World League's, Umm al-Qura's and Egypt's: https://www.banuri.edu.pk/namaz-times. Its 2026 times for Karachi, retrieved on 2026-10-18, all 365 days, compared at the city centre with Hanafi Asr: with 18° and 18°, no added minutes and rounding to the nearest minute, every prayer is within a minute on every day and matches to the minute on 78–82% of days (SalahTimes' fit; primary data, `docs/validation.md`).
 
 Notes:
 - Most timetables in South Asia use Hanafi Asr. The preset keeps Shafi'i Asr like every other preset; apps should offer the madhab setting.
@@ -119,9 +121,10 @@ Sources:
 - Khabaronline, 22 August 2010, by a senior expert at the Institute's calendar centre: "The calendar centre of the University of Tehran's Institute of Geophysics, which is responsible for computing the country's prayer times, uses 17.7° below the horizon for the dawn call to prayer", and "Maghrib is when the sun reaches 4.5° of depression". https://khabaronline.ir/news/86445 (secondary report of the Institute's practice)
 - Bahesab, which publishes times by the University of Tehran's rules, defines the shar'i midnight as "the middle of the interval between today's sunset and tomorrow's dawn". https://www.bahesab.ir/time/sun (secondary)
 - PrayTimes.org: Tehran "17.7 / 14", Maghrib 4.5°, midnight "Jafari" (sunset to Fajr), with the note "Isha angle is not explicitly defined in Tehran method". http://praytimes.org/calculation and http://praytimes.org/code/v2/js/PrayTimes.js (secondary)
+- The Institute's own 2026 timetable for Tehran, the PDFs for the Persian years 1404 and 1405 listed on its page of provincial capitals' prayer times, https://calendar.ut.ac.ir/%D8%A7%D9%88%D9%82%D8%A7%D8%AA-%D8%B4%D8%B1%D8%B9%D9%8A-%D9%85%D8%B1%D8%A7%DA%A9%D8%B2-%D8%A7%D8%B3%D8%AA%D8%A7%D9%86%D9%87%D8%A7, retrieved on 2026-10-18, all 365 days, for the coordinates they state (35.70° N, 51.42° E). They give Fajr, sunrise, Dhuhr, sunset, Maghrib and midnight. With Fajr at 17.7°, Maghrib at 4.5°, no added minutes and rounding to the nearest minute, every published prayer is within a minute on every day and matches to the minute on 98–99% of days (SalahTimes' fit; primary data, `docs/validation.md`).
 
 Notes:
-- The Institute publishes no Isha angle that we could find. 14° is PrayTimes.org's value and is uncertain.
+- The Institute publishes no Isha angle that we could find, and its timetables give no Isha (or Asr) time. 14° is PrayTimes.org's value and is uncertain.
 
 ## Turkey (Diyanet)
 
@@ -227,12 +230,14 @@ Sources:
 - Federal Territories Mufti, *Bayan al-Falak*: Isyak at the disappearance of the red twilight, "108°" from the zenith (18° below the horizon); Maghrib and Syuruk at 90° 50′. https://www.muftiwp.gov.my (primary)
 - Selangor State Mufti, article 66 (9 August 2024): solar noon is "1 minute 4 seconds before" the Sun has passed the meridian, so Zohor is transit plus 1 minute 4 seconds. https://www.muftiselangor.gov.my/2024/08/09/66/ (primary)
 - e-Solat's 2026 timetable for zone WLY01 (Kuala Lumpur) fits 18° for Subuh; 20° would be about 8 minutes early (SalahTimes' fit; primary data).
+- Federal Territories Mufti, *Bayan al-Falak* Siri ke-17 (9 August 2022), citing JUPEM's *Almanak Falak Syarie 2021*: zone WLY01's prayer times are computed for Kg. Gedangsa, 3° 44′ N, 101° 23′ E, and its sunrise for Cheras, 3° 11′ 24″ N, 101° 45′ 30″ E. https://www.muftiwp.gov.my/en/artikel/bayan-al-falak/5381-bayan-al-falak-siri-ke-17-kaedah-penentuan-waktu-solat (primary)
 
 Notes:
 - The preset rounds Zohor's 1 minute 4 seconds to 1 minute.
 - Before 2019 Malaysia used 20° for Subuh, and Kelantan 19°. States adopted 18° on different dates.
 - Secondary sources describe 1 to 2 minutes of ihtiyati added per prayer, tied to the zone design: a zone's east-west difference may not exceed 2 minutes, and times are computed for its westernmost point. We found no official per-prayer table or rounding rule, so the preset adds nothing else.
-- Measured against e-Solat's 2026 timetable for WLY01 (365 days, at Kuala Lumpur's centre), the official times run 1 to 3 minutes after the preset for Fajr, Dhuhr, Asr, Maghrib and Isha, and sunrise up to a minute before it. Only 24% to 35% of those prayers agree within a minute. Part of the offset is the zone's reference point, which differs from zone to zone, so no single set of minutes reproduces every zone. `docs/validation.md` gives a fit that brings most of WLY01's times within a minute; it belongs to that zone, not to the method.
+- Measured against e-Solat's 2026 timetable for WLY01 (365 days) at its reference stations, the official prayers run about half a minute after the preset before rounding and sunrise half a minute before it, which is rounding the prayers up and sunrise down, with no other minutes added. The preset is within a minute on 89–100% of days. At Kuala Lumpur's centre the same timetable runs 1.8 to 2.0 minutes after the preset; the reference point, not added minutes, explains that. `docs/validation.md` gives a fit, rounding up with sunrise a minute earlier, that brings WLY01 within a minute on 98–100% of days; JAKIM doesn't document that rounding, so the preset keeps rounding to the nearest minute.
+- Zones whose stations we haven't found (PNG01, JHR02 and SBH07 were compared) run 1 to 1.5 minutes after the preset at their main cities' centres, by amounts that differ from zone to zone, so no single set of minutes reproduces every zone.
 - Imsak is set 10 minutes before Subuh. SalahTimes doesn't compute Imsak.
 
 ## Indonesia (Kemenag)

@@ -8,6 +8,13 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Compare official 2026 timetables from more places and authorities: Diyanet's Izmir and Van,
+  JAKIM's zones PNG01, JHR02 and SBH07, Kemenag's Surabaya, Medan and Makassar, the University
+  of Tehran's Institute of Geophysics, Egypt's General Authority for Survey and Jamia
+  Uloom-ul-Islamia Banuri Town. `fetch.py` reads the Institute's PDFs with the standard
+  library, and the comparison accepts a column an authority doesn't publish and a separate
+  sunrise station.
+
 - Document the complete 2025 Qatar Calendar House comparison, its OCR provenance and
   the retained 90-minute Isha policy, without adding a fitted preset adjustment.
 
@@ -24,6 +31,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Compare JAKIM's zone WLY01 at the reference stations the Federal Territories Mufti publishes,
+  not central Kuala Lumpur. Most of its offset from the `jakim` preset then goes, leaving
+  upward rounding and a seasonal minute, and the zone's fit becomes rounding up with sunrise a
+  minute earlier.
 - Link CNN Indonesia's report of Kemenag's Subuh criterion at its current address, in
   METHODS.md and `Vectors/methods.json`; the old address returned 404.
 - Document the independent JPL solar-event comparison and the 2026 UAE Asr difference,
