@@ -1,6 +1,7 @@
 """Fetcher boundaries: the right addresses are requested and pages parse to the CSV rows."""
 
 import calendar
+import datetime
 import importlib.util
 import pathlib
 import unittest
@@ -30,24 +31,36 @@ class FakeClient:
         return self.pages[url]
 
 
+TURKISH_MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos",
+                  "Eylül", "Ekim", "Kasım", "Aralık"]
+
+
+def diyanet_yearly(year=2026, skip=()):
+    """Rows of a yearly table: 31 December of the year before, then every day of the year."""
+    days = [datetime.date(year - 1, 12, 31)]
+    day = datetime.date(year, 1, 1)
+    while day.year == year:
+        if day not in skip:
+            days.append(day)
+        day += datetime.timedelta(days=1)
+    return [[f"{day.day:02d} {TURKISH_MONTHS[day.month - 1]} {day.year} Perşembe",
+             "12 Recep 1447", "6:59", "8:30", "13:04", "15:29", "17:27", "18:53"]
+            for day in days]
+
+
 class DiyanetTests(unittest.TestCase):
     PAGE = "https://namazvakitleri.diyanet.gov.tr/tr-TR/9930/van-namaz-vakitleri"
     ARCHIVED = "https://namazvakitleri.diyanet.gov.tr/tr-TR/9930/van-icin-"
-    YEARLY = [
-        ["31 Aralık 2025 Çarşamba", "11 Recep 1447", "6:59", "8:30", "13:03", "15:28", "17:26",
-         "18:52"],
-        ["01 Ocak 2026 Perşembe", "12 Recep 1447", "06:59", "08:30", "13:04", "15:29", "17:27",
-         "18:53"],
-    ]
 
     def source(self, **fetch):
         return {"fetch": {"kind": "diyanet", "page": self.PAGE, "snapshot": "20260421213524",
                           "year": 2026, **fetch}}
 
-    def client(self, archived_url):
+    def client(self, archived_url, yearly=None):
+        yearly = yearly or diyanet_yearly()
         return FakeClient({
-            archived_url: diyanet_page("table-caption-yearly", self.YEARLY),
-            self.PAGE: diyanet_page("table-caption-monthly", self.YEARLY[1:]),
+            archived_url: diyanet_page("table-caption-yearly", yearly),
+            self.PAGE: diyanet_page("table-caption-monthly", yearly[290:320]),
         })
 
     def test_archived_copy_of_the_page_itself(self):
@@ -55,21 +68,28 @@ class DiyanetTests(unittest.TestCase):
         client = self.client(archived)
         rows = FETCH.fetch_diyanet(client, self.source())
         self.assertEqual(client.requested, [archived, self.PAGE])
-        self.assertEqual(rows, [
-            ["2026-01-01", "06:59", "08:30", "13:04", "15:29", "17:27", "18:53"]])
+        self.assertEqual(len(rows), 365)  # Without 31 December 2025.
+        self.assertEqual(rows[0], ["2026-01-01", "06:59", "08:30", "13:04", "15:29", "17:27",
+                                   "18:53"])
 
     def test_archived_copy_under_another_address(self):
         archived = f"https://web.archive.org/web/20260421213524id_/{self.ARCHIVED}"
         client = self.client(archived)
         rows = FETCH.fetch_diyanet(client, self.source(archivedPage=self.ARCHIVED))
         self.assertEqual(client.requested, [archived, self.PAGE])
-        self.assertEqual(len(rows), 1)
+        self.assertEqual(len(rows), 365)
 
-    def test_rows_outside_the_year_are_dropped(self):
+    def test_an_incomplete_year_is_rejected(self):
+        archived = f"https://web.archive.org/web/20260421213524id_/{self.PAGE}"
+        client = self.client(archived, diyanet_yearly(skip={datetime.date(2026, 6, 1)}))
+        with self.assertRaises(ValueError):
+            FETCH.fetch_diyanet(client, self.source())
+
+    def test_parse_keeps_every_row_and_pads_hours(self):
         rows = FETCH.parse_diyanet_table(
-            diyanet_page("table-caption-yearly", self.YEARLY), "table-caption-yearly")
+            diyanet_page("table-caption-yearly", diyanet_yearly()[:2]), "table-caption-yearly")
         self.assertEqual([row[0] for row in rows], ["2025-12-31", "2026-01-01"])
-        self.assertEqual(rows[0][1], "06:59")
+        self.assertEqual(rows[0][1:3], ["06:59", "08:30"])
 
 
 WEEKDAYS = ["00c4", "00c400ae", "00c400c1", "00c400c4", "00c400c5", "00c400c6", "00c7"]

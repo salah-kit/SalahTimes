@@ -1,6 +1,6 @@
 # Official timetables: results
 
-Official time minus SalahTimes' unrounded time, in minutes, for every day of 2026. A positive value means the authority publishes later. "Preset exact", "Preset within 1 min" and "Preset largest difference" compare the method's preset as it ships (with its own adjustments and rounding) with the published minute, in days of the year. A place-specific fit replaces the preset in those columns and in the mean.
+Official time minus SalahTimes' unrounded time, in minutes, for every day of 2026. A positive value means the authority publishes later. "Preset exact", "Preset within 1 min" and "Preset largest difference" compare the method's preset as it ships (with its own adjustments and rounding) with the published minute, in days of the year. A place-specific fit replaces the preset in every column.
 
 Written by `OfficialTimetableTests.swift`; see README.md to reproduce. docs/validation.md interprets the numbers.
 

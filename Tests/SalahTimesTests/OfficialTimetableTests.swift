@@ -78,6 +78,61 @@ struct OfficialTimetableTests {
     Self.publish(reports, name: "cached")
   }
 
+  @Test("Unpublished columns and a separate sunrise station")
+  func unpublishedColumnsAndSunriseStation() throws {
+    // A timetable made from SalahTimes' own rounded times, with sunrise computed a degree east
+    // of the prayers' station (four minutes earlier) and no Asr or Isha.
+    let source = try JSONDecoder().decode(
+      Source.self,
+      from: Data(
+        """
+        {"id": "synthetic", "authority": "Test", "place": "Test", "latitude": 30, "longitude": 31,
+         "sunriseLatitude": 30, "sunriseLongitude": 32, "timeZone": "Africa/Cairo",
+         "method": "egyptian", "madhab": "shafi", "unpublished": ["asr", "isha"],
+         "file": "synthetic.csv", "committed": false}
+        """.utf8))
+    let zone = try #require(TimeZone(identifier: source.timeZone))
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = zone
+    let parameters = CalculationMethod.egyptian.parameters
+    var csv = "date,fajr,sunrise,dhuhr,asr,maghrib,isha\n"
+    for text in ["2026-01-15", "2026-04-15", "2026-07-15", "2026-10-15"] {
+      let day = try #require(GregorianDay(text))
+      let prayers = try PrayerTimes(
+        coordinates: Coordinates(latitude: 30, longitude: 31), day: day, timeZone: zone,
+        parameters: parameters)
+      let sunrise = try PrayerTimes(
+        coordinates: Coordinates(latitude: 30, longitude: 32), day: day, timeZone: zone,
+        parameters: parameters)
+      func clock(_ times: PrayerTimes, _ event: PrayerTimes.Event) throws -> String {
+        let parts = calendar.dateComponents(
+          [.hour, .minute], from: try #require(times[event].date))
+        return String(format: "%02d:%02d", parts.hour ?? 0, parts.minute ?? 0)
+      }
+      csv += "\(text),\(try clock(prayers, .fajr)),\(try clock(sunrise, .sunrise)),"
+      csv += "\(try clock(prayers, .dhuhr)),,\(try clock(prayers, .maghrib)),\n"
+    }
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("OfficialTimetableTests-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try csv.write(
+      to: directory.appendingPathComponent(source.file), atomically: true, encoding: .utf8)
+
+    let report = try Self.compare(source, in: directory)
+    let statistics = Dictionary(uniqueKeysWithValues: report.statistics)
+    #expect(report.days == 4)
+    #expect(statistics["asr"]?.count == 0)
+    #expect(statistics["isha"]?.count == 0)
+    for name in ["fajr", "sunrise", "dhuhr", "maghrib"] {
+      let stats = try #require(statistics[name])
+      #expect(stats.count == 4, "\(name)")
+      // Computed at the prayers' station, sunrise would be about four minutes off.
+      #expect(abs(stats.minimum) <= 0.5 && abs(stats.maximum) <= 0.5, "\(name)")
+      #expect(stats.exactMatches == 4, "\(name)")
+    }
+  }
+
   // MARK: Comparison
 
   struct Source: Decodable {
@@ -94,6 +149,8 @@ struct OfficialTimetableTests {
     let madhab: String
     let shafaq: String?
     let ramadanIshaMinutes: Int?
+    /// The prayers the authority doesn't publish, whose columns are empty on every day.
+    let unpublished: [String]?
     let file: String
     let committed: Bool
     let optional: Bool?
@@ -225,11 +282,12 @@ struct OfficialTimetableTests {
     }
     // One issue per prayer, not per day.
     for (name, stats) in statistics {
+      let published = !(source.unpublished ?? []).contains(name)
       #expect(
-        stats.count == 0 || stats.count == days,
+        stats.count == (published ? days : 0),
         Comment(
-          rawValue: "\(source.id) \(name): published on \(stats.count) of \(days) days; a "
-            + "column is either published every day or empty every day"))
+          rawValue: "\(source.id) \(name): published on \(stats.count) of \(days) days; "
+            + (published ? "expected every day" : "sources.json lists it as unpublished")))
       if stats.count == 0 { continue }
       let worst = max(abs(stats.minimum), abs(stats.maximum))
       #expect(
@@ -299,7 +357,7 @@ struct OfficialTimetableTests {
     positive value means the authority publishes later. "Preset exact", "Preset within 1 \
     min" and "Preset largest difference" compare the method's preset as it ships (with its own \
     adjustments and rounding) with the published minute, in days of the year. A \
-    place-specific fit replaces the preset in those columns and in the mean.
+    place-specific fit replaces the preset in every column.
 
     Written by `OfficialTimetableTests.swift`; see README.md to reproduce. docs/validation.md \
     interprets the numbers.

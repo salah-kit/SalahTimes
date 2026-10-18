@@ -15,7 +15,7 @@ Usage:
     python3 fetch.py jakim-wly01 ...      # only these ids
     python3 fetch.py --cache /some/dir    # cache directory (default: ./cache)
 
-Be polite: the script waits between requests and makes about 25 in total.
+Be polite: the script waits between requests and makes about 110 in total.
 """
 
 import argparse
@@ -108,7 +108,7 @@ def fetch_diyanet(client, source):
     """Diyanet's page shows the next 30 days and a yearly table for the following year.
 
     The 2026 yearly table is only on copies of the page from 2026, so it comes from the
-    Internet Archive's unmodified copy (the id_ form) of the page as of early January 2026.
+    Internet Archive's unmodified copy (the id_ form) of the page from early 2026.
     The live page's 30-day table is used to check that the archived values are still current.
     """
     spec = source["fetch"]
@@ -124,6 +124,7 @@ def fetch_diyanet(client, source):
     changed = [row[0] for row in overlap if live_rows[row[0]] != row]
     print(f"  live 30-day table overlaps {len(overlap)} archived days; {len(changed)} differ"
           + (f": {changed}" if changed else ""))
+    require_whole_year(rows, spec["year"])
     return rows
 
 

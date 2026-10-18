@@ -106,7 +106,7 @@
       "longitude": 101.383333,
       "sunriseLatitude": 3.19,
       "sunriseLongitude": 101.758333,
-      "coordinatesNote": "The zone's published reference stations: Kg. Gedangsa (3° 44' N, 101° 23' E) for the prayers and Cheras (3° 11' 24\" N, 101° 45' 30\" E) for sunrise, from JUPEM's Almanak Falak Syarie 2021 as quoted by the Federal Territories Mufti, Bayan al-Falak Siri ke-17 (https://www.muftiwp.gov.my/en/artikel/bayan-al-falak/5381-bayan-al-falak-siri-ke-17-kaedah-penentuan-waktu-solat). The prayers equal those of Selangor's zone SGR01 on every day of 2026.",
+      "coordinatesNote": "The zone's published reference stations: Kg. Gedangsa (3° 44' N, 101° 23' E) for the prayers and Cheras (3° 11' 24\" N, 101° 45' 30\" E) for sunrise, from JUPEM's Almanak Falak Syarie 2021 as quoted by the Federal Territories Mufti, Bayan al-Falak Siri ke-17 (https://www.muftiwp.gov.my/en/artikel/bayan-al-falak/5381-bayan-al-falak-siri-ke-17-kaedah-penentuan-waktu-solat).",
       "timeZone": "Asia/Kuala_Lumpur",
       "method": "jakim",
       "madhab": "shafi",
@@ -356,6 +356,10 @@
       "timeZone": "Asia/Tehran",
       "method": "tehran",
       "madhab": "shafi",
+      "unpublished": [
+        "asr",
+        "isha"
+      ],
       "file": "ut-tehran-2026.csv",
       "committed": false,
       "license": "calendar.ut.ac.ir states no licence; its footer reserves all rights to the University of Tehran. Not redistributed.",
