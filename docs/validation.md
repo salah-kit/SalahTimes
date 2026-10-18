@@ -105,7 +105,8 @@ Only MUIS's data may be redistributed (Singapore Open Data Licence 1.0). It's co
 attribution, and its comparison runs in every test run. The others stay in a gitignored cache,
 and their comparison runs when `SALAHTIMES_OFFICIAL_TIMETABLES` points at it. The UAE's official 2026 calendars, added on 2026-10-14, are compared below. Qatar Calendar House's
 accessible 2025 daily-card PDFs also permit a complete dated comparison, described below.
-Kuwait's current original timetable remains a provenance limitation. Comparisons with other
+Kuwait's official calendar, the Al-Ojeiri Scientific Centre's, is compared in issue #5 instead,
+because its terms don't allow copying it. Comparisons with other
 authorities' timetables are welcome: see [issue #5](https://github.com/salah-kit/SalahTimes/issues/5).
 
 **Results.** These are the official time minus SalahTimes' unrounded time, in minutes. "Exact" and "≤ 1 min" compare the preset as it ships, with its own minute adjustments and rounding, against the published minute; their ranges run over the six prayers. Full tables: `Validation/official-timetables/results.md`.

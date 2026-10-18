@@ -48,7 +48,7 @@
     },
     "KW": {
       "method": "kuwait",
-      "source": "AlAdhan, methods list: 'Kuwait', Fajr 18°, Isha 17.5° (https://api.aladhan.com/v1/methods, retrieved 2026-10-13). Secondary; no official Kuwaiti source found."
+      "source": "The Al-Ojeiri Scientific Centre's official calendar for Kuwait (https://alojeiri.com/ar/ojeiri-calendar) fits Fajr at 18° and Isha at 17.5°, AlAdhan's 'Kuwait' method (https://api.aladhan.com/v1/methods); SalahTimes' own fit of the 2026 calendar, retrieved 2026-10-18. Neither source documents the angles."
     },
     "MY": {
       "method": "jakim",
