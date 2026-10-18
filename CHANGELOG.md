@@ -15,6 +15,10 @@ All notable changes to this project are documented here. The format follows
   library, and the comparison accepts a column an authority doesn't publish and a separate
   sunrise station.
 
+- Compare Tunisia's timetable in all 42 of its towns on one day: it adds about 7 minutes to Dhuhr
+  everywhere, and in all but one town fits sunset and the Fajr and Isha angles measured from the
+  horizon as seen at the town's elevation.
+
 - Compare Jordan's timetable in every calendar month, from the Internet Archive's copies of the
   Ministry's page: its Maghrib fits the Sun at 2.15° below the horizon better than a fixed
   number of minutes after sunset.
