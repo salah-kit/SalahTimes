@@ -26,6 +26,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Suggest `isna` for the United States, the Fiqh Council of North America's 2017
+  suggestion, and no method for Canada, whose suggested 13° no preset has. Both were
+  `moonsightingCommittee`, FCNA's 2011 position.
 - RFC 0001 cites SalahKit's public RFCs, and records how they answered its questions for
   SalahCalculation.
 

@@ -90,5 +90,7 @@ struct MethodsTests {
     #expect(CalculationMethod.suggested(forCountryCode: "ZZ") == nil)
     #expect(CalculationMethod.suggested(forCountryCode: "") == nil)
     #expect(CalculationMethod.suggested(forCountryCode: "UK") == nil)
+    #expect(CalculationMethod.suggested(forCountryCode: "US") == .isna)
+    #expect(CalculationMethod.suggested(forCountryCode: "CA") == nil)
   }
 }

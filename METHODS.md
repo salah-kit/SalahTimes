@@ -64,7 +64,7 @@ Notes:
 
 This is what the Fiqh Council of North America (FCNA), the Islamic Society of North America's fiqh council, now suggests for the United States on its site, and what most software calls "ISNA". FCNA's General Body Meeting in Dallas on 27–29 October 2017 suggested "15° for both Fajr and Isha in the USA" and 13° for both in Canada, throughout the year, and said this corresponds to the "Islamic Society of North America" setting in most apps. No preset has 13°; set both angles to 13° for that page's Canadian suggestion.
 
-The published positions have changed over time. Khalid Shaukat's article in ISNA's magazine *Islamic Horizons*, in the Internet Archive by June 2002, says that "ISNA uses a value of 15°". In 2010 FCNA's secretary general said the council followed 18°. On 25 September 2011 it adopted moonsighting.com's functions of latitude and season, the Moonsighting Committee's method, with 17.5° for Fajr and 15° for Isha as the fixed-angle alternative. The 2017 suggestion replaced that, and an FCNA page adopted on 19 September 2020, since removed, said 15° "for all regions". The country suggestions for the United States and Canada still follow the 2011 decision; [issue #8](https://github.com/salah-kit/SalahTimes/issues/8) tracks them.
+The published positions have changed over time. Khalid Shaukat's article in ISNA's magazine *Islamic Horizons*, in the Internet Archive by June 2002, says that "ISNA uses a value of 15°". In 2010 FCNA's secretary general said the council followed 18°. On 25 September 2011 it adopted moonsighting.com's functions of latitude and season, the Moonsighting Committee's method, with 17.5° for Fajr and 15° for Isha as the fixed-angle alternative. The 2017 suggestion replaced that, and an FCNA page adopted on 19 September 2020, since removed, said 15° "for all regions". The country suggestions follow the 2017 suggestion: `isna` for the United States, and none for Canada, because no preset has 13° ([issue #8](https://github.com/salah-kit/SalahTimes/issues/8)).
 
 Sources:
 - Fiqh Council of North America, *How should the times of Fajr and Isha be calculated?*, the suggestion of its General Body Meeting of 27–29 October 2017; the page is dated 8 November 2021, updated 13 August 2026, and archived from 4 May 2020. https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/ (primary)
@@ -361,7 +361,6 @@ A suggestion is kept when the country's official religious authority states its 
 | AF | Afghanistan | `karachi` | PrayTimes.org regions (https://praytimes.org/docs/methods). Secondary. |
 | BD | Bangladesh | `karachi` | PrayTimes.org regions. Secondary. |
 | BN | Brunei | `muis` | Ministry of Religious Affairs timetable (https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx) fits 20° and 18°. SalahTimes' fit. |
-| CA | Canada | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)); FCNA's current page suggests 13° ([#8](https://github.com/salah-kit/SalahTimes/issues/8)). |
 | DZ | Algeria | `muslimWorldLeague` | Ministry of Religious Affairs calendar for Algiers (https://marw.gov.dz/media/calendrier/1448/Alger.pdf) fits 18° and 17°. SalahTimes' fit. |
 | EG | Egypt | `egyptian` | Dar al-Ifta, fatwa 4021 (page 13816). Primary. |
 | ID | Indonesia | `kemenag` | Kemenag publishes the national schedule. Primary. |
@@ -376,7 +375,7 @@ A suggestion is kept when the country's official religious authority states its 
 | SG | Singapore | `muis` | MUIS publishes the national timetable. Primary. |
 | TN | Tunisia | `karachi` | Ministry of Religious Affairs data for Tunis (https://www.affaires-religieuses.tn/public/getData/1) fits 18° and 18°. SalahTimes' fit. |
 | TR | Turkey | `diyanet` | Diyanet publishes Turkey's official times. Primary. |
-| US | United States | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)); FCNA's current page suggests 15°, the `isna` preset ([#8](https://github.com/salah-kit/SalahTimes/issues/8)). |
+| US | United States | `isna` | Fiqh Council of North America, 2017: 15° for Fajr and Isha in the USA (see [ISNA](#isna)). Primary. |
 
 Known differences in these countries:
 - Jordan's timetable puts Maghrib about 6.6 minutes after sunset and sunrise about 6.5 minutes before it (October to December 2026; [#9](https://github.com/salah-kit/SalahTimes/issues/9)), Tunisia's Maghrib about 2 minutes after sunset and Dhuhr about 7 after the transit, on the two days available ([#10](https://github.com/salah-kit/SalahTimes/issues/10)), and Algeria's Maghrib about 3.5 minutes after sunset. The suggested presets don't include these minutes.
@@ -390,6 +389,7 @@ Entries that were dropped from the country table of a 2026 rebuild of Batoul App
 - **Sudan, South Sudan, Libya, Lebanon, Syria, Israel, Palestine, Iraq (SD, SS, LY, LB, SY, IL, PS, IQ)** were `egyptian`. Only aggregator sites support any method for them, and they disagree. PrayTimes.org lists the Egyptian method for "Africa, Syria, Lebanon, Malaysia", which is too broad to rely on; Malaysia, for one, has its own method.
 - **Malaysia (MY)** was `egyptian`; it's now `jakim`. **Turkey (TR)** was `egyptian`; it's now `diyanet`.
 - **Bahrain, Oman, Yemen (BH, OM, YE)** were `qatar`. Bahrain's official Islamiyat app gives an angle-based Isha near 18°, not 90 minutes; for Oman and Yemen no official source was found and secondary sources disagree.
+- **Canada (CA)** was `moonsightingCommittee`, FCNA's 2011 position. FCNA now suggests 13° for Fajr and Isha in Canada, which no preset has (see [ISNA](#isna)). **The United States (US)** was `moonsightingCommittee`; it's now `isna`, FCNA's 2017 suggestion ([#8](https://github.com/salah-kit/SalahTimes/issues/8)).
 - **United Kingdom (GB, and the non-ISO "UK")** was `moonsightingCommittee`. Britain has no national authority, and mosques use different timetables: some based on the Hizbul Ulama observations, some on 18°, some on the committee's method (for example, the East London Mosque explains its own basis at https://www.eastlondonmosque.org.uk/prayer-times-and-calendar-explained).
 - **The default** (`muslimWorldLeague` for everything else) isn't carried over. A missing suggestion returns `nil`.
 

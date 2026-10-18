@@ -24,7 +24,6 @@ extension CalculationMethod {
     "AF": .karachi,
     "BD": .karachi,
     "BN": .muis,
-    "CA": .moonsightingCommittee,
     "DZ": .muslimWorldLeague,
     "EG": .egyptian,
     "ID": .kemenag,
@@ -39,6 +38,6 @@ extension CalculationMethod {
     "SG": .muis,
     "TN": .karachi,
     "TR": .diyanet,
-    "US": .moonsightingCommittee,
+    "US": .isna,
   ]
 }

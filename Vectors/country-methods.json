@@ -18,10 +18,6 @@
       "method": "muis",
       "source": "Brunei's Ministry of Religious Affairs timetable (https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx) fits Fajr at 20° and Isha at 18°, the MUIS angles; SalahTimes' own fit, retrieved 2026-10-13"
     },
-    "CA": {
-      "method": "moonsightingCommittee",
-      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America Use functions of latitude and seasons for Fajr, and Isha' as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13). FCNA's current page suggests fixed angles instead (https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/); see https://github.com/salah-kit/SalahTimes/issues/8"
-    },
     "DZ": {
       "method": "muslimWorldLeague",
       "source": "Algeria's Ministry of Religious Affairs calendar for Algiers fits Fajr at 18° and Isha at 17°, the Muslim World League angles; SalahTimes' own fit, retrieved 2026-10-13 (https://marw.gov.dz/media/calendrier/1448/Alger.pdf). The ministry also puts Maghrib about 3.5 minutes after sunset."
@@ -79,8 +75,8 @@
       "source": "Diyanet İşleri Başkanlığı publishes Turkey's official times (https://namazvakitleri.diyanet.gov.tr) and its precautionary minutes (https://vakithesaplama.diyanet.gov.tr/temkin.php), retrieved 2026-10-13"
     },
     "US": {
-      "method": "moonsightingCommittee",
-      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America Use functions of latitude and seasons for Fajr, and Isha' as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13). FCNA's current page suggests fixed angles instead (https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/); see https://github.com/salah-kit/SalahTimes/issues/8"
+      "method": "isna",
+      "source": "Fiqh Council of North America, How should the times of Fajr and Isha be calculated?, the suggestion of its General Body Meeting of 27–29 October 2017: 'suggests using 15° for both Fajr and Isha in the USA' (https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/, retrieved 2026-10-18). It replaced FCNA's 2011 position, the Moonsighting Committee's method (https://github.com/salah-kit/SalahTimes/issues/8)."
     }
   }
 }
