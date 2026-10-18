@@ -33,8 +33,8 @@ All notable changes to this project are documented here. The format follows
 
 - Compare JAKIM's zone WLY01 at the reference stations the Federal Territories Mufti publishes,
   not central Kuala Lumpur. Most of its offset from the `jakim` preset then goes, leaving
-  upward rounding and a seasonal minute, and the zone's fit becomes rounding up with sunrise a
-  minute earlier.
+  upward rounding and a seasonal excess in Fajr, Asr, Maghrib and Isha, and the zone's fit
+  becomes rounding up with sunrise a minute earlier.
 - Link CNN Indonesia's report of Kemenag's Subuh criterion at its current address, in
   METHODS.md and `Vectors/methods.json`; the old address returned 404.
 - Document the independent JPL solar-event comparison and the 2026 UAE Asr difference,

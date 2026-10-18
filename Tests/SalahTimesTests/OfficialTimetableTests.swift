@@ -82,42 +82,11 @@ struct OfficialTimetableTests {
   func unpublishedColumnsAndSunriseStation() throws {
     // A timetable made from SalahTimes' own rounded times, with sunrise computed a degree east
     // of the prayers' station (four minutes earlier) and no Asr or Isha.
-    let source = try JSONDecoder().decode(
-      Source.self,
-      from: Data(
-        """
-        {"id": "synthetic", "authority": "Test", "place": "Test", "latitude": 30, "longitude": 31,
-         "sunriseLatitude": 30, "sunriseLongitude": 32, "timeZone": "Africa/Cairo",
-         "method": "egyptian", "madhab": "shafi", "unpublished": ["asr", "isha"],
-         "file": "synthetic.csv", "committed": false}
-        """.utf8))
-    let zone = try #require(TimeZone(identifier: source.timeZone))
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.timeZone = zone
-    let parameters = CalculationMethod.egyptian.parameters
-    var csv = "date,fajr,sunrise,dhuhr,asr,maghrib,isha\n"
-    for text in ["2026-01-15", "2026-04-15", "2026-07-15", "2026-10-15"] {
-      let day = try #require(GregorianDay(text))
-      let prayers = try PrayerTimes(
-        coordinates: Coordinates(latitude: 30, longitude: 31), day: day, timeZone: zone,
-        parameters: parameters)
-      let sunrise = try PrayerTimes(
-        coordinates: Coordinates(latitude: 30, longitude: 32), day: day, timeZone: zone,
-        parameters: parameters)
-      func clock(_ times: PrayerTimes, _ event: PrayerTimes.Event) throws -> String {
-        let parts = calendar.dateComponents(
-          [.hour, .minute], from: try #require(times[event].date))
-        return String(format: "%02d:%02d", parts.hour ?? 0, parts.minute ?? 0)
-      }
-      csv += "\(text),\(try clock(prayers, .fajr)),\(try clock(sunrise, .sunrise)),"
-      csv += "\(try clock(prayers, .dhuhr)),,\(try clock(prayers, .maghrib)),\n"
-    }
-    let directory = FileManager.default.temporaryDirectory
-      .appendingPathComponent("OfficialTimetableTests-\(UUID().uuidString)")
-    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let source = try Self.syntheticSource(
+      #""sunriseLatitude": 30, "sunriseLongitude": 32, "unpublished": ["asr", "isha"],"#)
+    let directory = try Self.writeSynthetic(
+      try Self.syntheticTimetable(sunriseLongitude: 32, empty: ["asr", "isha"]), for: source)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try csv.write(
-      to: directory.appendingPathComponent(source.file), atomically: true, encoding: .utf8)
 
     let report = try Self.compare(source, in: directory)
     let statistics = Dictionary(uniqueKeysWithValues: report.statistics)
@@ -131,6 +100,76 @@ struct OfficialTimetableTests {
       #expect(abs(stats.minimum) <= 0.5 && abs(stats.maximum) <= 0.5, "\(name)")
       #expect(stats.exactMatches == 4, "\(name)")
     }
+  }
+
+  @Test("An empty column the source doesn't list as unpublished is reported")
+  func undeclaredEmptyColumnIsReported() throws {
+    let source = try Self.syntheticSource("")
+    let directory = try Self.writeSynthetic(
+      try Self.syntheticTimetable(empty: ["asr"]), for: source)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    try withKnownIssue {
+      _ = try Self.compare(source, in: directory)
+    } matching: { issue in
+      issue.comments.contains { $0.rawValue.contains("asr: published on 0 of 4 days") }
+    }
+  }
+
+  /// A synthetic source at 30° N 31° E in Cairo's time zone, with `fields` added to it.
+  static func syntheticSource(_ fields: String) throws -> Source {
+    try JSONDecoder().decode(
+      Source.self,
+      from: Data(
+        """
+        {"id": "synthetic", "authority": "Test", "place": "Test", "latitude": 30, "longitude": 31,
+         \(fields) "timeZone": "Africa/Cairo", "method": "egyptian", "madhab": "shafi",
+         "file": "synthetic.csv", "committed": false}
+        """.utf8))
+  }
+
+  /// A timetable of SalahTimes' own rounded times for four days of 2026 at the synthetic
+  /// source's station, with sunrise computed at `sunriseLongitude` and the `empty` columns blank.
+  static func syntheticTimetable(sunriseLongitude: Double = 31, empty: Set<String>) throws
+    -> String
+  {
+    let zone = try #require(TimeZone(identifier: "Africa/Cairo"))
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = zone
+    let parameters = CalculationMethod.egyptian.parameters
+    var csv = "date,fajr,sunrise,dhuhr,asr,maghrib,isha\n"
+    for text in ["2026-01-15", "2026-04-15", "2026-07-15", "2026-10-15"] {
+      let day = try #require(GregorianDay(text))
+      let atStation = try PrayerTimes(
+        coordinates: Coordinates(latitude: 30, longitude: 31), day: day, timeZone: zone,
+        parameters: parameters)
+      let atSunriseStation = try PrayerTimes(
+        coordinates: Coordinates(latitude: 30, longitude: sunriseLongitude), day: day,
+        timeZone: zone, parameters: parameters)
+      var fields = [text]
+      for (name, event) in prayers {
+        if empty.contains(name) {
+          fields.append("")
+          continue
+        }
+        let times = event == .sunrise ? atSunriseStation : atStation
+        let parts = calendar.dateComponents(
+          [.hour, .minute], from: try #require(times[event].date))
+        fields.append(String(format: "%02d:%02d", parts.hour ?? 0, parts.minute ?? 0))
+      }
+      csv += fields.joined(separator: ",") + "\n"
+    }
+    return csv
+  }
+
+  /// Writes `csv` as the source's file in a new temporary directory, and returns the directory.
+  static func writeSynthetic(_ csv: String, for source: Source) throws -> URL {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("OfficialTimetableTests-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    try csv.write(
+      to: directory.appendingPathComponent(source.file), atomically: true, encoding: .utf8)
+    return directory
   }
 
   // MARK: Comparison

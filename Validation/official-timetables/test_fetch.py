@@ -169,8 +169,8 @@ class ESATests(unittest.TestCase):
         if month:
             for day in range(1, calendar.monthrange(2026, month)[1] + 1):
                 rows += (f"<tr><td>القاهرة</td><td>2026-{month:02d}-{day:02d}</td><td>1 رجب</td>"
-                         "<td>5:6 ص</td><td>6:51 ص</td><td>12:3 م</td><td>2:47 م</td>"
-                         "<td>5:6 م</td><td>12:30 ص</td></tr>")
+                         "<td>5:4 ص</td><td>6:30 ص</td><td>12:2 م</td><td>3:15 م</td>"
+                         "<td>5:4 م</td><td>12:20 ص</td></tr>")
         return (f'<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="{state}" />'
                 '<select name="ctl00$placeholder1$DropDownList1"><option value="الجيزة">الجيزة'
                 f'</option><option value="{self.CITY}">القاهرة</option></select>'
@@ -188,8 +188,8 @@ class ESATests(unittest.TestCase):
         source = {"fetch": {"kind": "esa", "city": "القاهرة", "year": 2026}}
         rows = FETCH.fetch_esa(Client(), source)
         self.assertEqual(len(rows), 365)
-        self.assertEqual(rows[0], ["2026-01-01", "05:06", "06:51", "12:03", "14:47", "17:06",
-                                   "00:30"])
+        self.assertEqual(rows[0], ["2026-01-01", "05:04", "06:30", "12:02", "15:15", "17:04",
+                                   "00:20"])
         self.assertIsNone(posts[0])
         self.assertEqual(posts[1]["__EVENTTARGET"], "ctl00$placeholder1$DropDownList1")
         self.assertEqual(posts[1]["ctl00$placeholder1$DropDownList1"], self.CITY)
@@ -207,13 +207,15 @@ class ESATests(unittest.TestCase):
 
 
 class BanuriTests(unittest.TestCase):
+    TODAY = datetime.date(2026, 10, 18)
+
     def page(self, month, today=None):
         name = FETCH.BANURI_MONTHS[month - 1]
         rows = ""
         for day in range(1, calendar.monthrange(2026, month)[1] + 1):
             attributes = ' style="background-color: #e8ddd3"' if day == today else ""
-            rows += (f"<tr{attributes}><td>{day:02d} {name}</td><td>05:55</td><td>07:17</td>"
-                     "<td>12:35</td><td>16:18</td><td>17:54</td><td>19:15</td></tr>")
+            rows += (f"<tr{attributes}><td>{day:02d} {name}</td><td>06:01</td><td>07:21</td>"
+                     "<td>12:31</td><td>16:01</td><td>17:51</td><td>19:11</td></tr>")
         return f"<table><thead><tr><th>تاریخ</th></tr></thead><tbody>{rows}</tbody></table>"
 
     def source(self):
@@ -229,10 +231,10 @@ class BanuriTests(unittest.TestCase):
                 month = len(requested)
                 return self.page(month, today=18 if month == 10 else None)
 
-        rows = FETCH.fetch_banuri(Client(), self.source())
+        rows = FETCH.fetch_banuri(Client(), self.source(), today=self.TODAY)
         self.assertEqual(len(rows), 365)
-        self.assertEqual(rows[0], ["2026-01-01", "05:55", "07:17", "12:35", "16:18", "17:54",
-                                   "19:15"])
+        self.assertEqual(rows[0], ["2026-01-01", "06:01", "07:21", "12:31", "16:01", "17:51",
+                                   "19:11"])
         self.assertIn("city=7487-Karachi%20-%20", requested[0])
         self.assertIn("time_method=1", requested[0])
 
@@ -242,7 +244,93 @@ class BanuriTests(unittest.TestCase):
                 return self.page(1)
 
         with self.assertRaises(ValueError):
-            FETCH.fetch_banuri(Client(), self.source())
+            FETCH.fetch_banuri(Client(), self.source(), today=self.TODAY)
+
+    def test_a_fetch_outside_the_year_is_rejected(self):
+        # The page computes the current year, so 2027's times would be saved as 2026's.
+        class Client:
+            def request(client, url, data=None, headers=None, binary=False):
+                raise AssertionError("nothing should be requested")
+
+        with self.assertRaises(ValueError):
+            FETCH.fetch_banuri(Client(), self.source(), today=datetime.date(2027, 1, 2))
+
+
+def days_of(year, skip=()):
+    day, days = datetime.date(year, 1, 1), []
+    while day.year == year:
+        if day not in skip:
+            days.append(day)
+        day += datetime.timedelta(days=1)
+    return days
+
+
+class JAKIMTests(unittest.TestCase):
+    URL = ("https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=year"
+           "&zone=WLY01")
+    MONTHS = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogos", "Sep", "Okt", "Nov",
+              "Dis"]
+
+    def client(self, days):
+        import json
+        times = {"fajr": "06:01:00", "syuruk": "07:21:00", "dhuhr": "13:11:00",
+                 "asr": "16:31:00", "maghrib": "19:11:00", "isha": "20:21:00"}
+        body = {"prayerTime": [
+            {"date": f"{day.day:02d}-{self.MONTHS[day.month - 1]}-{day.year}", **times}
+            for day in days]}
+        return FakeClient({self.URL: json.dumps(body)})
+
+    def test_a_whole_year(self):
+        rows = FETCH.fetch_jakim(self.client(days_of(2026)), {"fetch": {"zone": "WLY01"}})
+        self.assertEqual(len(rows), 365)
+        self.assertEqual(rows[0], ["2026-01-01", "06:01", "07:21", "13:11", "16:31", "19:11",
+                                   "20:21"])
+
+    def test_an_incomplete_year_is_rejected(self):
+        client = self.client(days_of(2026, skip={datetime.date(2026, 8, 31)}))
+        with self.assertRaises(ValueError):
+            FETCH.fetch_jakim(client, {"fetch": {"zone": "WLY01"}})
+
+    def test_rows_from_two_years_are_rejected(self):
+        client = self.client(days_of(2026)[1:] + [datetime.date(2027, 1, 1)])
+        with self.assertRaises(ValueError):
+            FETCH.fetch_jakim(client, {"fetch": {"zone": "WLY01"}})
+
+
+class KemenagTests(unittest.TestCase):
+    PROVINCE, CITY = "a" * 32, "b" * 32
+
+    def client(self, skip=()):
+        import json
+        test = self
+
+        class Client:
+            def request(client, url, data=None, headers=None, binary=False):
+                if url.endswith("/jadwalshalat"):
+                    return f'<option value="{test.PROVINCE}">JAWA TIMUR</option>'
+                if url.endswith("/getKabkoshalat"):
+                    return f'<option value="{test.CITY}">KOTA SURABAYA</option>'
+                month = data["bln"]
+                days = [day for day in days_of(2026) if day.month == month and day not in skip]
+                times = {"subuh": "04:01", "terbit": "05:21", "dzuhur": "11:31",
+                         "ashar": "14:51", "maghrib": "17:31", "isya": "18:41"}
+                return json.dumps({"status": 1, "data": {day.isoformat(): times for day in days}})
+
+        return Client()
+
+    def source(self):
+        return {"fetch": {"kind": "kemenag", "province": "JAWA TIMUR", "city": "KOTA SURABAYA",
+                          "year": 2026}}
+
+    def test_a_whole_year(self):
+        rows = FETCH.fetch_kemenag(self.client(), self.source())
+        self.assertEqual(len(rows), 365)
+        self.assertEqual(rows[0], ["2026-01-01", "04:01", "05:21", "11:31", "14:51", "17:31",
+                                   "18:41"])
+
+    def test_an_incomplete_year_is_rejected(self):
+        with self.assertRaises(ValueError):
+            FETCH.fetch_kemenag(self.client(skip={datetime.date(2026, 2, 14)}), self.source())
 
 
 class SourcesTests(unittest.TestCase):

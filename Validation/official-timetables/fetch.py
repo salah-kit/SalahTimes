@@ -156,6 +156,11 @@ def fetch_jakim(client, source):
         date = f"{int(year_text):04d}-{MALAY_MONTHS[month_text]:02d}-{int(day_text):02d}"
         rows.append([date] + [hhmm(day[key]) for key in
                               ("fajr", "syuruk", "dhuhr", "asr", "maghrib", "isha")])
+    # The API serves the current year only.
+    years = {row[0][:4] for row in rows}
+    if len(years) != 1:
+        raise ValueError(f"rows for the years {sorted(years)}")
+    require_whole_year(rows, int(years.pop()))
     return rows
 
 
@@ -218,6 +223,7 @@ def fetch_kemenag(client, source):
         for date, day in sorted(body["data"].items()):
             rows.append([date] + [hhmm(day[key]) for key in
                                   ("subuh", "terbit", "dzuhur", "ashar", "maghrib", "isya")])
+    require_whole_year(rows, spec["year"])
     return rows
 
 
@@ -300,14 +306,18 @@ BANURI_MONTHS = ["جنوری", "فروری", "مارچ", "اپریل", "مئی",
                  "اکتوبر", "نومبر", "دسمبر"]
 
 
-def fetch_banuri(client, source):
+def fetch_banuri(client, source, today=None):
     """Jamia Uloom-ul-Islamia Allama Banuri Town's prayer-time page, one month per request.
 
     The request names no year and the page doesn't say which year it computes; February has 28
-    days. Its columns are Fajr, sunrise, zawal (the start of Dhuhr), Asr, sunset (Maghrib) and
-    Isha.
+    days. It computes the current year, so a fetch in another year is refused rather than saved
+    under the wrong year. Its columns are Fajr, sunrise, zawal (the start of Dhuhr), Asr, sunset
+    (Maghrib) and Isha.
     """
     spec = source["fetch"]
+    today = today or datetime.date.today()
+    if today.year != spec["year"]:
+        raise ValueError(f"the page computes the current year, {today.year}, not {spec['year']}")
     rows = []
     for month, name in enumerate(BANURI_MONTHS, start=1):
         query = urllib.parse.urlencode({
@@ -336,7 +346,7 @@ def require_whole_year(rows, year):
         raise ValueError(f"{len(rows)} rows for the {days} days of {year}")
 
 
-PDF_TEXT =re.compile(rb"\((?P<text>(?:\\.|[^\\)])*)\)\s*Tj|<(?P<glyphs>[0-9A-Fa-f]*)>\s*Tj")
+PDF_TEXT = re.compile(rb"\((?P<text>(?:\\.|[^\\)])*)\)\s*Tj|<(?P<glyphs>[0-9A-Fa-f]*)>\s*Tj")
 CLOCK = re.compile(r"\d{1,2}:\d{2}")
 
 
