@@ -31,6 +31,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Cite the authorities' own publications in METHODS.md where they exist (the Muslim World
+  League's 1986 resolution, Diyanet's 2013 statement, the Fiqh Council of North America's
+  current suggestion, Kuwait's official calendar, Banuri Town's fatwas), and correct what they
+  contradict: Diyanet's 16° Isha covers its calendars for Europe and North America only, FCNA
+  no longer uses the Moonsighting Committee's method, and several measured country differences.
 - Compare JAKIM's zone WLY01 at the reference stations the Federal Territories Mufti publishes,
   not central Kuala Lumpur. Most of its offset from the `jakim` preset then goes, leaving
   upward rounding and a seasonal minute, and the zone's fit becomes rounding up with sunrise a

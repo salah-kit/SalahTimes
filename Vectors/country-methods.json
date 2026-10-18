@@ -20,7 +20,7 @@
     },
     "CA": {
       "method": "moonsightingCommittee",
-      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America use functions of latitude and seasons for Fajr and Isha as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13)"
+      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America Use functions of latitude and seasons for Fajr, and Isha' as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13). FCNA's current page suggests fixed angles instead (https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/); see https://github.com/salah-kit/SalahTimes/issues/8"
     },
     "DZ": {
       "method": "muslimWorldLeague",
@@ -28,7 +28,7 @@
     },
     "EG": {
       "method": "egyptian",
-      "source": "Dar al-Ifta al-Misriyyah, fatwa 13816: Egypt's times use 19.5° for Fajr and 17.5° for Isha, issued by the Egyptian General Authority for Survey (https://www.dar-alifta.org/ar/fatwa/details/13816, retrieved 2026-10-13)"
+      "source": "Dar al-Ifta al-Misriyyah, fatwa 4021 of 20 March 2017 (page 13816): Egypt's Fajr is at 19.5°, and the Egyptian General Authority for Survey issues its official prayer-time calendars; it quotes the astronomer Mervat Awad for 17.5° for Isha (https://www.dar-alifta.org/ar/fatwa/details/13816, retrieved 2026-10-18)"
     },
     "ID": {
       "method": "kemenag",
@@ -80,7 +80,7 @@
     },
     "US": {
       "method": "moonsightingCommittee",
-      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America use functions of latitude and seasons for Fajr and Isha as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13)"
+      "source": "Fiqh Council of North America, decision of 25 September 2011: 'For North America Use functions of latitude and seasons for Fajr, and Isha' as determined by Moonsighting.com' (relayed by the International Astronomical Center, https://astronomycenter.net/articles/2012/07/30/81?l=en, retrieved 2026-10-13). FCNA's current page suggests fixed angles instead (https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/); see https://github.com/salah-kit/SalahTimes/issues/8"
     }
   }
 }
