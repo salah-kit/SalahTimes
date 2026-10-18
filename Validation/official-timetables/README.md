@@ -114,8 +114,10 @@ Only the Umm al-Qura service and moonsighting.com compute for coordinates you gi
   marw.gov.dz's image-only yearly PDFs) cover 2026, but their terms forbid copying or storing
   them without permission. They're compared in issue #5.
 - **Jordan:** awqaf.gov.jo's date search fails on the server, so the page lists only today to
-  31 December. **Tunisia:** affaires-religieuses.tn returns only the current day. Neither can
-  give a whole year; what they gave is compared in issue #5.
+  31 December, and the Internet Archive's copies of the page each show ten days, from 2021 to
+  2025. The Ministry's terms allow only small excerpts, so neither is fetched here; both are
+  compared in issues #5 and #9. **Tunisia:** affaires-religieuses.tn returns only the current
+  day, which can't give a whole year; what it gave is compared in issue #5.
 - **ISNA, Bangladesh, Afghanistan:** ISNA publishes no timetable beyond a Ramadan 2026 image
   for its headquarters, the Islamic Foundation Bangladesh only a permanent table of six days a
   month from about 1992, and Afghanistan's Ministry a single image. They're compared in

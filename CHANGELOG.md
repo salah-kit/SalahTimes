@@ -15,6 +15,10 @@ All notable changes to this project are documented here. The format follows
   library, and the comparison accepts a column an authority doesn't publish and a separate
   sunrise station.
 
+- Compare Jordan's timetable in every calendar month, from the Internet Archive's copies of the
+  Ministry's page: its Maghrib fits the Sun at 2.15° below the horizon better than a fixed
+  number of minutes after sunset.
+
 - Document the complete 2025 Qatar Calendar House comparison, its OCR provenance and
   the retained 90-minute Isha policy, without adding a fitted preset adjustment.
 
