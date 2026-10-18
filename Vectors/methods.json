@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "description": "SalahTimes' calculation-method presets, as the Codable JSON of CalculationParameters. When an authority documents its rules, its entry follows them: the astronomical definition plus the precautionary minutes (methodAdjustments) and rounding it documents. When an authority publishes only timetables (MUIS, the UAE), the values are fitted to them. User adjustments are zero, the high-latitude rule is 'recommended' and the Ramadan Isha rule is off in every preset. METHODS.md gives the sources, retrieved 2026-10-13, and the measured differences from official timetables. 'sources' maps each method to its source URLs.",
+  "description": "SalahTimes' calculation-method presets, as the Codable JSON of CalculationParameters. When an authority documents its rules, its entry follows them: the astronomical definition plus the precautionary minutes (methodAdjustments) and rounding it documents. When an authority publishes only timetables (MUIS, the UAE), the values are fitted to them. User adjustments are zero, the high-latitude rule is 'recommended' and the Ramadan Isha rule is off in every preset. METHODS.md gives the sources, retrieved between 2026-10-13 and 2026-10-18, and the measured differences from official timetables. 'sources' maps each method to its source URLs.",
   "methods": {
     "muslimWorldLeague": {
       "fajr": {
@@ -432,6 +432,8 @@
     ],
     "isna": [
       "https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/",
+      "https://web.archive.org/web/20231201114432/https://fiqhcouncil.org/fajr-and-isha-timings-are-fifteen-degrees/",
+      "https://web.archive.org/web/20020624125039/http://www.isna.net:80/Horizons/article.asp?section=2&fromarticle=1&issueid=14&catid=4&artname=Perfecting+Prayer+Times",
       "http://praytimes.org/calculation",
       "https://astronomycenter.net/articles/2012/07/30/81?l=en"
     ],

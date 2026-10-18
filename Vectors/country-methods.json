@@ -24,7 +24,7 @@
     },
     "DZ": {
       "method": "muslimWorldLeague",
-      "source": "Algeria's Ministry of Religious Affairs calendar for Algiers fits Fajr at 18° and Isha at 17°, the Muslim World League angles; SalahTimes' own fit, retrieved 2026-10-13 (https://marw.gov.dz/media/calendrier/1448/Alger.pdf). The ministry also puts Maghrib about 3 minutes after sunset."
+      "source": "Algeria's Ministry of Religious Affairs calendar for Algiers fits Fajr at 18° and Isha at 17°, the Muslim World League angles; SalahTimes' own fit, retrieved 2026-10-13 (https://marw.gov.dz/media/calendrier/1448/Alger.pdf). The ministry also puts Maghrib about 3.5 minutes after sunset."
     },
     "EG": {
       "method": "egyptian",
@@ -44,11 +44,11 @@
     },
     "JO": {
       "method": "karachi",
-      "source": "Jordan's Ministry of Awqaf timetable for Amman (https://www.awqaf.gov.jo/ar/Pages/PrayerTime) fits Fajr and Isha at 18°, the Karachi angles; SalahTimes' own fit, retrieved 2026-10-13. The ministry also puts Maghrib about 5 minutes after sunset."
+      "source": "Jordan's Ministry of Awqaf timetable for Amman (https://www.awqaf.gov.jo/ar/Pages/PrayerTime) fits Fajr and Isha at 18°, the Karachi angles; SalahTimes' own fit, retrieved 2026-10-13. The ministry also puts Maghrib about 6.6 minutes after sunset and sunrise about 6.5 minutes before it (https://github.com/salah-kit/SalahTimes/issues/9)."
     },
     "KW": {
       "method": "kuwait",
-      "source": "The Al-Ojeiri Scientific Centre's official calendar for Kuwait (https://alojeiri.com/ar/ojeiri-calendar) fits Fajr at 18° and Isha at 17.5°, AlAdhan's 'Kuwait' method (https://api.aladhan.com/v1/methods); SalahTimes' own fit of the 2026 calendar, retrieved 2026-10-18. Neither source documents the angles."
+      "source": "The Al-Ojeiri Scientific Centre's official calendar for Kuwait (https://alojeiri.com/ar/ojeiri-calendar) fits Fajr at 18° and Isha at 17.5°, AlAdhan's 'Kuwait' method (https://api.aladhan.com/v1/methods); SalahTimes' own fit of the 2026 calendar, retrieved 2026-10-18. The Centre doesn't state the angles; AlAdhan, a secondary source, lists them."
     },
     "MY": {
       "method": "jakim",
