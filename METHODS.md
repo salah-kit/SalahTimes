@@ -2,7 +2,7 @@
 
 This page lists every calculation method that SalahTimes ships, what each one contains, and where the values come from. It also covers the high-latitude rules, the Moonsighting Committee's formula, the Ramadan Isha rule, the Kaaba's coordinates for the Qibla, and the country suggestions.
 
-All sources were retrieved on 2026-10-13 unless a section says otherwise. A 2026-10-14
+All sources were retrieved between 2026-10-13 and 2026-10-18 unless a section says otherwise. A 2026-10-14
 comparison adds complete official UAE timetables; the dated results are in `docs/validation.md`.
 
 ## What a preset contains
@@ -62,9 +62,9 @@ Notes:
 
 `isna`: Fajr and Isha at 15°.
 
-This is what the Fiqh Council of North America (FCNA), the Islamic Society of North America's fiqh council, now suggests for the United States, and what most software calls "ISNA". FCNA's General Body Meeting in Dallas on 27–29 October 2017 suggested "15° for both Fajr and Isha in the USA" and 13° for both in Canada, throughout the year, and said this corresponds to the "Islamic Society of North America" setting in most apps. No preset has 13°; set both angles to 13° for FCNA's Canadian suggestion.
+This is what the Fiqh Council of North America (FCNA), the Islamic Society of North America's fiqh council, now suggests for the United States on its site, and what most software calls "ISNA". FCNA's General Body Meeting in Dallas on 27–29 October 2017 suggested "15° for both Fajr and Isha in the USA" and 13° for both in Canada, throughout the year, and said this corresponds to the "Islamic Society of North America" setting in most apps. No preset has 13°; set both angles to 13° for that page's Canadian suggestion.
 
-FCNA's published position has changed over time. ISNA's magazine said in 2002 that "ISNA uses a value of 15°". In 2010 FCNA's secretary general said the council followed 18°. On 25 September 2011 it adopted moonsighting.com's functions of latitude and season, the Moonsighting Committee's method, with 17.5° for Fajr and 15° for Isha as the fixed-angle alternative. The 2017 suggestion replaced that, and an FCNA page adopted on 19 September 2020, since removed, said 15° "for all regions". The country suggestions for the United States and Canada still follow the 2011 decision; [issue #8](https://github.com/salah-kit/SalahTimes/issues/8) tracks them.
+The published positions have changed over time. Khalid Shaukat wrote in ISNA's magazine *Islamic Horizons* in 2002 that "ISNA uses a value of 15°". In 2010 FCNA's secretary general said the council followed 18°. On 25 September 2011 it adopted moonsighting.com's functions of latitude and season, the Moonsighting Committee's method, with 17.5° for Fajr and 15° for Isha as the fixed-angle alternative. The 2017 suggestion replaced that, and an FCNA page adopted on 19 September 2020, since removed, said 15° "for all regions". The country suggestions for the United States and Canada still follow the 2011 decision; [issue #8](https://github.com/salah-kit/SalahTimes/issues/8) tracks them.
 
 Sources:
 - Fiqh Council of North America, *How should the times of Fajr and Isha be calculated?*, the suggestion of its General Body Meeting of 27–29 October 2017; the page is dated 8 November 2021, updated 13 August 2026, and archived from 4 May 2020. https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/ (primary)
@@ -116,7 +116,7 @@ Sources:
 - Jamia Uloom-ul-Islamia Allama Banuri Town (جامعہ علوم اسلامیہ, literally "University of Islamic Sciences"), Karachi, whose prayer-time page offers its own method next to ISNA's, the Muslim World League's, Umm al-Qura's and Egypt's: https://www.banuri.edu.pk/namaz-times. Its 2026 times for Karachi, retrieved on 2026-10-18, all 365 days, compared at the city centre with Hanafi Asr: with 18° and 18°, no added minutes and rounding to the nearest minute, every prayer is within a minute on every day and matches to the minute on 78–82% of days (SalahTimes' fit; primary data, `docs/validation.md`).
 
 Notes:
-- The Jamia's Darul Ifta holds 18° below the horizon for true dawn: "١٨ درجہ زیرِ افق والا قول معتبر، راجح، اصح و مفتی بہ و معمول بہ ہے" (the view of 18° below the horizon is the reliable, preferred and followed one), fatwa 144008201183 of 18 May 2019, https://www.banuri.edu.pk/readquestion/144008201183/18-05-2019. A fatwa of 3 October 2018 says timetables based on 18° are correct: https://www.banuri.edu.pk/readquestion/fajr-ka-waqt-dakhil-hone-ke-waqt-suraj-ka-ufq-se-zaaviya-15-degree-wala-naqsha-darust-hai-ya-18-degree-wala-144001200384/06-10-2020. Neither states an Isha angle; its prayer-time page uses 18° for both.
+- The Jamia's Darul Ifta holds 18° below the horizon for true dawn: "١٨ درجہ زیرِ افق والا قول معتبر، راجح، اصح و مفتی بہ و معمول بہ ہے" (the view of 18° below the horizon is the reliable, preferred and followed one), fatwa 144008201183 of 18 May 2019, https://www.banuri.edu.pk/readquestion/144008201183/18-05-2019. A fatwa of 3 October 2018 says timetables based on 18° are correct: https://www.banuri.edu.pk/readquestion/144001200384/03-10-2018. Neither states an Isha angle; its prayer-time page uses 18° for both.
 - The Jamia also hosts a permanent printed timetable for Karachi, certified by its ulama and those of Darul Uloom Korangi and Jamia Farooqia, which agrees with its page within a minute and advises giving the Fajr adhan 10 minutes after true dawn as a precaution; its times don't include those minutes. https://cdn.banuri.edu.pk/banuri-panel/cdn/pdf/2020/04/20200427120241_2430.pdf
 - Most timetables in South Asia use Hanafi Asr, as Banuri Town's, the Islamic Foundation Bangladesh's and Afghanistan's Ministry's do. The preset keeps Shafi'i Asr like every other preset; apps should offer the madhab setting.
 
@@ -129,7 +129,7 @@ The Institute's calendar centre computes Iran's official times. Maghrib is later
 Sources:
 - Khabaronline, 22 August 2010, by Amir Hassanzadeh, a senior expert at the Institute's calendar centre: "The calendar centre of the University of Tehran's Institute of Geophysics, which is responsible for computing the country's prayer times, uses 17.7° below the horizon for the dawn call to prayer", and "Maghrib is when the sun reaches 4.5° of depression". The article also says sunrise and sunset are taken with the Sun's centre 50′ below the horizon, Dhuhr at the Sun's centre on the meridian, and that "اعداد با دقت دقیقه گرد می‌شوند" (the times are rounded to the minute). https://khabaronline.ir/news/86445 (secondary report of the Institute's practice)
 - Bahesab, which publishes times by the University of Tehran's rules, defines the shar'i midnight as "the middle of the interval between today's sunset and tomorrow's dawn". https://www.bahesab.ir/time/prayer/ (formerly `/time/sun`; secondary)
-- Mehdi Sohrabi, a member of the Institute's calendar council, interviewed by Hawzah News in April 2020: the council's observations "arrived at 17.7" for Fajr, and it takes 4.5° of depression as the average criterion for Maghrib. He doesn't mention Isha. http://ijtihadnet.ir/%D8%AA%D8%AC%D8%B1%D8%A8%D9%87%D9%87%D8%A7%DB%8C-%D8%B9%D8%B6%D9%88-%D8%B4%D9%88%D8%B1%D8%A7%DB%8C-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D9%85%D8%A4%D8%B3%D8%B3%D9%87-%DA%98%D8%A6%D9%88%D9%81%DB%8C/ (secondary report of the council's practice)
+- Mehdi Sohrabi, a member of the Institute's calendar council, in a Hawzah News interview republished by Ijtihad Network on 21 April 2020: the council's observations "arrived at 17.7" for Fajr, and it takes 4.5° of depression as the average criterion for Maghrib. He doesn't mention Isha. http://ijtihadnet.ir/%D8%AA%D8%AC%D8%B1%D8%A8%D9%87%D9%87%D8%A7%DB%8C-%D8%B9%D8%B6%D9%88-%D8%B4%D9%88%D8%B1%D8%A7%DB%8C-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D9%85%D8%A4%D8%B3%D8%B3%D9%87-%DA%98%D8%A6%D9%88%D9%81%DB%8C/ (secondary report of the council's practice)
 - PrayTimes.org: Tehran "17.7 / 14", Maghrib 4.5°, midnight "Jafari" (sunset to Fajr), with the note "Isha angle is not explicitly defined in Tehran method". http://praytimes.org/calculation and http://praytimes.org/code/v2/js/PrayTimes.js (secondary)
 - The Institute's own 2026 timetable for Tehran, the PDFs for the Persian years 1404 and 1405 listed on its page of provincial capitals' prayer times, https://calendar.ut.ac.ir/%D8%A7%D9%88%D9%82%D8%A7%D8%AA-%D8%B4%D8%B1%D8%B9%D9%8A-%D9%85%D8%B1%D8%A7%DA%A9%D8%B2-%D8%A7%D8%B3%D8%AA%D8%A7%D9%86%D9%87%D8%A7, retrieved on 2026-10-18, all 365 days, for the coordinates they state (35.70° N, 51.42° E). They give Fajr, sunrise, Dhuhr, sunset, Maghrib and midnight. With Fajr at 17.7°, Maghrib at 4.5°, no added minutes and rounding to the nearest minute, every published prayer is within a minute on every day and matches to the minute on 98–99% of days (SalahTimes' fit; primary data, `docs/validation.md`).
 
@@ -146,7 +146,7 @@ Sources:
 - Diyanet's own timetable for Ankara, https://namazvakitleri.diyanet.gov.tr/tr-TR/9206, checked on four dates across a year: imsak falls with the Sun at 17.8° to 17.95° below the horizon and yatsı at 17.0° to 17.3°, which fits 18° and 17° (SalahTimes' fit; primary data).
 
 Notes:
-- Diyanet's current site doesn't state the 18° and 17° angles; the 2013 press release above does. A 2022 study quotes the 1982 decision itself as setting 16° plus four minutes, which it says wasn't applied as written (T. Erdoğan and İ. Karagözoğlu, *Dini Araştırmalar* 25/63: https://dergipark.org.tr/en/download/article-file/2671884).
+- Diyanet's current site doesn't state the 18° and 17° angles; the 2013 press release above does. A 2022 study quotes the 1982 decision itself as setting 16° with ±4 minutes of temkin, which it says wasn't applied as written (T. Erdoğan and İ. Karagözoğlu, *Dini Araştırmalar* 25/63: https://dergipark.org.tr/en/download/article-file/2671884).
 - Asr follows the majority view (Shafi'i shadow): "İkindi vakti cumhurun görüşüne göre … hesaplanmaktadır" (Asr is computed according to the majority view), on the calculation criteria of Diyanet's international platform, https://awqatsalah.com/sub/34/tespit-kriterleri.
 - Diyanet's calendars for Europe and North America (https://awqatsalah.com) use Isha at 16°, following the International Prayer Times Congress held in Istanbul on 26–27 September 2021 with the European Council for Fatwa and Research (final declaration: https://awqatsalah.com/sub/12/uluslararasi-namaz-vakitleri-kongresi-sonuc-bildirgesi). Its calendars for Muslim-majority countries and Japan still use 17°: on 2026-10-17, Isha fell with the Sun at about 16.1° to 16.4° below the horizon in Rome, Paris, Sarajevo and New York, and at about 17.0° to 17.1° in Cairo, Tunis, Baku and Tokyo. The `diyanet` preset is Turkey's domestic definition. For Diyanet's calendars in Europe and North America, set Isha to 16°.
 - Diyanet's high-latitude rules can't be reproduced by SalahTimes. From 44.5° of latitude its calendars abroad cap Isha at Maghrib plus a third of the shar'i night (sunset to true dawn), floor Fajr at sunrise minus (1/3 + 2/16) of that night, phase the switch in over 20 minutes, and keep day and night at least 5 hours long. These rules are on the platform's calculation criteria page, https://awqatsalah.com/sub/34/tespit-kriterleri. An earlier rule, High Board decision 61 of 10 June 2009, used a third of the night above 45°, capped Isha at Maghrib plus 1 hour 20 minutes, set imsak from March to September at sunrise minus that Maghrib-to-Isha interval and 10 minutes, and used the 62° times above 62°: https://kurul.diyanet.gov.tr/tr/kurul/karar/45-enlemin-otesinde-namaz-vakitleri/d681fdc5-924c-4f02-bb74-08dd1c135350. SalahTimes applies its own `recommended` rule instead, so its times differ from Diyanet's above about 45°.
@@ -183,7 +183,7 @@ Notes:
 
 Sources:
 - AlAdhan, methods list: "Kuwait", Fajr 18°, Isha 17.5°. https://api.aladhan.com/v1/methods (secondary)
-- The Al-Ojeiri Scientific Centre, whose calendar "is the official calendar of the State of Kuwait and its approved computation" for years, prayer times and crescents (https://alojeiri.com/ar/aboutUs): its 2026 times for Kuwait, https://alojeiri.com/ar/ojeiri-calendar, retrieved on 2026-10-18, all 365 days, compared at central Kuwait City (29.3697, 47.9783). With 18° and 17.5°, no added minutes and rounding to the nearest minute, every prayer is within a minute on every day but two, one sunrise and one Maghrib off by two minutes, and matches to the minute on 67–85% of days (SalahTimes' fit; primary data, [issue #5](https://github.com/salah-kit/SalahTimes/issues/5)).
+- The Al-Ojeiri Scientific Centre, whose calendar "is the official calendar of the State of Kuwait and its approved computation" for years, prayer times and crescents (https://alojeiri.com/ar/aboutUs): its 2026 times for Kuwait, https://alojeiri.com/ar/ojeiri-calendar, retrieved on 2026-10-18, all 365 days, compared at central Kuwait City (29.3697, 47.9783). With 18° and 17.5°, no added minutes and rounding to the nearest minute, every prayer is within a minute on every day but two, one sunrise and one Maghrib off by two minutes (one sunrise, published as 00:00, is left out), and matches to the minute on 67–85% of days (SalahTimes' fit; primary data, [issue #5](https://github.com/salah-kit/SalahTimes/issues/5)).
 
 Notes:
 - Neither the Centre nor the Ministry of Awqaf (https://www.awqaf.gov.kw) states the angles, so the preset is a fit to the official calendar, not a documented rule. The Arabeyes ITL documentation lists Kuwait under 18° for both; the calendar's Isha fits 17.5°, not 18°.
@@ -193,7 +193,7 @@ Notes:
 
 `qatar`: Fajr at 18°, Isha 90 minutes after Maghrib.
 
-Qatar Calendar House (Dar al-Taqweem al-Qatari) issues the state's approved calendar. Its about page quotes Council of Ministers resolution 333-23/2008, which makes that calendar the sole reference for dating events and documents; it doesn't mention prayer times or a method.
+Qatar Calendar House (Dar al-Taqweem al-Qatari) issues the state's approved calendar. Its about page quotes Council of Ministers resolution 333-23/2008, which makes that calendar the sole reference for dating events and documents; the resolution as quoted doesn't concern prayer times, and the page, which says the House prepares the prayer times, states no method.
 
 Sources:
 - Qatar Calendar House, about page. https://qatarch.com/brief-altakwem (primary for the authority; it doesn't state the method)
@@ -213,7 +213,7 @@ Notes:
   point with no fitted minutes. Use the published timetable for exact official minutes.
   Full 2026 daily-card coverage remains a publisher-availability limitation, separate from
   the completed 2025 comparison.
-- The Calendar House's 2026 cards up to 11 October (284 days, retrieved on 2026-10-18) show the same offsets as 2025: Fajr −0.99, sunrise +0.02, Dhuhr +0.97, Asr +0.99 and Maghrib and Isha +2.09 minutes at central Doha, Isha exactly 90 minutes after Maghrib every day ([issue #5](https://github.com/salah-kit/SalahTimes/issues/5)). Its 1448 cards say Doha's times are the reference for the east coast from al-Khor to al-Wakrah.
+- The Calendar House's 2026 cards up to 11 October (284 days, retrieved on 2026-10-18) show the same Fajr, sunrise, Maghrib and Isha offsets as 2025 (−0.99, +0.02 and +2.09 minutes at central Doha), with Dhuhr and Asr about half a minute later than in 2025 (+0.97 and +0.99), Isha exactly 90 minutes after Maghrib every day ([issue #5](https://github.com/salah-kit/SalahTimes/issues/5)). Its 1448 cards say Doha's times are the reference for the east coast from al-Khor to al-Wakrah.
 - Qatar doesn't lengthen Isha in Ramadan. Leave `ramadanIsha` off for Qatar.
 
 ## Singapore (MUIS)
@@ -361,9 +361,9 @@ A suggestion is kept when the country's official religious authority states its 
 | AF | Afghanistan | `karachi` | PrayTimes.org regions (https://praytimes.org/docs/methods). Secondary. |
 | BD | Bangladesh | `karachi` | PrayTimes.org regions. Secondary. |
 | BN | Brunei | `muis` | Ministry of Religious Affairs timetable (https://www.mora.gov.bn/SitePages/WaktuSembahyang.aspx) fits 20° and 18°. SalahTimes' fit. |
-| CA | Canada | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)); FCNA now suggests 13° ([#8](https://github.com/salah-kit/SalahTimes/issues/8)). |
+| CA | Canada | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)); FCNA's current page suggests 13° ([#8](https://github.com/salah-kit/SalahTimes/issues/8)). |
 | DZ | Algeria | `muslimWorldLeague` | Ministry of Religious Affairs calendar for Algiers (https://marw.gov.dz/media/calendrier/1448/Alger.pdf) fits 18° and 17°. SalahTimes' fit. |
-| EG | Egypt | `egyptian` | Dar al-Ifta, fatwa 13816. Primary. |
+| EG | Egypt | `egyptian` | Dar al-Ifta, fatwa 4021 (page 13816). Primary. |
 | ID | Indonesia | `kemenag` | Kemenag publishes the national schedule. Primary. |
 | IN | India | `karachi` | PrayTimes.org regions. Secondary; India has no national authority. |
 | IR | Iran | `tehran` | The Institute of Geophysics computes Iran's official times (Khabaronline). |
@@ -376,13 +376,13 @@ A suggestion is kept when the country's official religious authority states its 
 | SG | Singapore | `muis` | MUIS publishes the national timetable. Primary. |
 | TN | Tunisia | `karachi` | Ministry of Religious Affairs data for Tunis (https://www.affaires-religieuses.tn/public/getData/1) fits 18° and 18°. SalahTimes' fit. |
 | TR | Turkey | `diyanet` | Diyanet publishes Turkey's official times. Primary. |
-| US | United States | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)); FCNA now suggests 15°, the `isna` preset ([#8](https://github.com/salah-kit/SalahTimes/issues/8)). |
+| US | United States | `moonsightingCommittee` | Fiqh Council of North America, 2011 (see [ISNA](#isna)); FCNA's current page suggests 15°, the `isna` preset ([#8](https://github.com/salah-kit/SalahTimes/issues/8)). |
 
 Known differences in these countries:
-- Jordan's timetable puts Maghrib about 6.5 minutes after sunset and sunrise about 6.5 minutes before it (October to December 2026; [#9](https://github.com/salah-kit/SalahTimes/issues/9)), Tunisia's Maghrib about 2 minutes after sunset and Dhuhr about 7 after the transit ([#10](https://github.com/salah-kit/SalahTimes/issues/10)), and Algeria's Maghrib about 3.5 minutes after sunset. The suggested presets don't include these minutes.
-- Algeria's 2026 calendar for Algiers, every day of the year, rounds up: with `rounding: .up`, Fajr, sunrise, Dhuhr, Asr and Isha match it to the minute on 90–98% of days.
-- Brunei's Ministry rounds to the nearest minute, so the `muis` preset, which rounds up as MUIS does, gives Brunei's minute on about half the days and is never more than a minute off (2026, Brunei-Muara; [issue #5](https://github.com/salah-kit/SalahTimes/issues/5)). The Ministry adds 3 minutes for Belait district and 1 for Tutong.
-- The Islamic Foundation Bangladesh's permanent timetable for Dhaka adds 3 minutes to Fajr, Dhuhr and Maghrib, and uses Hanafi Asr; in February 2025 it announced that sehri, the Fajr adhan and iftar no longer carry those minutes. Afghanistan's Ministry's Kabul table puts Maghrib about 3 minutes after sunset, with Hanafi Asr.
+- Jordan's timetable puts Maghrib about 6.5 minutes after sunset and sunrise about 6.5 minutes before it (October to December 2026; [#9](https://github.com/salah-kit/SalahTimes/issues/9)), Tunisia's Maghrib about 2 minutes after sunset and Dhuhr about 7 after the transit, on the two days available ([#10](https://github.com/salah-kit/SalahTimes/issues/10)), and Algeria's Maghrib about 3.5 minutes after sunset. The suggested presets don't include these minutes.
+- Algeria's 2026 calendar for Algiers fits rounding up: with `rounding: .up`, Fajr, sunrise, Dhuhr, Asr and Isha match it to the minute on 90–98% of days (every day of the year, leaving out 11 Isha times printed an hour late).
+- Brunei's 2026 timetable fits rounding to the nearest minute, so the `muis` preset, whose upward rounding is fitted to MUIS's timetable, gives Brunei's minute on about half the days and is never more than a minute off (2026, Brunei-Muara; [issue #5](https://github.com/salah-kit/SalahTimes/issues/5)). The Ministry adds 3 minutes for Belait district and 1 for Tutong.
+- The Islamic Foundation Bangladesh's permanent timetable for Dhaka (https://web.archive.org/web/20200424211525id_/http://www.islamicfoundation.gov.bd//sites/default/files/files/islamicfoundation.portal.gov.bd/page/e64eafb0_5067_44ac_aa4e_a2e2545a454b/Calender_permanent%20fr%20Sahri%20&%20Iftar%20(1).pdf, the Internet Archive's copy) adds 3 minutes to Fajr, Dhuhr and Maghrib, and uses Hanafi Asr; in February 2025 it announced that sehri, the Fajr adhan and iftar no longer carry those minutes (https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-islamicfoundation/2024/12/54660c350c61491e80f52729e33d4831.pdf). Afghanistan's Ministry's Kabul table (https://mohia.gov.af/dr/%D8%AC%D8%AF%D9%88%D9%84-%D8%AF%D8%A7%DB%8C%D9%85%DB%8C-%D8%A7%D9%88%D9%82%D8%A7%D8%AA-%D9%86%D9%85%D8%A7%D8%B2-%D9%87%D8%A7%DB%8C-%D9%BE%D9%86%DA%86%DA%AF%D8%A7%D9%86%D9%87-%D8%B4%D9%87%D8%B1%DA%A9%D8%A7%D8%A8%D9%84) uses Hanafi Asr and puts Maghrib about 3 minutes after sunset in a 15-day sample.
 
 Entries that were dropped from the country table of a 2026 rebuild of Batoul Apps' Guidance for Mac (https://github.com/batoulapps/GuidanceMac/pull/8), and why:
 - **Morocco (MA).** The Ministry of Habous timetable for Rabat (https://www.habous.gov.ma/prieres/horaire_hijri_2.php?ville=1) fits Fajr at 19° and Isha at 17°, with Maghrib about 4 minutes after sunset. No preset matches; `egyptian` would put Fajr about 3 minutes early.
@@ -399,7 +399,7 @@ adhan-swift (https://github.com/batoulapps/adhan-swift, MIT) is the Swift librar
 
 | Method | adhan-swift | SalahTimes | Reason |
 |---|---|---|---|
-| `muslimWorldLeague`, `egyptian`, `karachi` | Dhuhr +1 | no minutes | None of these authorities publishes a Dhuhr minute. |
+| `muslimWorldLeague`, `egyptian`, `karachi` | Dhuhr +1 | no minutes | None of these authorities requires a Dhuhr minute. The Muslim World League's resolution allows an optional two (see [Muslim World League](#muslim-world-league)). |
 | `northAmerica` → `isna` | Dhuhr +1 | no minutes | As above. The name follows the authority. |
 | (Malaysia) `singapore` → `jakim` | 20° / 18° | 18° / 18°, Dhuhr +1 | Malaysia moved Subuh to 18° in 2019; Zohor is transit plus 1 minute 4 seconds. |
 | (Indonesia) `singapore` → `kemenag` | 20° / 18°, Dhuhr +1, rounding up | 20° / 18°, Maghrib at 1°, Fajr +2, sunrise −3, Dhuhr +3, Asr +2, Maghrib +2, Isha +2, rounding up | Kemenag's documented ihtiyat and Maghrib altitude. |
