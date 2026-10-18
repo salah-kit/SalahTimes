@@ -427,9 +427,11 @@
   },
   "sources": {
     "muslimWorldLeague": [
+      "https://web.archive.org/web/20160806121152id_/http://www.themwl.org/Fatwa/default.aspx?d=1&cidi=110&l=AR&cid=11",
       "http://praytimes.org/calculation"
     ],
     "isna": [
+      "https://fiqhcouncil.org/the-suggested-calculation-method-for-fajr-and-isha/",
       "http://praytimes.org/calculation",
       "https://astronomycenter.net/articles/2012/07/30/81?l=en"
     ],
@@ -443,16 +445,19 @@
       "http://praytimes.org/code/v2/js/PrayTimes.js"
     ],
     "karachi": [
+      "https://www.banuri.edu.pk/readquestion/144008201183/18-05-2019",
+      "https://www.banuri.edu.pk/readquestion/144001200384/03-10-2018",
       "http://praytimes.org/calculation",
       "https://www.banuri.edu.pk/namaz-times"
     ],
     "tehran": [
       "https://khabaronline.ir/news/86445",
-      "https://www.bahesab.ir/time/sun",
+      "https://www.bahesab.ir/time/prayer/",
       "http://praytimes.org/code/v2/js/PrayTimes.js",
       "https://calendar.ut.ac.ir/%D8%A7%D9%88%D9%82%D8%A7%D8%AA-%D8%B4%D8%B1%D8%B9%D9%8A-%D9%85%D8%B1%D8%A7%DA%A9%D8%B2-%D8%A7%D8%B3%D8%AA%D8%A7%D9%86%D9%87%D8%A7"
     ],
     "diyanet": [
+      "https://web.archive.org/web/20221222182141/https://www.diyanet.gov.tr/tr-TR/Kurumsal/Detay/2921/basin-aciklamasi",
       "https://vakithesaplama.diyanet.gov.tr/temkin.php",
       "https://namazvakitleri.diyanet.gov.tr/tr-TR/9206"
     ],
@@ -462,6 +467,8 @@
       "https://github.com/batoulapps/adhan-swift/tree/main/Tests/AdhanTests/Resources/Times"
     ],
     "kuwait": [
+      "https://alojeiri.com/ar/aboutUs",
+      "https://alojeiri.com/ar/ojeiri-calendar",
       "https://api.aladhan.com/v1/methods"
     ],
     "qatar": [

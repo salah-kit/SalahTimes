@@ -17,10 +17,12 @@ public enum CalculationMethod: String, Hashable, Codable, Sendable, CaseIterable
   /// Muslim World League: Fajr at 18°, Isha at 17°.
   case muslimWorldLeague
 
-  /// Islamic Society of North America, as its Fiqh Council long defined it: Fajr and Isha at 15°.
+  /// Islamic Society of North America: Fajr and Isha at 15°, what the Fiqh Council of North
+  /// America has suggested for the United States since 2017.
   ///
-  /// In 2011 the Fiqh Council of North America adopted the Moonsighting Committee's seasonal
-  /// method instead. Use ``moonsightingCommittee`` for that definition.
+  /// The council's published positions have changed over time: 18° in 2010, and in 2011 the
+  /// Moonsighting Committee's seasonal method, which ``moonsightingCommittee`` reproduces.
+  /// METHODS.md gives the history and its sources.
   case isna
 
   /// Egyptian General Authority of Survey: Fajr at 19.5°, Isha at 17.5°.
@@ -51,10 +53,11 @@ public enum CalculationMethod: String, Hashable, Codable, Sendable, CaseIterable
   /// The authority doesn't publish its method; every value is fitted to its official timetables.
   case dubai
 
-  /// Kuwait, as secondary sources such as AlAdhan list it: Fajr at 18°, Isha at 17.5°.
+  /// Kuwait: Fajr at 18°, Isha at 17.5°.
   ///
-  /// Kuwait's Ministry of Awqaf and Islamic Affairs doesn't publish its method in a form that
-  /// could be checked, so METHODS.md treats these values as unverified.
+  /// Neither the Al-Ojeiri Scientific Centre, whose calendar is Kuwait's official one, nor the
+  /// Ministry of Awqaf and Islamic Affairs states the angles. These values are fitted to the
+  /// Centre's official calendar, as METHODS.md describes.
   case kuwait
 
   /// Qatar Calendar House, for Qatar's Ministry of Endowments and Islamic Affairs: Fajr at 18°,
